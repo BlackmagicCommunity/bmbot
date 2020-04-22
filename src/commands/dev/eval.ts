@@ -1,5 +1,5 @@
 import { inspect } from "util";
-import { Client, Command, Message, RunArgumentsOptions } from "../../util";
+import { Client, Command, Message, RunArgumentsOptions } from '../../util'
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
