@@ -1,5 +1,7 @@
 import { inspect } from "util";
-import { Client, Command, Message, RunArgumentsOptions } from '../../util'
+import { Client, Command, Message, RunArgumentsOptions } from "../../util";
+
+const evalGlobals = ["discord.js", "fs", "path", "util"].map(require);
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
@@ -19,9 +21,19 @@ export default class EvalCommand extends Command {
     const code = args.join(" ");
     const msg = message;
     const client = message.client;
+    const guild = message.guild;
 
     try {
-      const evaled = eval(code); // tslint:disable-line:no-eval
+      // tslint:disable-next-line:no-eval
+      const evaled = eval(
+        `(g)=>{${evalGlobals
+          .map((module, i) =>
+            Object.keys(module)
+              .map((key) => `const ${key}=g[${i}]['${key}']`)
+              .join(";")
+          )
+          .join(";")};return eval(\`${code.replace(/(\\|`)/g, "\\$1")}\`)}`
+      )(evalGlobals);
       let ogeval = evaled;
       if (evaled instanceof Promise) ogeval = await ogeval;
       if (typeof evaled !== "string") ogeval = inspect(ogeval, { depth: 0, showHidden: true });
