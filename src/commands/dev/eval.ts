@@ -1,5 +1,6 @@
 import { inspect } from 'util'
 import { Client, Command, Message, RunArgumentsOptions } from '../../util'
+import { MessageEmbed } from 'discord.js'
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {

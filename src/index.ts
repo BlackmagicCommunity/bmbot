@@ -5,6 +5,6 @@ DotEnvConfig();
 new Client({
     disableMentions: 'everyone',
     presence: {
-        activity: { name: 'DaVinci Resolve', type: "STREAMING" }
+        activity: { name: 'DaVinci Resolve', type: "PLAYING" }
     }
 }).start();

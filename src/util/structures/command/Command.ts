@@ -31,7 +31,7 @@ export class Command {
   }
 
   public hasPermission(message: Message): boolean {
-    if (message.author.id === process.env.owner)
+    if (process.env.owner.includes(message.author.id))
         return true;
 
     //Guild only
