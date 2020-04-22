@@ -31,8 +31,7 @@ export class Command {
   }
 
   public hasPermission(message: Message): boolean {
-    if (message.author.id === process.env.owner) return true;
-    if (process.env.owner.includes(message.author.id)) return true;
+    if (process.env.OWNER.toString().includes(message.author.id)) return true;
 
     // Guild only
     if (message.channel.type === 'dm' && this.guildOnly === true) {
