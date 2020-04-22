@@ -1,4 +1,4 @@
-import { Event, Client, Message } from '../util'
+import { Client, Event, Message } from "../util";
 
 export default class MessageUpdateEvent extends Event {
   constructor(client: Client) {
@@ -8,6 +8,6 @@ export default class MessageUpdateEvent extends Event {
   }
 
   main(oldMessage: Message, newMessage: Message): any {
-    this.client.emit('message', newMessage);
+    this.client.emit("message", newMessage);
   }
 }

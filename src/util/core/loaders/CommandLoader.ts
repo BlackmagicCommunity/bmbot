@@ -1,6 +1,6 @@
-import { readdirSync } from 'fs'
-import { resolve as Resolve } from 'path'
-import { Command } from '../../structures/command/Command'
+import { readdirSync } from 'fs';
+import { resolve as Resolve } from 'path';
+import { Command } from '../../structures/command/Command';
 import { Client } from '../Client';
 
 export default (client: Client, path: string): void => {
@@ -17,4 +17,4 @@ export default (client: Client, path: string): void => {
   } catch (e) {
     client.logger.log(e);
   }
-}
+};

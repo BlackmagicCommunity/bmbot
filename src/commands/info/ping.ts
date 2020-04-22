@@ -1,10 +1,10 @@
-import { Client, Command, RunArgumentsOptions } from '../../util'
-import { PermissionString } from 'discord.js';
+import { PermissionString } from "discord.js";
+import { Client, Command, RunArgumentsOptions } from "../../util";
 
 export default class PingCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      requiredPermissions: ["BAN_MEMBERS"]
+      requiredPermissions: ["BAN_MEMBERS"],
     });
   }
 

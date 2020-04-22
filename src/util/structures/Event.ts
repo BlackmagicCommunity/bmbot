@@ -1,6 +1,6 @@
-import { WSEventType } from 'discord.js'
-import { Client } from '../core/Client'
-import { EventOptions } from '../typings/typings'
+import { WSEventType } from 'discord.js';
+import { Client } from '../core/Client';
+import { EventOptions } from '../typings/typings';
 
 export class Event {
   public client: Client;

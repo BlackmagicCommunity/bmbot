@@ -1,5 +1,5 @@
-import { readdirSync } from 'fs'
-import { resolve as Resolve } from 'path'
+import { readdirSync } from 'fs';
+import { resolve as Resolve } from 'path';
 import { Client } from '../Client';
 
 export default (client: Client) => {
@@ -10,4 +10,4 @@ export default (client: Client) => {
   } catch (e) {
     client.logger.log(e);
   }
-}
+};

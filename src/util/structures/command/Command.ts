@@ -1,7 +1,7 @@
 import { Message, PermissionString } from 'discord.js';
-import { resolve as Resolve } from 'path'
-import { Client } from '../../core/Client'
-import { CommandArguments, CommandOptions, CommandParameters, RunArgumentsOptions } from '../../typings/typings'
+import { resolve as Resolve } from 'path';
+import { Client } from '../../core/Client';
+import { CommandArguments, CommandOptions, CommandParameters, RunArgumentsOptions } from '../../typings/typings';
 
 export class Command {
   public client: Client;
@@ -18,7 +18,7 @@ export class Command {
   public parameters: CommandParameters[];
   public requiredPermissions: PermissionString[];
 
-  constructor(client: Client, options: CommandOptions ) {
+  constructor(client: Client, options: CommandOptions) {
     Object.defineProperty(this, 'client', { value: client });
     this.alias = false;
     this.aliases = options.aliases || [];
@@ -31,22 +31,26 @@ export class Command {
   }
 
   public hasPermission(message: Message): boolean {
-    if (message.author.id === process.env.owner)
-        return true;
-
-    //Guild only
-    if (message.channel.type === 'dm' && this.guildOnly === true)
-        return false;
-
-    //Guild Permissions
-    for (let permission of this.requiredPermissions) {
-        if (message.member.hasPermission(permission) === false)
-            return false;
+    if (message.author.id === process.env.owner) {
+      return true;
     }
 
-    //Owner only
-    if (this.ownerOnly)
+    // Guild only
+    if (message.channel.type === 'dm' && this.guildOnly === true) {
+      return false;
+    }
+
+    // Guild Permissions
+    for (const permission of this.requiredPermissions) {
+      if (message.member.hasPermission(permission) === false) {
         return false;
+      }
+    }
+
+    // Owner only
+    if (this.ownerOnly) {
+      return false;
+    }
 
     return true;
   }
@@ -58,8 +62,8 @@ export class Command {
   public reload(): Promise<Command | any> {
     return new Promise((resolve, reject) => {
       try {
-        delete require.cache[require.resolve(Resolve("src", "commands", this.category, this.name))];
-        const commandFile: any = require(Resolve("src", "commands", this.category, this.name)).default;
+        delete require.cache[require.resolve(Resolve('src', 'commands', this.category, this.name))];
+        const commandFile: any = require(Resolve('src', 'commands', this.category, this.name)).default;
         const command: Command = new commandFile(this.client);
         this.client.commands.delete(this.name);
         this.client.commands.set(command.name, command);

@@ -4,15 +4,23 @@
   "description": "Discord.js rewrite of the Blackmagic Design Community Discord Server. Feel free to use and adapt this script.",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon --exec ts-node src",
     "test": "nodemon --exec ts-node src"
   },
   "author": "Tim Haettich, Dave Caruso, Lucas Pinto",
   "license": "ISC",
   "dependencies": {
-    "@types/node": "^13.13.2",
     "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.13.2",
+    "nodemon": "^2.0.3",
+    "prettier": "^2.0.5",
     "ts-node": "^8.9.0",
+    "tslint": "^6.1.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^3.8.3"
   }
 }
