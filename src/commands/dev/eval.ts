@@ -1,7 +1,16 @@
 import { inspect } from "util";
 import { Client, Command, Message, RunArgumentsOptions } from "../../util";
 
-const evalGlobals = ["discord.js", "fs", "path", "util"].map(require);
+const evalGlobals = ["discord.js"].map(require);
+
+// tslint:disable: no-var-requires
+const util = require("util");
+const fs = require("fs");
+const path = require("path");
+const assert = require("assert");
+// tslint:disable-next-line: variable-name
+const child_process = require("child_process");
+// tslint:enable: no-var-requires
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
