@@ -10,13 +10,14 @@ export default class HelpCommand extends Command {
         name: 'resource',
         type: 'Command | Category',
       }],
+      help: 'This command!!!'
     });
   }
 
   public main({ msg, args }: RunArgumentsOptions) {
     const embed = new MessageEmbed()
         .setTitle(`${this.client.user.username}'s Commands`)
-        .setColor(`#${process.env.DEFAULTCOLOR}`);
+        .setColor(process.env.DEFAULTCOLOR);
     
     if(args.length === 0) {
         let categories: any = {};

@@ -16,6 +16,7 @@ import { APIMessage, PermissionString, User, Guild, Message as message, MessageA
     
   export interface CommandOptions {
     aliases?: string[],
+    help: string,
     disabled?: boolean,
     hidden?: boolean,
     ownerOnly?: boolean,

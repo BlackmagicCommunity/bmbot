@@ -8,7 +8,8 @@ export default class EvalCommand extends Command {
       aliases: ['e', 'js'],
       disabled: false,
       hidden: true,
-      ownerOnly: true
+      ownerOnly: true,
+      help: 'Runs JS code'
     });
   }
 
