@@ -1,11 +1,11 @@
-import { Client as client, ClientOptions } from 'discord.js'
-import { CommandStore } from '../stores/CommandStore'
-import { EventStore } from '../stores/EventStore'
-import { Logger } from '../structures/Logger'
-import { ClientUtil } from '../utils/ClientUtil'
-import CommandLoader from './loaders/CommandLoader'
-import EventLoader from './loaders/EventLoader'
-import ExtensionsLoader from './loaders/ExtensionsLoader'
+import { Client as client, ClientOptions } from 'discord.js';
+import { CommandStore } from '../stores/CommandStore';
+import { EventStore } from '../stores/EventStore';
+import { Logger } from '../structures/Logger';
+import { ClientUtil } from '../utils/ClientUtil';
+import CommandLoader from './loaders/CommandLoader';
+import EventLoader from './loaders/EventLoader';
+import ExtensionsLoader from './loaders/ExtensionsLoader';
 
 export class Client extends client {
   public commands: CommandStore = new CommandStore();
@@ -20,8 +20,8 @@ export class Client extends client {
 
   public start(): void {
     ExtensionsLoader(this);
-    CommandLoader(this, "src/commands");
-    EventLoader(this, "src/events");
+    CommandLoader(this, 'src/commands');
+    EventLoader(this, 'src/events');
     super.login(process.env.TOKEN);
   }
 }

@@ -1,6 +1,16 @@
-import { APIMessage, PermissionString, User, Guild, Message as message, MessageAdditions, MessageOptions, StringResolvable, WSEventType } from 'discord.js'
-  import { Client } from '../core/Client'
-  import { Command } from '../structures/command/Command'
+import {
+  APIMessage,
+  Guild,
+  Message as message,
+  MessageAdditions,
+  MessageOptions,
+  PermissionString,
+  StringResolvable,
+  User,
+  WSEventType,
+} from 'discord.js';
+import { Client } from '../core/Client';
+import { Command } from '../structures/command/Command';
 
   export interface EventOptions {
     disabled?: boolean,

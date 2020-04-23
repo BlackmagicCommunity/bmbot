@@ -1,4 +1,4 @@
-import { Event, Client, Message } from '../util'
+import { Client, Event, Message } from '../util';
 
 export default class MessageUpdateEvent extends Event {
   constructor(client: Client) {

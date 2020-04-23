@@ -1,5 +1,5 @@
-import { Event, Client } from '../util'
-import { GuildMember, TextChannel, Message, MessageEmbed } from 'discord.js';
+import { GuildMember, Message, MessageEmbed, TextChannel } from 'discord.js';
+import { Client, Event } from '../util';
 
 export default class MemberAddEvent extends Event {
   constructor(client: Client) {
@@ -9,10 +9,11 @@ export default class MemberAddEvent extends Event {
   }
 
   main(member: GuildMember): any {
-    try
-    {
+    try {
       const channel: TextChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
-      channel.send('hello this is a welcome message by `Grant the bot`:tm:').then(m => m.delete({timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
+      channel
+        .send('hello this is a welcome message by `Grant the bot`:tm:')
+        .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
 
       let embed: MessageEmbed = new MessageEmbed()
       .setColor(process.env.DEFAULTCOLOR)
