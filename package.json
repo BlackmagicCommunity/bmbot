@@ -2,8 +2,9 @@
   "name": "bmbot",
   "version": "1.0.0",
   "description": "Discord.js rewrite of the Blackmagic Design Community Discord Server. Feel free to use and adapt this script.",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "dependencies": {
+    "@reverse/compact": "^1.1.4",
     "@reverse/string": "^1.1.3",
     "discord.js": "^12.2.0",
     "dom-parser": "^0.1.6",
@@ -14,10 +15,11 @@
     "os-utils": "0.0.14"
   },
   "devDependencies": {
-    "@types/os-utils": "0.0.0",
     "@types/dom-parser": "^0.1.0",
     "@types/node": "^13.13.2",
     "@types/node-fetch": "^2.5.6",
+    "@types/os-utils": "0.0.0",
+    "@types/ws": "^7.2.4",
     "nodemon": "^2.0.3",
     "prettier": "^2.0.5",
     "ts-node": "^8.9.0",
@@ -29,13 +31,31 @@
   "scripts": {
     "start": "nodemon --exec ts-node src",
     "test": "nodemon --exec ts-node src",
+    "build": "tsc",
+    "production": "node dist",
+    "prod": "node dist",
     "lint": "tslint -c tslint.json \"src/**/*.ts\" --fix --force"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BlackmagicCommunity/bmbot.git"
   },
-  "author": "Tim Haettich, Dave Caruso and Lucks",
+  "contributors": [
+    {
+      "name": "Dave Caruso",
+      "email": "dave@davecode.me",
+      "url": "https://davecode.me/"
+    },
+    {
+      "name": "Lucks",
+      "url": "https://lucks.tech/"
+    },
+    {
+      "name": "Timothy Lukas Hättich",
+      "url": "https://timhaetti.ch/"
+    }
+  ],
+  "author": "Tim Haettich,  and ",
   "bugs": {
     "url": "https://github.com/BlackmagicCommunity/bmbot/issues"
   },

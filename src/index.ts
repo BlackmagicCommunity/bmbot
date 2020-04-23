@@ -7,4 +7,5 @@ new Client({
   presence: {
     activity: { name: 'DaVinci Resolve', type: 'PLAYING' },
   },
+  codeBaseDir: __dirname,
 }).start();
