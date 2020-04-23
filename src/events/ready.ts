@@ -1,4 +1,4 @@
-import { Client, Event } from "../util";
+import { Client, Event } from '../util';
 
 export default class ReadyEvent extends Event {
   constructor(client: Client) {

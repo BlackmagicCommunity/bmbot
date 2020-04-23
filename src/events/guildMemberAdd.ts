@@ -1,5 +1,5 @@
-import { Event, Client } from '../util'
-import { GuildMember, TextChannel, Message, MessageEmbed } from 'discord.js';
+import { GuildMember, Message, MessageEmbed, TextChannel } from 'discord.js';
+import { Client, Event } from '../util';
 
 export default class MemberAddEvent extends Event {
   constructor(client: Client) {
@@ -9,20 +9,20 @@ export default class MemberAddEvent extends Event {
   }
 
   main(member: GuildMember): any {
-    try
-    {
+    try {
       const channel: TextChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
-      channel.send('hello this is a welcome message by `Grant the bot`:tm:').then(m => m.delete({timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
+      channel
+        .send('hello this is a welcome message by `Grant the bot`:tm:')
+        .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
 
-      let embed: MessageEmbed = new MessageEmbed()
-      .setColor(`#${process.env.DEFAULTCOLOR}`)
-      .setTitle('Channels Overview')
-      .setDescription('See what each channel is for below:');
+      const embed: MessageEmbed = new MessageEmbed()
+        .setColor(`#${process.env.DEFAULTCOLOR}`)
+        .setTitle('Channels Overview')
+        .setDescription('See what each channel is for below:');
 
-      const channels: TextChannel[] = member.guild.channels.cache.filter(e => e.type === 'text').array() as TextChannel[];
-      for(let channel of channels) {
-        if(channel.members.has(member.id))
-          embed.addField(channel.name, channel.topic, true);
+      const channels: TextChannel[] = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
+      for (const channel of channels) {
+        if (channel.members.has(member.id)) embed.addField(channel.name, channel.topic, true);
       }
 
       member.send(embed);
