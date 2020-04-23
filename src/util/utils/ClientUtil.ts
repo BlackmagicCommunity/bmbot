@@ -10,7 +10,7 @@ export class ClientUtil {
   }
 
   public isOwner(id: string): boolean {
-    return process.env.owner.includes(id);
+    return process.env.OWNER.includes(id);
   }
 
   public clean(text: string) {
