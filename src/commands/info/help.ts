@@ -1,6 +1,5 @@
 import { MessageEmbed } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
-import { CommandStore } from '../../util/stores/CommandStore';
 
 export default class HelpCommand extends Command {
   constructor(client: Client) {
@@ -8,8 +7,8 @@ export default class HelpCommand extends Command {
       arguments: [
         {
           all: true,
-          name: 'resource',
-          type: 'Command | Category',
+          name: 'command',
+          type: 'Command',
         },
       ],
       help: 'This command!!!',
@@ -17,7 +16,7 @@ export default class HelpCommand extends Command {
   }
 
   public main({ msg, args }: RunArgumentsOptions) {
-    const embed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(process.env.DEFAULTCOLOR);
+    const embed: MessageEmbed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(process.env.DEFAULTCOLOR);
 
     if (args.length === 0) {
       const categories: any = {};
@@ -44,12 +43,14 @@ export default class HelpCommand extends Command {
       embed.addField('Command', `${cmd.name} (${cmd.category})`, true);
 
       if (cmd.guildOnly) embed.addField('Guild Only', 'Yes', true);
+      if (cmd.aliases.length !== 0) embed.addField('Aliases', `\`${cmd.aliases.join('`, `')}\``, true)
       if (cmd.arguments.length !== 0)
         embed.addField(
-          'Arguments',
-          cmd.arguments.map((a) => `${a.name} ${a.type} ${a.required ? '(required)' : ''}\n`)
+          'Usage',
+          msg.prefix + cmd.name + ' ' + cmd.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')
         );
       if (cmd.requiredPermissions.length !== 0) embed.addField('Required Permissions', `\`${cmd.requiredPermissions.join('`, `')}\``, false);
+      if (cmd.ownerOnly) embed.addField('Developer Only', 'Yes');
     }
 
     msg.send(embed);

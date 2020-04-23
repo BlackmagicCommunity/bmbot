@@ -25,7 +25,7 @@ export default class MemberAddEvent extends Event {
         if (channel.members.has(member.id))
           embed.addField(
             channel.name,
-            `${channel.topic}\n[Take me there!](https://discordapp.com/channels/${member.guild.id}/${channel.id}/${channel.lastMessageID})`,
+            `${channel.topic ? channel.topic + '\n' : ''}[Take me there!](https://discordapp.com/channels/${member.guild.id}/${channel.id}/${channel.lastMessageID})`,
             true
           );
       }

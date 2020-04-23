@@ -3,7 +3,7 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 
 const map = [...Array(9)].map((_, i) => i).map((n) => (n + 1).toString() + String.fromCharCode(65039, 8419));
 
-export default class PingCommand extends Command {
+export default class RulesCommand extends Command {
   constructor(client: Client) {
     super(client, {
       arguments: [
@@ -19,11 +19,10 @@ export default class PingCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    const embed = new MessageEmbed().setTitle('Blackmagic Community - Rules').setColor(process.env.DEFAULTCOLOR);
+    const embed: MessageEmbed = new MessageEmbed().setColor(process.env.DEFAULTCOLOR).setTitle('Blackmagic Community - Rules');
 
-    const channel: TextChannel = msg.guild.channels.cache.get('701865087442616380') as TextChannel;
-    const msgs = await channel.messages.fetch();
-    const content = msgs.first().content;
+    const channel: TextChannel = msg.guild.channels.cache.get(process.env.RULES_CHANNEL) as TextChannel;
+    const { content } = await channel.messages.fetch(process.env.RULES_MESSAGE);
 
     if (args.length === 0) {
       embed.setDescription(content.substring(content.indexOf(map[0]), content.indexOf('https')));
