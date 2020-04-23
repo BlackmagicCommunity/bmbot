@@ -4,12 +4,16 @@ import { Client, Command, Message, RunArgumentsOptions } from '../../util';
 const evalGlobals = ['discord.js'].map(require);
 
 // tslint:disable: no-var-requires
-const util = require('util');
-const fs = require('fs');
-const path = require('path');
 const assert = require('assert');
 // tslint:disable-next-line: variable-name
 const child_process = require('child_process');
+const Discord = require('discord.js');
+const fetch = require('node-fetch');
+const fs = require('fs-extra');
+const knowledge = require('knowledge');
+const os = require('os');
+const path = require('path');
+const util = require('util');
 // tslint:enable: no-var-requires
 
 export default class EvalCommand extends Command {
@@ -22,15 +26,15 @@ export default class EvalCommand extends Command {
       help: 'Runs JS code',
       arguments: [
         {
-        all: true,
-        name: 'code',
-        type: 'code'
+          all: true,
+          name: 'code',
+          type: 'code',
         },
         {
           name: 'hello',
-          type: 'some'
-        }
-      ]
+          type: 'some',
+        },
+      ],
     });
   }
 
