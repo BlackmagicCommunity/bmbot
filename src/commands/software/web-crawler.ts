@@ -1,8 +1,11 @@
 // dave caruso 2020-03-17, updated to ts 2020-04-22
 import DomParser from 'dom-parser';
+import Cache from 'node-cache';
 import fetch from 'node-fetch';
 
 const parser = new DomParser();
+// two hour cache
+const cache = new Cache({ stdTTL: 60 * 60 * 2 });
 
 const BM_BASE_URL = 'https://www.blackmagicdesign.com';
 const BM_VERSION_LIST = '/support/partial/downloads';
@@ -32,7 +35,7 @@ export interface DownloadsObject {
   linux?: string;
 }
 
-async function RunWebCrawler(): Promise<WebCrawlerData> {
+async function crawl(): Promise<WebCrawlerData> {
   // fetch html text
   const text = await fetch(BM_BASE_URL + BM_VERSION_LIST).then((response) => response.text());
   // parse it
@@ -72,13 +75,13 @@ async function RunWebCrawler(): Promise<WebCrawlerData> {
     const downloadsRootNode = rootNode.getElementsByClassName('group')[1];
     // assemble the download links
     const downloads = downloadsRootNode.getElementsByTagName('a').reduce((obj, node) => {
-      const platform = node.getAttribute('class').split(' ')[1];
+      const platform = node.getAttribute('class').split(' ')[1] as keyof DownloadsObject;
       const url = BM_BASE_URL + node.getAttribute('href');
 
       obj[platform] = encodeURI(url);
 
       return obj;
-    }, {});
+    }, {} as DownloadsObject);
 
     const filteredDesc = shortDescription
       .replace(/  +/g, ' ')
@@ -155,4 +158,13 @@ async function RunWebCrawler(): Promise<WebCrawlerData> {
       versions: Array.from(resolveVersions.values()),
     },
   };
+}
+
+export default async function getData(): Promise<WebCrawlerData> {
+  if (cache.has('data')) {
+    return cache.get('data');
+  }
+  const data = await crawl();
+  cache.set('data', data);
+  return data;
 }
