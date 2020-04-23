@@ -31,10 +31,6 @@ export default class EvalCommand extends Command {
           name: 'code',
           type: 'code',
         },
-        {
-          name: 'hello',
-          type: 'some',
-        },
       ],
     });
   }

@@ -27,12 +27,15 @@ export interface Message extends message {
 export interface CommandOptions {
   aliases?: string[];
   help: string;
+  deletable?: boolean;
   disabled?: boolean;
   hidden?: boolean;
   ownerOnly?: boolean;
   arguments?: CommandArguments[];
   parameters?: CommandParameters[];
   requiredPermissions?: PermissionString[];
+  allowedChannels?: string[];
+  allowedRoles?: string[];
 }
 
 export interface CommandArguments {

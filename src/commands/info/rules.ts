@@ -14,7 +14,7 @@ export default class RulesCommand extends Command {
         },
       ],
       aliases: ['rule'],
-      help: 'Returns a given rule',
+      help: "Returns the server's rule(s) info",
     });
   }
 
