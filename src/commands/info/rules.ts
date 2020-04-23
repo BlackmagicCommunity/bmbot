@@ -30,15 +30,13 @@ export default class PingCommand extends Command {
     } else {
       try
       {
-        const key = map[parseInt(args[0])-1];
-        const next = map[parseInt(args[0])];
-        if(typeof key === 'undefined')
+        const key = content.indexOf(map[parseInt(args[0])-1]);
+        let next = content.indexOf(map[parseInt(args[0])]);
+        if(key === -1)
           return msg.send(':x: Invalid rule.');
-
-        const res = content.substring(content.indexOf(key), content.indexOf(next)).trim();
-        if(res === "")
-          return msg.send(':x: Invalid rule.');
-        embed.setDescription(res);
+        if(next === -1)
+          next = content.indexOf('http');
+        embed.setDescription(content.substring(key, next).trim());
       } catch {
         msg.send(':x: The parameter you specified is not a number.');
         return;
