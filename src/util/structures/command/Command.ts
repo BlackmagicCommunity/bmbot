@@ -24,7 +24,7 @@ export class Command {
     this.aliases = options.aliases || [];
     this.disabled = options.disabled || false;
     this.hidden = options.hidden || false;
-    this.help = options.help || "Command goes brrrr";
+    this.help = options.help || 'Command goes brrrr';
     this.ownerOnly = options.ownerOnly || false;
     this.arguments = options.arguments || [];
     this.parameters = options.parameters || [];
@@ -32,8 +32,7 @@ export class Command {
   }
 
   public hasPermission(message: Message): boolean {
-    if (this.client.util.isOwner(message.author.id))
-        return true;
+    if (this.client.util.isOwner(message.author.id)) return true;
 
     // Guild only
     if (message.channel.type === 'dm' && this.guildOnly === true) {

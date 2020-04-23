@@ -1,6 +1,6 @@
-import { APIMessage, DMChannel, Structures, TextChannel } from 'discord.js'
-import { Client } from '../core/Client'
-import { Command } from '../structures/command/Command'
+import { APIMessage, DMChannel, Structures, TextChannel } from 'discord.js';
+import { Client } from '../core/Client';
+import { Command } from '../structures/command/Command';
 
 export default Structures.extend('Message', (message) => {
   class Message extends message {
@@ -17,8 +17,9 @@ export default Structures.extend('Message', (message) => {
     }
 
     public reply(content?: any, options?: any): any {
-      return this.send(content instanceof APIMessage ?
-        content : APIMessage.transformOptions(content, options, { reply: this.member || this.author }));
+      return this.send(
+        content instanceof APIMessage ? content : APIMessage.transformOptions(content, options, { reply: this.member || this.author })
+      );
     }
 
     public combineContentOptions(content: any, options: any): any {
@@ -27,4 +28,4 @@ export default Structures.extend('Message', (message) => {
     }
   }
   return Message;
-})
+});

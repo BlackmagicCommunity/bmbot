@@ -22,8 +22,7 @@ export default class MessageEvent extends Event {
     if (!command) return;
     message.command = command;
     if (command.disabled) return;
-    if (typeof command.hasPermission === 'function' && !command.hasPermission(message))
-      return message.react('❌');
+    if (typeof command.hasPermission === 'function' && !command.hasPermission(message)) return message.react('❌');
     const commandArguments = RunArguments(message, args);
     try {
       await command.main(commandArguments);

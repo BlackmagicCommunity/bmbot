@@ -1,5 +1,5 @@
-import { Structures } from 'discord.js'
-import { Client } from '../core/Client'
+import { Structures } from 'discord.js';
+import { Client } from '../core/Client';
 
 export default Structures.extend('User', (user) => {
   class User extends user {
@@ -8,4 +8,4 @@ export default Structures.extend('User', (user) => {
     }
   }
   return User;
-})
+});
