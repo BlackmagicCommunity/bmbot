@@ -26,6 +26,7 @@ export interface Message extends message {
 
 export interface CommandOptions {
   aliases?: string[];
+  help: string;
   disabled?: boolean;
   hidden?: boolean;
   ownerOnly?: boolean;

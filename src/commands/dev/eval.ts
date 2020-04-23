@@ -19,6 +19,7 @@ export default class EvalCommand extends Command {
       disabled: false,
       hidden: true,
       ownerOnly: true,
+      help: 'Runs JS code',
     });
   }
 

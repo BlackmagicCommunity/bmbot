@@ -45,7 +45,7 @@
         "one-variable-per-declaration": false,
         "no-var-keyword": true,
         "prefer-const": true,
-        "radix": true,
+        "radix": false,
         "triple-equals": [true, "allow-null-check"],
         "unified-signatures": true,
         "prefer-template": [true, "allow-single-concat"],

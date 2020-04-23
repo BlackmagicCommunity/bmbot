@@ -22,14 +22,7 @@ export default class MessageEvent extends Event {
     if (!command) return;
     message.command = command;
     if (command.disabled) return;
-    if (typeof command.hasPermission === 'function' && !command.hasPermission(message))
-      return message.send(
-        new MessageEmbed({
-          title: 'Missing Permission(s)',
-          description: "You don't have enough permissions to run this command.",
-          color: `#${process.env.ERRCOLOR}`,
-        })
-      );
+    if (typeof command.hasPermission === 'function' && !command.hasPermission(message)) return message.react('❌');
     const commandArguments = RunArguments(message, args);
     try {
       await command.main(commandArguments);
