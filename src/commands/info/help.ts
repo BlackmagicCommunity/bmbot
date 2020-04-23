@@ -43,11 +43,11 @@ export default class HelpCommand extends Command {
       embed.addField('Command', `${cmd.name} (${cmd.category})`, true);
 
       if (cmd.guildOnly) embed.addField('Guild Only', 'Yes', true);
-      if (cmd.aliases.length !== 0) embed.addField('Aliases', `\`${cmd.aliases.join('`, `')}\``, true)
+      if (cmd.aliases.length !== 0) embed.addField('Aliases', `\`${cmd.aliases.join('`, `')}\``, true);
       if (cmd.arguments.length !== 0)
         embed.addField(
           'Usage',
-          msg.prefix + cmd.name + ' ' + cmd.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')
+          `${msg.prefix}${cmd.name} ${cmd.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`
         );
       if (cmd.requiredPermissions.length !== 0) embed.addField('Required Permissions', `\`${cmd.requiredPermissions.join('`, `')}\``, false);
       if (cmd.ownerOnly) embed.addField('Developer Only', 'Yes');

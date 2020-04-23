@@ -8,20 +8,13 @@ export default class EvalCommand extends Command {
       aliases: ['u'],
       disabled: false,
       hidden: true,
-      ownerOnly: true,
-      help: 'gets userinfo',
+      help: 'Shows userinfo',
+      allowedChannels: ['test-channel'],
+      allowedRoles: ['staff'],
     });
   }
 
   public async main({ msg, guild }: RunArgumentsOptions) {
-    if (!(await this.hasPermission(msg))) {
-      return;
-    }
-    if (msg.channel.id !== '701865088180813880') {
-      msg.channel.send('Only usable in <#701865088180813880>');
-      return;
-    }
-
     let str = '';
 
     const members = await guild.members.fetch();

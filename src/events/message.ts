@@ -26,6 +26,7 @@ export default class MessageEvent extends Event {
     const commandArguments = RunArguments(message, args);
     try {
       await command.main(commandArguments);
+      if (command.deletable) message.delete();
     } catch (e) {
       this.client.logger.log(e);
     }

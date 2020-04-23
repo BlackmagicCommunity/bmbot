@@ -8,14 +8,12 @@ export default class ComplimentCommand extends Command {
       disabled: false,
       hidden: true,
       ownerOnly: false,
-      help: 'say nice',
+      help: 'Forces grant to say some nice things',
+      deletable: true,
     });
   }
 
   public async main({ msg }: RunArgumentsOptions) {
     msg.channel.send(randomOf(compliment_data));
-    if (msg.deletable) {
-      msg.delete();
-    }
   }
 }
