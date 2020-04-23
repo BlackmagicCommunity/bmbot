@@ -20,6 +20,17 @@ export default class EvalCommand extends Command {
       hidden: true,
       ownerOnly: true,
       help: 'Runs JS code',
+      arguments: [
+        {
+        all: true,
+        name: 'code',
+        type: 'code'
+        },
+        {
+          name: 'hello',
+          type: 'some'
+        }
+      ]
     });
   }
 

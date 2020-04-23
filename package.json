@@ -2,20 +2,19 @@
   "name": "bmbot",
   "version": "1.0.0",
   "description": "Discord.js rewrite of the Blackmagic Design Community Discord Server. Feel free to use and adapt this script.",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon --exec ts-node src",
-    "test": "nodemon --exec ts-node src",
-    "lint": "tslint -c tslint.json \"src/**/*.ts\" --fix --force"
-  },
-  "author": "Tim Haettich, Dave Caruso, Lucas Pinto",
-  "license": "ISC",
+  "main": "src/index.ts",
   "dependencies": {
+    "@types/os-utils": "0.0.0",
     "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0"
+    "dom-parser": "^0.1.6",
+    "dotenv": "^8.2.0",
+    "node-fetch": "^2.6.0",
+    "os-utils": "0.0.14"
   },
   "devDependencies": {
+    "@types/dom-parser": "^0.1.0",
     "@types/node": "^13.13.2",
+    "@types/node-fetch": "^2.5.6",
     "nodemon": "^2.0.3",
     "prettier": "^2.0.5",
     "ts-node": "^8.9.0",
@@ -23,5 +22,20 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-plugin-prettier": "^2.3.0",
     "typescript": "^3.8.3"
-  }
+  },
+  "scripts": {
+    "start": "nodemon --exec ts-node src",
+    "test": "nodemon --exec ts-node src",
+    "lint": "tslint -c tslint.json \"src/**/*.ts\" --fix --force"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackmagicCommunity/bmbot.git"
+  },
+  "author": "Tim Haettich, Dave Caruso and Lucks",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlackmagicCommunity/bmbot/issues"
+  },
+  "homepage": "https://github.com/BlackmagicCommunity/bmbot"
 }
