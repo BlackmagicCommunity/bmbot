@@ -1,5 +1,5 @@
-import { Structures } from 'discord.js'
-import { Client } from '../core/Client'
+import { Structures } from 'discord.js';
+import { Client } from '../core/Client';
 
 export default Structures.extend('Guild', (guild) => {
   class Guild extends guild {

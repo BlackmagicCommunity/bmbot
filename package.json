@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --exec ts-node src",
     "test": "nodemon --exec ts-node src",
-    "lint": "tslint -c tslint.json \"src/*/*.ts\" --fix --force"
+    "lint": "tslint -c tslint.json \"src/**/*.ts\" --fix --force"
   },
   "author": "Tim Haettich, Dave Caruso, Lucas Pinto",
   "license": "ISC",

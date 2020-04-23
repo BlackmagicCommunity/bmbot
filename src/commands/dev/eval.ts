@@ -1,21 +1,21 @@
-import { inspect } from "util";
-import { Client, Command, Message, RunArgumentsOptions } from "../../util";
+import { inspect } from 'util';
+import { Client, Command, Message, RunArgumentsOptions } from '../../util';
 
-const evalGlobals = ["discord.js"].map(require);
+const evalGlobals = ['discord.js'].map(require);
 
 // tslint:disable: no-var-requires
-const util = require("util");
-const fs = require("fs");
-const path = require("path");
-const assert = require("assert");
+const util = require('util');
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
 // tslint:disable-next-line: variable-name
-const child_process = require("child_process");
+const child_process = require('child_process');
 // tslint:enable: no-var-requires
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      aliases: ["e", "js"],
+      aliases: ['e', 'js'],
       disabled: false,
       hidden: true,
       ownerOnly: true,
@@ -27,7 +27,7 @@ export default class EvalCommand extends Command {
   }
 
   public async getEval({ message, args }: RunArgumentsOptions) {
-    const code = args.join(" ");
+    const code = args.join(' ');
     const msg = message;
     const client = message.client;
     const guild = message.guild;
@@ -39,13 +39,13 @@ export default class EvalCommand extends Command {
           .map((module, i) =>
             Object.keys(module)
               .map((key) => `const ${key}=g[${i}]['${key}']`)
-              .join(";")
+              .join(';')
           )
-          .join(";")};return eval(\`${code.replace(/(\\|`)/g, "\\$1")}\`)}`
+          .join(';')};return eval(\`${code.replace(/(\\|`)/g, '\\$1')}\`)}`
       )(evalGlobals);
       let ogeval = evaled;
       if (evaled instanceof Promise) ogeval = await ogeval;
-      if (typeof evaled !== "string") ogeval = inspect(ogeval, { depth: 0, showHidden: true });
+      if (typeof evaled !== 'string') ogeval = inspect(ogeval, { depth: 0, showHidden: true });
       if (ogeval === null) ogeval = undefined;
       const cleanEval = this.client.util.clean(ogeval);
 
@@ -66,14 +66,11 @@ export default class EvalCommand extends Command {
 
   private getComplexType(value: any) {
     const basicType = this.getType(value);
-    if (basicType === "object" || basicType === "function")
-      return { basicType, type: this.getClass(value) };
+    if (basicType === 'object' || basicType === 'function') return { basicType, type: this.getClass(value) };
     return { basicType, type: basicType };
   }
 
   private getClass(value: any) {
-    return value && value.constructor && value.constructor.name
-      ? value.constructor.name
-      : {}.toString.call(value).match(/\[object (\w+)\]/)[1];
+    return value && value.constructor && value.constructor.name ? value.constructor.name : {}.toString.call(value).match(/\[object (\w+)\]/)[1];
   }
 }

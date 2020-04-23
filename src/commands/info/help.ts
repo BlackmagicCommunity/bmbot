@@ -1,6 +1,6 @@
-import { MessageEmbed } from "discord.js";
-import { Client, Command, RunArgumentsOptions } from "../../util";
-import { CommandStore } from "../../util/stores/CommandStore";
+import { MessageEmbed } from 'discord.js';
+import { Client, Command, RunArgumentsOptions } from '../../util';
+import { CommandStore } from '../../util/stores/CommandStore';
 
 export default class HelpCommand extends Command {
   constructor(client: Client) {
@@ -8,17 +8,15 @@ export default class HelpCommand extends Command {
       arguments: [
         {
           all: true,
-          name: "resource",
-          type: "Command | Category",
+          name: 'resource',
+          type: 'Command | Category',
         },
       ],
     });
   }
 
   public main({ msg, args }: RunArgumentsOptions) {
-    const embed = new MessageEmbed()
-      .setTitle(`${this.client.user.username}'s Commands`)
-      .setColor(`#${process.env.DEFAULTCOLOR}`);
+    const embed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(`#${process.env.DEFAULTCOLOR}`);
 
     if (args.length === 0) {
       const categories: any = {};
@@ -27,7 +25,7 @@ export default class HelpCommand extends Command {
         if (cmd.disabled || cmd.hidden) {
           continue;
         }
-        if (typeof categories[cmd.category] === "undefined") {
+        if (typeof categories[cmd.category] === 'undefined') {
           categories[cmd.category] = [cmd];
         } else {
           categories[cmd.category].push(cmd);
@@ -36,42 +34,36 @@ export default class HelpCommand extends Command {
 
       for (const categoryName in categories) {
         const category: Command[] = categories[categoryName];
-        let categoryCommands = "";
+        let categoryCommands = '';
         for (const cmd of category) {
           categoryCommands += `\`${msg.prefix}${cmd.name}\`\n`;
         }
         embed.addField(categoryName, categoryCommands, true);
       }
 
-      embed.setDescription(
-        `Hello, I'm ${this.client.user.username}, a bot built to serve the the **Blackmagic Design Community Discord Server**`
-      );
+      embed.setDescription(`Hello, I'm ${this.client.user.username}, a bot built to serve the the **Blackmagic Design Community Discord Server**`);
     } else {
       const cmd = this.client.commands.get(args[0]);
-      if (typeof cmd === "undefined") {
+      if (typeof cmd === 'undefined') {
         return msg.send(`Command named ${args[0]} not found.`);
       }
 
       if (cmd.help) {
         embed.setDescription(cmd.help);
       }
-      embed.addField("Command", `${cmd.name} (${cmd.category})`, true);
+      embed.addField('Command', `${cmd.name} (${cmd.category})`, true);
 
       if (cmd.guildOnly) {
-        embed.addField("Guild Only", "Yes", true);
+        embed.addField('Guild Only', 'Yes', true);
       }
       if (cmd.arguments.length !== 0) {
         embed.addField(
-          "Arguments",
-          cmd.arguments.map((a) => `${a.name} ${a.type} ${a.required ? "(required)" : ""}\n`)
+          'Arguments',
+          cmd.arguments.map((a) => `${a.name} ${a.type} ${a.required ? '(required)' : ''}\n`)
         );
       }
       if (cmd.requiredPermissions.length !== 0) {
-        embed.addField(
-          "Required Permissions",
-          `\`${cmd.requiredPermissions.join("`, `")}\``,
-          false
-        );
+        embed.addField('Required Permissions', `\`${cmd.requiredPermissions.join('`, `')}\``, false);
       }
     }
 

@@ -1,5 +1,5 @@
 import { MessageEmbed, PermissionString } from 'discord.js';
-import { Client, Command, RunArgumentsOptions } from '../../util'
+import { Client, Command, RunArgumentsOptions } from '../../util';
 
 export default class PingCommand extends Command {
   constructor(client: Client) {
