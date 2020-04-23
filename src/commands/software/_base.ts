@@ -32,7 +32,13 @@ export class BaseVersionLookup extends Command {
   public async main({ msg, args }: RunArgumentsOptions) {
     const data = (await getData())[this.software];
     const version = args[0] ?? data.latest;
-    const versionInfo = data.versions.find((x) => x.version === version);
+
+    if (version === 'list-all') {
+      msg.channel.send(data.versions.map(y => y.version).join(' / '));
+      return;
+    }
+
+    const versionInfo = data.versions.find((x) => x.version === version) || data.versions.find((x) => x.version === version + '.0');
 
     if (versionInfo) {
       const embed = new MessageEmbed() //

@@ -14,6 +14,7 @@ const knowledge = require('knowledge');
 const os = require('os');
 const path = require('path');
 const util = require('util');
+const crawl = require('../software/web-crawler').default;
 // tslint:enable: no-var-requires
 
 export default class EvalCommand extends Command {
