@@ -34,7 +34,7 @@ export class BaseVersionLookup extends Command {
     const version = args[0] ?? data.latest;
 
     if (version === 'list-all') {
-      msg.channel.send(data.versions.map(y => y.version).join(' / '));
+      msg.channel.send(data.versions.map((y) => y.version).join(' / '));
       return;
     }
 

@@ -1,4 +1,3 @@
-import { MessageEmbed, PermissionString } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
 const responses: string[] = [

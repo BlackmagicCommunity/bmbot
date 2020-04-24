@@ -21,7 +21,6 @@ export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['e', 'js'],
-      disabled: false,
       hidden: true,
       ownerOnly: true,
       help: 'Runs JS code',

@@ -6,7 +6,6 @@ export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['u'],
-      disabled: false,
       hidden: true,
       help: 'Shows userinfo',
       allowedChannels: ['test-channel'],

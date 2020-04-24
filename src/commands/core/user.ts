@@ -1,13 +1,12 @@
 import DateFormat from 'dateformat';
-import { MessageAttachment, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['u'],
-      disabled: false,
-      help: 'gets userinfo',
+      help: 'Gets userinfo',
     });
   }
 
