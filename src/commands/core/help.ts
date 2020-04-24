@@ -22,7 +22,7 @@ export default class HelpCommand extends Command {
       const categories: any = {};
       // Separate by category
       for (const cmd of this.client.commands.map((cmd) => cmd)) {
-        if (cmd.disabled || cmd.hidden) continue;
+        if (cmd.ownerOnly ? !this.client.util.isOwner(msg.author.id) && (cmd.disabled || cmd.hidden) : cmd.disabled || cmd.hidden) continue;
         if (typeof categories[cmd.category] === 'undefined') categories[cmd.category] = [cmd];
         else categories[cmd.category].push(cmd);
       }
