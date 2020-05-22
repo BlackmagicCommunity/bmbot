@@ -12,9 +12,5 @@ export default class ComplimentCommand extends Command {
 
   public async main({ msg }: RunArgumentsOptions) {
     msg.channel.send((await fetch('https://timto.site/compliment.php').then((x) => x.json())).compliment);
-
-    if (msg.deletable) {
-      msg.delete();
-    }
   }
 }
