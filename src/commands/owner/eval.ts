@@ -35,7 +35,7 @@ export default class EvalCommand extends Command {
   }
 
   public async main(runArguments: RunArgumentsOptions) {
-    this.getEval(runArguments).then((msg) => runArguments.message.send(msg));
+    this.getEval(runArguments).then((msg) => runArguments.message.channel.send(msg));
   }
 
   public async getEval({ message, args }: RunArgumentsOptions) {

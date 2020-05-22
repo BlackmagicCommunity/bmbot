@@ -21,12 +21,9 @@ export default class MessageEvent extends Event {
     const command = this.client.commands.get(args.shift().toLowerCase());
     if (!command) return;
     message.command = command;
-    if (command.disabled) return;
-    if (typeof command.hasPermission === 'function' && !command.hasPermission(message)) return message.react('❌');
     const commandArguments = RunArguments(message, args);
     try {
-      await command.main(commandArguments);
-      if (command.deletable) message.delete();
+      await command.handleCommand(commandArguments);
     } catch (e) {
       this.client.logger.log(e);
     }

@@ -1,4 +1,4 @@
-import { GuildMember, Message, MessageEmbed, TextChannel } from 'discord.js';
+import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
 import { Client, Event } from '../util';
 
 export default class MemberAddEvent extends Event {
@@ -10,9 +10,12 @@ export default class MemberAddEvent extends Event {
 
   main(member: GuildMember): any {
     try {
-      const channel: TextChannel = member.guild.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
+      this.client.logger.join(member);
+      const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
       channel
-        .send('hello this is a welcome message by `Grant the bot`:tm:')
+        .send(
+          `Hello ${member}, and welcome to ${member.guild.name}! Please read <#701807068272656404>.\nType \`${this.client.prefix}help\` to learn how to use me, and \`${this.client.prefix}channels\` to get a quick introduction.`
+        )
         .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
 
       const embed: MessageEmbed = new MessageEmbed()
@@ -20,7 +23,7 @@ export default class MemberAddEvent extends Event {
         .setTitle('Channels Overview')
         .setDescription('See what each channel is for below:');
 
-      const channels: TextChannel[] = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
+      const channels = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
       for (const channel of channels) {
         if (channel.members.has(member.id))
           embed.addField(

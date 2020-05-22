@@ -37,7 +37,19 @@ export default class StatsCommand extends Command {
       `Bot Uptime: ${botUptime}`,
     ].join('\n');
 
+    const topCommands = this.client.commands
+      .filter((c) => c.usageCount !== 0)
+      .sort((a, b) => {
+        if (a.usageCount > b.usageCount) return -1;
+        else if (a.usageCount < b.usageCount) return 1;
+        else return 0;
+      })
+      .map((e) => `${e.name} -> ${e.usageCount} usages.`)
+      .slice(0, 5)
+      .join('\n');
+
     const embed: MessageEmbed = new MessageEmbed()
+      .setDescription(description)
       .setTitle(`${this.client.user.username}'s statistics`)
       .setColor(process.env.DEFAULTCOLOR)
       .addField('System Usage', systemUsage, true)
@@ -45,8 +57,9 @@ export default class StatsCommand extends Command {
       .addField('Version', version, true)
       .addField('User Count', this.client.users.cache.size, true)
       .addField('Authors', contributors.map((contrib: any) => (contrib.url ? `[${contrib.name}](${contrib.url})` : contrib.name)).join('\n'), true)
-      .setDescription(description);
+      .addField('Top Commands', topCommands, true)
+      .setFooter(`${this.client.commands.reduce((acc, c) => acc + c.usageCount, 0)} total commands ran`);
 
-    msg.send(embed);
+    msg.channel.send(embed);
   }
 }

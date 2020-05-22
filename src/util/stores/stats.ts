@@ -47,6 +47,6 @@ export default class StatsCommand extends Command {
       .addField('Authors', contributors.map((contrib: any) => (contrib.url ? `[${contrib.name}](${contrib.url})` : contrib.name)).join('\n'), true)
       .setDescription(description);
 
-    msg.send(embed);
+    msg.channel.send(embed);
   }
 }

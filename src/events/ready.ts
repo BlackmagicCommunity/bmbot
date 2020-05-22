@@ -1,4 +1,4 @@
-import { Collection, Message, Role, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import { Client, Event } from '../util';
 
 export let roleList: any = {};
@@ -13,8 +13,22 @@ export default class ReadyEvent extends Event {
   }
 
   async main(): Promise<any> {
-    const channel: TextChannel = (await this.client.channels.fetch(process.env.ROLES_CHANNEL)) as TextChannel;
-    const messages: Collection<string, Message> = await channel.messages.fetch();
+    // add channels to logger
+    this.client.logger.channels.joins = await this.client.channels
+      .fetch(process.env.JOINS_CHANNEL)
+      .then((c) => c)
+      .catch((_) => null);
+    this.client.logger.channels.infractions = await this.client.channels
+      .fetch(process.env.INFRACTIONS_CHANNEL)
+      .then((c) => c)
+      .catch((_) => null);
+    this.client.logger.channels.messages = await this.client.channels
+      .fetch(process.env.MESSAGES_CHANNEL)
+      .then((c) => c)
+      .catch((_) => null);
+
+    const channel = (await this.client.channels.fetch(process.env.ROLES_CHANNEL)) as TextChannel;
+    const messages = await channel.messages.fetch();
     await messages.forEach((m) => {
       roleList[m.id] = {};
 
@@ -34,10 +48,15 @@ export default class ReadyEvent extends Event {
         const r = roleList[m.id][rs.emoji.name];
 
         // add role to members that don't have the role
-        if (users) users.forEach((u) => m.guild.member(u.id).roles.add(r, 'ReactionRoles - Startup Sync'));
+        if (users)
+          users.forEach((u) => {
+            const member = m.guild.member(u.id);
+            if (!member) return rs.users.remove(u.id);
+            member.roles.add(r, 'ReactionRoles - Startup Sync');
+          });
 
         // remove from members that un-reacted
-        const role: Role = await channel.guild.roles.fetch(r);
+        const role = await channel.guild.roles.fetch(r);
         role.members.forEach((u) => {
           if (!users.has(u.id)) u.roles.remove(r, 'ReactionRoles - Startup Sync');
         });

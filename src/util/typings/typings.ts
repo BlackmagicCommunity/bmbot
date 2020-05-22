@@ -6,8 +6,8 @@ import {
   MessageOptions,
   PermissionString,
   StringResolvable,
+  TextChannel,
   User,
-  WSEventType,
 } from 'discord.js';
 import { Client } from '../core/Client';
 import { Command } from '../structures/command/Command';
@@ -20,8 +20,6 @@ export interface Message extends message {
   prefix: string;
   command: Command;
   client: Client;
-  send(options?: MessageOptions | MessageAdditions | APIMessage): any;
-  send(content?: StringResolvable, options?: MessageOptions | MessageAdditions): any;
 }
 
 export interface CommandOptions {
@@ -31,11 +29,13 @@ export interface CommandOptions {
   disabled?: boolean;
   hidden?: boolean;
   ownerOnly?: boolean;
+  developerOnly?: boolean;
   arguments?: CommandArguments[];
   parameters?: CommandParameters[];
   requiredPermissions?: PermissionString[];
   allowedChannels?: string[];
   allowedRoles?: string[];
+  cooldown?: number;
 }
 
 export interface CommandArguments {
@@ -57,4 +57,10 @@ export interface RunArgumentsOptions {
   args: string[];
   user: User;
   guild: Guild;
+}
+
+export interface LoggerChannels {
+  messages?: TextChannel;
+  joins?: TextChannel;
+  infractions?: TextChannel;
 }

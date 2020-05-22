@@ -56,9 +56,9 @@ export class BaseVersionLookup extends Command {
           true
         )
         .setFooter('Staff does not take responsibility for download links.');
-      msg.send(embed);
+      msg.channel.send(embed);
     } else {
-      msg.send(`:x: Such version of ${capitalize(this.software)} does not exist`);
+      msg.channel.send(`:x: Such version of ${capitalize(this.software)} does not exist`);
     }
   }
 }

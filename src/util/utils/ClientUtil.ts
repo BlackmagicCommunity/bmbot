@@ -13,6 +13,10 @@ export class ClientUtil {
     return process.env.OWNER.includes(id);
   }
 
+  public isDeveloper(id: string): boolean {
+    return process.env.DEVELOPER.includes(id);
+  }
+
   public clean(text: string) {
     return text
       .replace(/`/g, `\`${String.fromCharCode(8203)}`)

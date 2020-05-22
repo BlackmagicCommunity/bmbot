@@ -36,12 +36,12 @@ export default class ChannelsCommand extends Command {
       const channel: TextChannel = msg.guild.channels.cache.find(
         (c) => c.name.includes(args[0]) || c.toString() === args[0] || c.id === args[0]
       ) as TextChannel;
-      if (!channel) return msg.send(':x: Channel not found.');
-      if (!channel.topic) return msg.send("Sorry, can't help you with that one.");
+      if (!channel) return msg.channel.send(':x: Channel not found.');
+      if (!channel.topic) return msg.channel.send("Sorry, can't help you with that one.");
 
       embed.setTitle(`Blackmagic Community - ${channel.name}`).setDescription(channel.topic);
     }
 
-    msg.send(embed);
+    msg.channel.send(embed);
   }
 }

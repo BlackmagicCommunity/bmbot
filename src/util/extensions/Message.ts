@@ -12,12 +12,8 @@ export default Structures.extend('Message', (message) => {
       super(client, data, channel);
     }
 
-    public send(content?: any, options?: any) {
-      return this.channel.send(content, options);
-    }
-
     public reply(content?: any, options?: any): any {
-      return this.send(
+      return this.channel.send(
         content instanceof APIMessage ? content : APIMessage.transformOptions(content, options, { reply: this.member || this.author })
       );
     }

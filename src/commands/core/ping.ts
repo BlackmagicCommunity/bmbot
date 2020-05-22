@@ -22,6 +22,6 @@ export default class PingCommand extends Command {
   }
 
   public main({ msg }: RunArgumentsOptions) {
-    msg.send(`${responses[Math.floor(Math.random() * responses.length)]}. Took me ${msg.createdTimestamp - Date.now()}ms`);
+    msg.channel.send(`${responses[Math.floor(Math.random() * responses.length)]}. Took me ${msg.createdTimestamp - Date.now()}ms`);
   }
 }
