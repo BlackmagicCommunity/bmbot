@@ -29,11 +29,12 @@ export default class HelpCommand extends Command {
       for (const categoryName in categories) {
         const category: Command[] = categories[categoryName];
         let categoryCommands = '';
-        for (const cmd of category) categoryCommands += `\`${msg.prefix}${cmd.name}\`\n`;
+        for (const cmd of category) categoryCommands += ` \`${msg.prefix}${cmd.name}\`\n`;
         embed.addField(categoryName, categoryCommands, true);
       }
 
-      embed.setDescription(`Hello, I'm ${this.client.user.username}, a bot built to serve the the **Blackmagic Design Community Discord Server**`);
+      embed.setDescription(`You can use any of the following commands by simply typing a message.`);
+      embed.setFooter(`Staff does not take any responsibility for the bot.`)
       msg.channel.send(embed);
     } else {
       const cmd = this.client.commands.get(args.join(' '));

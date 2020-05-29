@@ -17,7 +17,7 @@ const responses: string[] = [
 export default class PingCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: "Gets bot's latency.",
+      help: "Test if the bot is available.",
     });
   }
 

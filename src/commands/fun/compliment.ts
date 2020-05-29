@@ -5,8 +5,8 @@ export default class ComplimentCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['c'],
-      hidden: true,
       help: 'Forces grant to say some nice things',
+      deletable: true,
     });
   }
 

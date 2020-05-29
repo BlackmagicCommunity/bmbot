@@ -1,7 +1,7 @@
 {
   "name": "bmbot",
   "version": "1.0.0",
-  "description": "Discord.js rewrite of the Blackmagic Design Community Discord Server. Feel free to use and adapt this script.",
+  "description": "Blackmagic Design Community Discord Bot based on Discord.js. Feel free to use and adapt this script.",
   "main": "dist/index.js",
   "dependencies": {
     "@reverse/compact": "^1.1.4",
@@ -56,7 +56,7 @@
     },
     {
       "name": "Timothy Lukas Hättich",
-      "url": "https://timhaetti.ch/"
+      "url": "https://github.com/timhaettich"
     }
   ],
   "author": "Tim Haettich",
