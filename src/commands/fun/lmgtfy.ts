@@ -11,7 +11,7 @@ export default class ComplimentCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    var uri =  args.map(encodeURIComponent).join("+")
+    const uri =  args.map(encodeURIComponent).join("+")
     msg.channel.send(`We're happy to help you on questions that are not easy to google. But you can literally google your message.\nhttps://lmgtfy.com/?q=${uri}`);
   }
 }
