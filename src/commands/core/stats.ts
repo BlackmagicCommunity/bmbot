@@ -11,6 +11,18 @@ function cpu(): any {
   return new Promise((resolve) => os.cpuUsage(resolve));
 }
 
+function msToTime(ms: number): string {
+  let seconds = Math.floor((ms / 1000) % 60),
+    minutes = Math.floor((ms / (1000 * 60)) % 60),
+    hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+    let hres = hours > 0 ? `${hours} hours`: '',
+    mres = minutes > 0 ? `${minutes} minutes`: '',
+    sres = seconds > 0 ? `${seconds} seconds`: '';
+    
+  return `${hres !== '' ? `${hres}, ` : ''}${mres !== '' ? `${mres}, ` : ''}${sres}`;
+}
+
 export default class StatsCommand extends Command {
   constructor(client: Client) {
     super(client, {
@@ -19,22 +31,20 @@ export default class StatsCommand extends Command {
     });
   }
 
-  public async main({ msg }: RunArgumentsOptions) {
+  public async main({ msg, guild }: RunArgumentsOptions) {
     const cpuPercent = (100 * (await cpu())).toFixed(0);
     const usedMem = ((os.totalmem() - os.freemem()) / 1000).toFixed(1);
     const totalMem = (os.totalmem() / 1000).toFixed(1);
     const botMem = (process.memoryUsage().rss / 1024 / 1024).toFixed(2);
 
     const systemUptime = compactTime(os.sysUptime()).replace(/[0-9]+ Minutes.*$/, '');
-    const botUptime = compactTime(os.processUptime()).replace(/[0-9]+ Minutes.*$/, '');
 
     const systemUsage = [
-      //
       `System CPU: ${cpuPercent}%`,
       `System Memory: ${usedMem}/${totalMem}GB`,
       `System Uptime: ${systemUptime}`,
       `Bot Memory: ${botMem} MB`,
-      `Bot Uptime: ${botUptime}`,
+      `Bot Uptime: ${msToTime(this.client.uptime)}`,
     ].join('\n');
 
     const topCommands = this.client.commands
@@ -55,7 +65,7 @@ export default class StatsCommand extends Command {
       .addField('System Usage', systemUsage, true)
       .addField('Source', `[Github Repository](${homepage})`, true)
       .addField('Version', version, true)
-      .addField('User Count', this.client.users.cache.size, true)
+      .addField('Member Count', guild.memberCount, true)
       .addField('Authors', contributors.map((contrib: any) => (contrib.url ? `[${contrib.name}](${contrib.url})` : contrib.name)).join('\n'), true)
       .addField('Top Commands', topCommands, true)
       .setFooter(`${this.client.commands.reduce((acc, c) => acc + c.usageCount, 0)} total commands ran`);

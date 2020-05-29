@@ -1,6 +1,6 @@
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
-const responses: string[] = [
+const responses = [
   'https://media.giphy.com/media/v1dTuaCHDuEA8/giphy.gif',
   'Pong!',
   "No! I'm better than just writting 'Pong'",
@@ -22,6 +22,6 @@ export default class PingCommand extends Command {
   }
 
   public main({ msg }: RunArgumentsOptions) {
-    msg.channel.send(`${responses[Math.floor(Math.random() * responses.length)]}. Might have taken me ${msg.createdTimestamp - Date.now()}ms.`);
+    msg.channel.send(`${responses[Math.floor(Math.random() * responses.length)]}.\nMath: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${this.client.ws.ping}ms.`);
   }
 }

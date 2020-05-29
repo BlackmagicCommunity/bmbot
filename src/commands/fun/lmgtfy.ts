@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
-export default class ComplimentCommand extends Command {
+export default class LMGTFYCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['google'],

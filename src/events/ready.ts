@@ -27,9 +27,18 @@ export default class ReadyEvent extends Event {
       .then((c) => c)
       .catch((_) => null);
 
-    const channel = (await this.client.channels.fetch(process.env.ROLES_CHANNEL)) as TextChannel;
-    const messages = await channel.messages.fetch();
-    await messages.forEach((m) => {
+    // clean rules channel
+    const rulesChannel = (await this.client.channels.fetch(process.env.RULES_CHANNEL)) as TextChannel;
+    if(rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
+      const rulesMessages = await rulesChannel.messages.fetch();
+      rulesMessages.forEach(m => {
+        if(m.author.bot) m.delete({ reason: 'WelcomeMessages - Startup Clean'});
+      });
+    }
+
+    const rolesChannel = (await this.client.channels.fetch(process.env.ROLES_CHANNEL)) as TextChannel;
+    const rolesMessages = await rolesChannel.messages.fetch();
+    await rolesMessages.forEach((m) => {
       roleList[m.id] = {};
 
       // add roles to roleList
@@ -43,24 +52,26 @@ export default class ReadyEvent extends Event {
       });
 
       // sync
-      m.reactions.cache.forEach(async (rs) => {
-        const users = await rs.users.fetch();
-        const r = roleList[m.id][rs.emoji.name];
+      if(rolesChannel.permissionsFor(this.client.user).has('MANAGE_ROLES')) {
+        m.reactions.cache.forEach(async (rs) => {
+          const users = await rs.users.fetch();
+          const r = roleList[m.id][rs.emoji.name];
 
-        // add role to members that don't have the role
-        if (users)
-          users.forEach((u) => {
-            const member = m.guild.member(u.id);
-            if (!member) return rs.users.remove(u.id);
-            member.roles.add(r, 'ReactionRoles - Startup Sync');
+          // add role to members that don't have the role
+          if (users)
+            users.forEach((u) => {
+              const member = m.guild.member(u.id);
+              if (!member) return rs.users.remove(u.id);
+              member.roles.add(r, 'ReactionRoles - Startup Sync');
+            });
+
+          // remove from members that un-reacted
+          const role = await rolesChannel.guild.roles.fetch(r);
+          role.members.forEach((u) => {
+            if (!users.has(u.id)) u.roles.remove(r, 'ReactionRoles - Startup Sync');
           });
-
-        // remove from members that un-reacted
-        const role = await channel.guild.roles.fetch(r);
-        role.members.forEach((u) => {
-          if (!users.has(u.id)) u.roles.remove(r, 'ReactionRoles - Startup Sync');
         });
-      });
+      }
     });
 
     this.client.logger.log(`Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`);
