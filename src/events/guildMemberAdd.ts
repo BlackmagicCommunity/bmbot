@@ -14,14 +14,14 @@ export default class MemberAddEvent extends Event {
       const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
       channel
         .send(
-          `Hello ${member}, and welcome to ${member.guild.name}! Please read <#701807068272656404>.\nType \`${this.client.prefix}help\` to learn how to use me, and \`${this.client.prefix}channels\` to get a quick introduction.`
+          `${member}, welcome to the ${member.guild.name}! Please read ${process.env.RULES_CHANNEL} and assign yourself ${process.env.ROLES_CHANNEL}.\nType \`${this.client.prefix} help\` to learn how to use me, and \`${this.client.prefix}channels\` to get a quick introduction.`
         )
         .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
 
       const embed: MessageEmbed = new MessageEmbed()
         .setColor(process.env.DEFAULTCOLOR)
-        .setTitle('Channels Overview')
-        .setDescription('See what each channel is for below:');
+        .setTitle('Blackmagic Community')
+        .setDescription('Welcome to the Blackmagic Community Discord! Here\'s an overview of all channels:');
 
       const channels = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
       for (const channel of channels) {

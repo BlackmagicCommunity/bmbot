@@ -22,9 +22,9 @@ export default class EvalCommand extends Command {
           .setTitle(`User: ${m.user.tag} ${m.user.bot ? '[BOT]' : m.user.system ? '[SYSTEM]' : ''}`)
           .setColor(m.displayColor)
           .setImage(`https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png?size=1024`)
+          .addField('Display Name', `${m.displayName} (\`${m.displayHexColor}\`)`, true)
           .addField('ID', `${m.user.id}`, true)
           .addField('Joined On', `${DateFormat(m.joinedTimestamp, 'yyyy-mm-dd h:MM TT')}`, true)
-          .addField('Display Name', `${m.displayName} (\`${m.displayHexColor}\`)`, true)
           .addField(
             'Roles',
             m.roles.cache
