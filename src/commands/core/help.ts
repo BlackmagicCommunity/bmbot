@@ -20,7 +20,7 @@ export default class HelpCommand extends Command {
       const categories: any = {};
       // Separate by category
       for (const cmd of this.client.commands.map((cmd) => cmd)) {
-        if (cmd.ownerOnly ? !this.client.util.isOwner(msg.author.id) && (cmd.disabled || cmd.hidden) : cmd.disabled || cmd.hidden) continue;
+        if (!cmd.hasPermission(msg)) continue;
         if (typeof categories[cmd.category] === 'undefined') categories[cmd.category] = [cmd];
         else categories[cmd.category].push(cmd);
       }
@@ -36,8 +36,8 @@ export default class HelpCommand extends Command {
       embed.setDescription(`Hello, I'm ${this.client.user.username}, a bot built to serve the the **Blackmagic Design Community Discord Server**`);
       msg.channel.send(embed);
     } else {
-      const cmd = this.client.commands.get(args[0]);
-      if (typeof cmd === 'undefined') return msg.channel.send(`:x: Command named ${args[0]} not found.`);
+      const cmd = this.client.commands.get(args.join(' '));
+      if (typeof cmd === 'undefined' || !cmd.hasPermission(msg)) return msg.channel.send(`:x: Command named ${args[0]} not found.`);
       msg.channel.send(this.helpMessage(msg, cmd));
     }
   }

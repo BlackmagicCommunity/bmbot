@@ -8,6 +8,7 @@ export default class MessageDeleteEvent extends Event {
   }
 
   main(message: Message): any {
+    if (message.author.bot) return;
     this.client.logger.message(message, 'Message Delete');
   }
 }

@@ -54,8 +54,7 @@ export class Command {
     if (this.client.util.isOwner(message.author.id)) return true;
     if (this.ownerOnly) return false;
 
-    if (this.client.util.isDeveloper(message.author.id)) return true;
-    if (this.developerOnly) return false;
+    if (this.developerOnly && !this.client.util.isDeveloper(message.author.id)) return false;
 
     // Guild Permissions
     for (const permission of this.requiredPermissions) {
@@ -108,8 +107,10 @@ export class Command {
         'Usage',
         `${message.prefix}${command.name} ${command.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`
       );
-    if (command.requiredPermissions.length !== 0) embed.addField('Required Permissions', `\`${command.requiredPermissions.join('`, `')}\``, false);
     if (command.ownerOnly || command.developerOnly) embed.addField('Developer Only', 'Yes');
+    if (command.requiredPermissions.length !== 0) embed.addField('Required Permissions', `\`${command.requiredPermissions.join('`, `')}\``);
+    if (command.allowedRoles.length !== 0) embed.addField('Allowed Roles', `\`${command.allowedRoles.join('`, `')}\``);
+    if (command.allowedChannels.length !== 0) embed.addField('Allowed Channels', `\`${command.allowedChannels.join('`, `')}\``);
     return embed;
   }
 

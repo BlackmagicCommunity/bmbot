@@ -5,10 +5,8 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      aliases: ['u'],
-      hidden: true,
+      aliases: ['ulist', 'users'],
       help: 'Shows userinfo',
-      allowedChannels: ['test-channel'],
       allowedRoles: ['staff'],
     });
   }
