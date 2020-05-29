@@ -29,10 +29,10 @@ export default class ReadyEvent extends Event {
 
     // clean rules channel
     const rulesChannel = (await this.client.channels.fetch(process.env.RULES_CHANNEL)) as TextChannel;
-    if(rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
+    if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
       const rulesMessages = await rulesChannel.messages.fetch();
-      rulesMessages.forEach(m => {
-        if(m.author.bot) m.delete({ reason: 'WelcomeMessages - Startup Clean'});
+      rulesMessages.forEach((m) => {
+        if (m.author.bot) m.delete({ reason: 'WelcomeMessages - Startup Clean' });
       });
     }
 
@@ -52,7 +52,7 @@ export default class ReadyEvent extends Event {
       });
 
       // sync
-      if(rolesChannel.permissionsFor(this.client.user).has('MANAGE_ROLES')) {
+      if (rolesChannel.permissionsFor(this.client.user).has('MANAGE_ROLES')) {
         m.reactions.cache.forEach(async (rs) => {
           const users = await rs.users.fetch();
           const r = roleList[m.id][rs.emoji.name];

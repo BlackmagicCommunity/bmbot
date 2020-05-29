@@ -12,14 +12,14 @@ function cpu(): any {
 }
 
 function msToTime(ms: number): string {
-  let seconds = Math.floor((ms / 1000) % 60),
+  const seconds = Math.floor((ms / 1000) % 60),
     minutes = Math.floor((ms / (1000 * 60)) % 60),
     hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
 
-    let hres = hours > 0 ? `${hours} hours`: '',
-    mres = minutes > 0 ? `${minutes} minutes`: '',
-    sres = seconds > 0 ? `${seconds} seconds`: '';
-    
+  const hres = hours > 0 ? `${hours} hours` : '',
+    mres = minutes > 0 ? `${minutes} minutes` : '',
+    sres = seconds > 0 ? `${seconds} seconds` : '';
+
   return `${hres !== '' ? `${hres}, ` : ''}${mres !== '' ? `${mres}, ` : ''}${sres}`;
 }
 

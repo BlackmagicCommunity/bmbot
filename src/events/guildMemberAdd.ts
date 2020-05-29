@@ -1,6 +1,8 @@
 import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
 import { Client, Event } from '../util';
 
+const hasPermission = (channel: TextChannel): boolean => channel.permissionsFor(channel.guild.id).has('VIEW_CHANNEL');
+
 export default class MemberAddEvent extends Event {
   constructor(client: Client) {
     super(client, {
@@ -8,11 +10,11 @@ export default class MemberAddEvent extends Event {
     });
   }
 
-  main(member: GuildMember): any {
+  async main(member: GuildMember): Promise<any> {
     try {
       this.client.logger.join(member);
       const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
-      channel
+      await channel
         .send(
           `${member}, welcome to the ${member.guild.name}! Please read <#${process.env.RULES_CHANNEL}> and assign yourself <#${process.env.ROLES_CHANNEL}>.\nType \`${this.client.prefix} help\` to learn how to use me, and \`${this.client.prefix} channels\` to get a quick introduction.`
         )
@@ -21,11 +23,11 @@ export default class MemberAddEvent extends Event {
       const embed: MessageEmbed = new MessageEmbed()
         .setColor(process.env.DEFAULTCOLOR)
         .setTitle('Blackmagic Community')
-        .setDescription('Welcome to the Blackmagic Community Discord! Here\'s an overview of all channels:');
+        .setDescription("Welcome to the Blackmagic Community Discord! Here's an overview of all channels:");
 
       const channels = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
       for (const channel of channels) {
-        if (channel.members.has(member.id))
+        if (hasPermission(channel))
           embed.addField(
             channel.name,
             `${channel.topic ? channel.topic + '\n' : ''}[Take me there!](https://discordapp.com/channels/${member.guild.id}/${channel.id}/${
@@ -35,9 +37,9 @@ export default class MemberAddEvent extends Event {
           );
       }
 
-      member.send(embed);
-    } catch (err) {
-      this.client.logger.log(`Failed on ${member.user.tag} (${member.id} join: ${err}`);
+      await member.send(embed);
+    } catch {
+      // user has dms off
     }
 
     return;

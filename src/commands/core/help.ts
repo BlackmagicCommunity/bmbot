@@ -34,7 +34,7 @@ export default class HelpCommand extends Command {
       }
 
       embed.setDescription(`You can use any of the following commands by simply typing a message.`);
-      embed.setFooter(`Staff does not take any responsibility for the bot.`)
+      embed.setFooter(`Staff does not take any responsibility for the bot.`);
       msg.channel.send(embed);
     } else {
       const cmd = this.client.commands.get(args.join(' '));

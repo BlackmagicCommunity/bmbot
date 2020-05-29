@@ -17,11 +17,15 @@ const responses = [
 export default class PingCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: "Test if the bot is available.",
+      help: 'Test if the bot is available.',
     });
   }
 
   public main({ msg }: RunArgumentsOptions) {
-    msg.channel.send(`${responses[Math.floor(Math.random() * responses.length)]}.\nMath: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${this.client.ws.ping}ms.`);
+    msg.channel.send(
+      `${responses[Math.floor(Math.random() * responses.length)]}.\nMath: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${
+        this.client.ws.ping
+      }ms.`
+    );
   }
 }
