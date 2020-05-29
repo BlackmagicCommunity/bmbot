@@ -8,6 +8,7 @@ export default class EvalCommand extends Command {
       aliases: ['u'],
       help: 'Gets userinfo',
       arguments: [{ name: 'member', type: 'Member' }],
+      allowedRoles: ['staff'],
     });
   }
 
