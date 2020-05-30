@@ -27,6 +27,13 @@ export default class ReadyEvent extends Event {
       .then((c) => c)
       .catch((_) => null);
 
+    // get all invites
+    this.client.guilds.cache.forEach((guild) => {
+      guild.fetchInvites().then((invites) => {
+        this.client.invites.set(guild.id, invites);
+      });
+    });
+
     // clean rules channel
     const rulesChannel = (await this.client.channels.fetch(process.env.RULES_CHANNEL)) as TextChannel;
     if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
@@ -74,7 +81,7 @@ export default class ReadyEvent extends Event {
       }
     });
 
-    this.client.logger.log(`Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`);
+    console.log(`Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`);
     return;
   }
 }

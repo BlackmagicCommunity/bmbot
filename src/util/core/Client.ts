@@ -1,4 +1,4 @@
-import { Client as client, ClientOptions as clientOptions } from 'discord.js';
+import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
 import path from 'path';
 import { CommandStore } from '../stores/CommandStore';
 import { EventStore } from '../stores/EventStore';
@@ -13,10 +13,11 @@ interface ClientOptions extends clientOptions {
 }
 
 export class Client extends client {
-  public commands: CommandStore = new CommandStore();
-  public events: EventStore = new EventStore();
-  public util: ClientUtil = new ClientUtil(this);
-  public logger: Logger = new Logger();
+  public commands = new CommandStore();
+  public events = new EventStore();
+  public util = new ClientUtil(this);
+  public invites = new Collection<string, Collection<string, Invite>>();
+  public logger = new Logger(this);
   public readonly prefix: string = process.env.PREFIX;
   public codeBaseDir: string;
 

@@ -25,7 +25,7 @@ export default class MessageEvent extends Event {
     try {
       await command.handleCommand(commandArguments);
     } catch (e) {
-      this.client.logger.log(e);
+      console.log(e);
     }
   }
 

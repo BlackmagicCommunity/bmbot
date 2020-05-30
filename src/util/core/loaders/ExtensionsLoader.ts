@@ -10,6 +10,6 @@ export default (client: Client, path: string) => {
         require(Resolve(path, file));
       });
   } catch (e) {
-    client.logger.log(e);
+    console.log(e);
   }
 };

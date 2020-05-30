@@ -17,6 +17,6 @@ export default async (client: Client, path: string) => {
         }
       });
   } catch (e) {
-    client.logger.log(e);
+    console.log(e);
   }
 };

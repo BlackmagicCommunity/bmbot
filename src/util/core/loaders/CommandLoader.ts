@@ -21,6 +21,6 @@ export default (client: Client, path: string): void => {
         });
     });
   } catch (e) {
-    client.logger.log(e);
+    console.log(e);
   }
 };

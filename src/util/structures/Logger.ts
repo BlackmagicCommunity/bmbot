@@ -1,16 +1,5 @@
-import {
-  Client,
-  Collection,
-  GuildMember,
-  Message,
-  MessageEmbed,
-  MessageReaction,
-  MessageTarget,
-  Snowflake,
-  SnowflakeUtil,
-  TextChannel,
-  User,
-} from 'discord.js';
+import { Collection, GuildMember, Invite, Message, MessageEmbed, Snowflake, TextChannel, User } from 'discord.js';
+import { Client } from '../../util';
 import { LoggerChannels } from '../typings/typings';
 
 const colors: any = {
@@ -23,10 +12,10 @@ const colors: any = {
 
 export class Logger {
   public channels: LoggerChannels = {};
+  public client: Client;
 
-  public log(message: string): void {
-    // tslint:disable-next-line:no-console
-    console.log(message);
+  constructor(client: Client) {
+    Object.defineProperty(this, 'client', { value: client });
   }
 
   public message(message: Message | Collection<Snowflake, Message>, action: string, otherData?: any) {
@@ -49,9 +38,18 @@ export class Logger {
     channel.send(embed);
   }
 
-  public join(member: GuildMember, left: boolean = false) {
+  public async join(member: GuildMember, left: boolean = false) {
     if (this.channels.joins === null) return;
     const channel = this.channels.joins as TextChannel;
+
+    let used: Invite;
+    if (!left) {
+      const cached = this.client.invites.get(member.guild.id);
+      const current = await member.guild.fetchInvites();
+      used = cached.find((invite) => {
+        return current.get(invite.code).uses !== invite.uses;
+      });
+    }
 
     const embed = new MessageEmbed()
       .setColor(!left ? 'GREEN' : 'RED')
@@ -59,6 +57,7 @@ export class Logger {
       .addField('User', `**${member.user.username}**#${member.user.discriminator} (${member.id})`)
       .addField('Mention', `${member}`)
       .setTimestamp();
+    if (used) embed.addField('Invited by', `**${used.inviter.username}**#${used.inviter.discriminator} (${used.inviter.id}) - ${used.uses} uses`);
 
     channel.send(embed);
   }
