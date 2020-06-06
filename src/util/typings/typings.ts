@@ -5,9 +5,11 @@ import {
   MessageAdditions,
   MessageOptions,
   PermissionString,
+  Role as role,
+  Snowflake,
   StringResolvable,
   TextChannel,
-  User,
+  User as user,
 } from 'discord.js';
 import { Client } from '../core/Client';
 import { Command } from '../structures/command/Command';
@@ -19,6 +21,20 @@ export interface EventOptions {
 export interface Message extends message {
   prefix: string;
   command: Command;
+  client: Client;
+}
+
+export interface Role extends role {
+  level: number;
+  single: boolean | number;
+  client: Client;
+}
+
+export interface User extends user {
+  messageCount: number;
+  level: number;
+  xp: number;
+  remainingXp: number;
   client: Client;
 }
 
@@ -63,4 +79,17 @@ export interface LoggerChannels {
   messages?: TextChannel;
   joins?: TextChannel;
   infractions?: TextChannel;
+}
+
+export interface ConfigChannels {
+  joins?: TextChannel;
+  leaves?: TextChannel;
+  infractions?: TextChannel;
+  rules?: TextChannel;
+}
+
+export interface LevelRow {
+  user_id: Snowflake;
+  xp: number;
+  message_count: number;
 }

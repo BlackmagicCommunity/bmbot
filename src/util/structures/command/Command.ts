@@ -130,7 +130,7 @@ export class Command {
       }
     }
 
-    if (runArguments.args.length === 0 && this.arguments.reduce((acc, a) => (a.required ? acc + 1 : acc), 0) !== 0)
+    if (runArguments.args.length < this.arguments.length && this.arguments.reduce((acc, a) => (a.required ? acc + 1 : acc), 0) !== 0)
       return runArguments.message.channel.send(this.helpMessage(runArguments.message));
 
     this.usageCount++;

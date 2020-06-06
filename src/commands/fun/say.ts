@@ -23,14 +23,14 @@ export default class SayCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    const channel = (await this.client.util.getChannel(msg, args[0], true)) as TextChannel;
-    if (!channel) return msg.channel.send(':x: Channel not found.');
+    let channel = (await this.client.util.getChannel(msg, args[0], true)) as TextChannel;
+    if (!channel) channel = msg.channel as TextChannel;
     if (!args[1]) return msg.channel.send(':x: Message not specified');
     else {
       try {
         await channel.send(args.join(' '));
       } catch {
-        msg.channel.send(`:x: Hmm... I don't have permissions to send a message there.`);
+        msg.channel.send(`:x: Can't send messages there.`);
       }
     }
   }

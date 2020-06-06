@@ -14,24 +14,17 @@ export default class ReadyEvent extends Event {
 
   async main(): Promise<any> {
     // add channels to logger
-    this.client.logger.channels.joins = await this.client.channels
-      .fetch(process.env.JOINS_CHANNEL)
-      .then((c) => c)
-      .catch((_) => null);
-    this.client.logger.channels.infractions = await this.client.channels
-      .fetch(process.env.INFRACTIONS_CHANNEL)
-      .then((c) => c)
-      .catch((_) => null);
-    this.client.logger.channels.messages = await this.client.channels
-      .fetch(process.env.MESSAGES_CHANNEL)
-      .then((c) => c)
-      .catch((_) => null);
+    this.client.logger.channels.joins = await this.client.channels.fetch(process.env.JOINS_CHANNEL).catch((_) => null);
+    this.client.logger.channels.infractions = await this.client.channels.fetch(process.env.INFRACTIONS_CHANNEL).catch((_) => null);
+    this.client.logger.channels.messages = await this.client.channels.fetch(process.env.MESSAGES_CHANNEL).catch((_) => null);
 
     // get all invites
     this.client.guilds.cache.forEach((guild) => {
-      guild.fetchInvites().then((invites) => {
-        this.client.invites.set(guild.id, invites);
-      });
+      if (guild.me.permissions.has('MANAGE_MESSAGES')) {
+        guild.fetchInvites().then((invites) => {
+          this.client.invites.set(guild.id, invites);
+        });
+      }
     });
 
     // clean rules channel
@@ -58,7 +51,7 @@ export default class ReadyEvent extends Event {
         roleList[m.id][a.substring(0, a.indexOf(' '))] = role.id;
       });
 
-      // sync
+      // syn
       if (rolesChannel.permissionsFor(this.client.user).has('MANAGE_ROLES')) {
         m.reactions.cache.forEach(async (rs) => {
           const users = await rs.users.fetch();

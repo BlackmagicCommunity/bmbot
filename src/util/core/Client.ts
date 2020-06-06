@@ -1,5 +1,6 @@
 import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
 import path from 'path';
+import { Database } from '../database';
 import { CommandStore } from '../stores/CommandStore';
 import { EventStore } from '../stores/EventStore';
 import { Logger } from '../structures/Logger';
@@ -20,6 +21,7 @@ export class Client extends client {
   public logger = new Logger(this);
   public readonly prefix: string = process.env.PREFIX;
   public codeBaseDir: string;
+  public database: Database = new Database(this);
 
   constructor(clientOptions: ClientOptions) {
     super(clientOptions);
