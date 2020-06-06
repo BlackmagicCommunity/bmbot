@@ -15,6 +15,7 @@ export default class RulesCommand extends Command {
       ],
       aliases: ['rule'],
       help: "Returns the server's rule(s) info",
+      guildOnly: true,
     });
   }
 

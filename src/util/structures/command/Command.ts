@@ -1,7 +1,7 @@
-import { Collection, MessageEmbed, PermissionString, Snowflake, TextChannel } from 'discord.js';
+import { Collection, MessageEmbed, PermissionString, Role, Snowflake, TextChannel } from 'discord.js';
 import { resolve as Resolve } from 'path';
 import { Client } from '../../core/Client';
-import { CommandArguments, CommandOptions, CommandParameters, Message, RunArgumentsOptions } from '../../typings/typings';
+import { CommandArguments, CommandOptions, Message, RunArgumentsOptions } from '../../typings/typings';
 
 export class Command {
   public name: string;
@@ -18,7 +18,6 @@ export class Command {
   public readonly deletable: boolean;
   public readonly help: string;
   public readonly arguments: CommandArguments[];
-  public readonly parameters: CommandParameters[];
   public readonly requiredPermissions: PermissionString[];
   public readonly allowedChannels: string[];
   public readonly allowedRoles: string[];
@@ -33,10 +32,10 @@ export class Command {
     this.disabled = options.disabled || false;
     this.hidden = options.hidden || false;
     this.help = options.help || 'Command goes brrrr';
+    this.guildOnly = options.guildOnly || false;
     this.ownerOnly = options.ownerOnly || false;
     this.developerOnly = options.developerOnly || false;
     this.arguments = options.arguments || [];
-    this.parameters = options.parameters || [];
     this.requiredPermissions = options.requiredPermissions || [];
     this.allowedChannels = options.allowedChannels || [];
     this.allowedRoles = options.allowedRoles || [];
@@ -49,7 +48,7 @@ export class Command {
 
   public hasPermission(message: Message): boolean {
     // Guild only
-    if (message.channel.type === 'dm' && this.guildOnly === true) return false;
+    if (message.channel.type === 'dm' && this.guildOnly) return false;
 
     if (this.client.util.isOwner(message.author.id)) return true;
     if (this.ownerOnly) return false;
@@ -65,7 +64,7 @@ export class Command {
 
     // Allowed Channels
     let allowed = false;
-    if (this.allowedChannels.length !== 0) {
+    if (this.allowedChannels) {
       for (const chnl of this.allowedChannels) {
         const c = message.guild.channels.cache.find(
           (a) => a.type === 'text' && (a.name.toLowerCase().includes(chnl.toLowerCase()) || a.id === chnl)
@@ -79,12 +78,11 @@ export class Command {
     }
 
     // Allowed Roles
-    if (this.allowedRoles.length !== 0) {
+    if (this.allowedRoles) {
       allowed = false;
-      const memberRoles = message.member.roles;
       for (const rol of this.allowedRoles) {
         const r = message.guild.roles.cache.find((a) => a.name.toLowerCase().includes(rol.toLowerCase()) || a.id === rol);
-        if (r && memberRoles.cache.has(r.id)) {
+        if (r && message.member.roles.cache.has(r.id)) {
           allowed = true;
           break;
         }

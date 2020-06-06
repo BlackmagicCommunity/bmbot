@@ -6,6 +6,7 @@ export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['ulist', 'users'],
+      guildOnly: true,
       help: 'Shows userinfo',
       allowedRoles: ['staff'],
     });

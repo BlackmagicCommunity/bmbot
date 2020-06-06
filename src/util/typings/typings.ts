@@ -45,6 +45,7 @@ export interface CommandOptions {
   disabled?: boolean;
   hidden?: boolean;
   ownerOnly?: boolean;
+  guildOnly?: boolean;
   developerOnly?: boolean;
   arguments?: CommandArguments[];
   parameters?: CommandParameters[];
@@ -60,11 +61,6 @@ export interface CommandArguments {
   required?: boolean;
   infinite?: boolean;
   all?: boolean;
-}
-
-export interface CommandParameters {
-  name: string;
-  type?: string;
 }
 
 export interface RunArgumentsOptions {

@@ -5,18 +5,19 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class EvalCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      aliases: ['u'],
+      aliases: ['u', 'uinfo', 'userinfo'],
       help: 'Gets userinfo',
       arguments: [{ name: 'member', type: 'Member' }],
       allowedRoles: ['staff'],
+      guildOnly: true,
     });
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
     let m = msg.member;
-    if (args.length !== 0) {
+    if (args[0]) {
       m = await this.client.util.getMember(msg, args.join(' '));
-      if (m === undefined) return msg.channel.send(`:x: Could not find member \`${args.join(' ')}\`.`);
+      if (!m) return msg.channel.send(`:x: Could not find member \`${args.join(' ')}\`.`);
     }
 
     const roles = m.roles.cache

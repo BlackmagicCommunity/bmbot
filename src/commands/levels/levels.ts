@@ -7,6 +7,7 @@ export default class LeaderboardCommand extends Command {
       help: 'Check the leaderboard.',
       aliases: ['leaderboard', 'ranks'],
       arguments: [{ name: 'page', type: 'Number' }],
+      cooldown: 5,
     });
   }
 
