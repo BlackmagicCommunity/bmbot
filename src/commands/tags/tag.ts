@@ -3,7 +3,7 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class CreateTagCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: 'Uses a tag',
+      help: 'Replies with the tag content.',
       arguments: [{ name: 'name', type: 'string', required: true }],
       deletable: true,
     });

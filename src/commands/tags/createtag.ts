@@ -7,8 +7,9 @@ export default class CreateTagCommand extends Command {
       aliases: ['ctag', 'ntag', 'newtag'],
       ownerOnly: true,
       arguments: [
-        { name: 'trigger', type: 'string', required: true },
+        { name: 'name', type: 'string', required: true },
         { name: 'reply', type: 'string', required: true },
+        { name: 'description', type: 'string', required: true }
       ],
     });
   }
@@ -16,9 +17,10 @@ export default class CreateTagCommand extends Command {
   public async main({ msg, args }: RunArgumentsOptions) {
     const tag = new Tag(args[0]);
     tag.reply = args[1];
-    const existed = await this.client.database.tags.getTag(tag.trigger);
+    tag.description = args[2];
+    const existed = await this.client.database.tags.getTag(tag.name);
     await this.client.database.tags.updateTag(tag);
 
-    msg.channel.send(`Tag \`${tag.trigger}\` ${existed ? 'edited' : 'created'}.`);
+    msg.channel.send(`Tag \`${tag.name}\` ${existed ? 'edited' : 'created'}.`);
   }
 }

@@ -1,8 +1,9 @@
 export class Tag {
-  public readonly trigger: string;
+  public readonly name: string;
+  public description: string;
   public reply: string;
 
-  constructor(trigger: string) {
-    this.trigger = trigger;
+  constructor(name: string) {
+    this.name = name;
   }
 }

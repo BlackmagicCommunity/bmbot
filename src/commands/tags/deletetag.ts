@@ -6,7 +6,7 @@ export default class CreateTagCommand extends Command {
       help: 'Creates a new tag',
       aliases: ['dtag', 'remtag', 'removetag'],
       ownerOnly: true,
-      arguments: [{ name: 'trigger', type: 'string', required: true }],
+      arguments: [{ name: 'name', type: 'string', required: true }],
     });
   }
 
@@ -15,7 +15,7 @@ export default class CreateTagCommand extends Command {
     tag.reply = args[1];
     try {
       await this.client.database.tags.deleteTag(tag);
-      msg.channel.send(`Tag \`${tag.trigger}\` deleted.`);
+      msg.channel.send(`Tag \`${tag.name}\` deleted.`);
     } catch (err) {
       msg.channel.send(`:x: ${err}`);
     }
