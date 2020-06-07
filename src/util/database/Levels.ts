@@ -119,11 +119,6 @@ export default class Levels {
     return this._roles;
   }
 
-  public formatXp(xp: number) {
-    if (xp >= 1000) return `${(xp / 1000).toFixed(1)}k`;
-    return xp.toString();
-  }
-
   public async fetchMee6(id: Snowflake) {
     let amount = 0;
     const url = `https://mee6.xyz/api/plugins/levels/leaderboard/${id}?page=`;

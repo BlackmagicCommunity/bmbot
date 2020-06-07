@@ -57,14 +57,12 @@ export class Command {
 
     // Guild Permissions
     for (const permission of this.requiredPermissions) {
-      if (message.member.hasPermission(permission) === false) {
-        return false;
-      }
+      if (!message.member.hasPermission(permission) || !message.guild.me.hasPermission(permission)) return false;
     }
 
     // Allowed Channels
-    let allowed = false;
-    if (this.allowedChannels) {
+    if (this.allowedChannels.length !== 0) {
+      let allowed = false;
       for (const chnl of this.allowedChannels) {
         const c = message.guild.channels.cache.find(
           (a) => a.type === 'text' && (a.name.toLowerCase().includes(chnl.toLowerCase()) || a.id === chnl)
@@ -78,7 +76,9 @@ export class Command {
     }
 
     // Allowed Roles
-    if (this.allowedRoles) {
+    if (this.allowedRoles.length !== 0) {
+      console.log('b')
+      let allowed = false;
       allowed = false;
       for (const rol of this.allowedRoles) {
         const r = message.guild.roles.cache.find((a) => a.name.toLowerCase().includes(rol.toLowerCase()) || a.id === rol);

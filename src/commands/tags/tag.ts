@@ -5,6 +5,7 @@ export default class CreateTagCommand extends Command {
     super(client, {
       help: 'Uses a tag',
       arguments: [{ name: 'name', type: 'string', required: true }],
+      deletable: true,
     });
   }
 

@@ -57,7 +57,7 @@ export default class MessageEvent extends Event {
 
         // update db & cooldown
         this.client.database.levels.updateUser(user);
-        this.levelCooldown.set(message.author.id, Date.now() + 60000);
+        this.levelCooldown.set(message.author.id, Date.now() + 10000);
       }
     }
 

@@ -17,6 +17,11 @@ export class ClientUtil {
     return process.env.DEVELOPER.includes(id);
   }
 
+  public formatThousand(xp: number) {
+    if (xp >= 1000) return `${(xp / 1000).toFixed(1)}k`;
+    return xp.toString();
+  }
+
   public clean(text: string) {
     return text
       .replace(/`/g, `\`${String.fromCharCode(8203)}`)

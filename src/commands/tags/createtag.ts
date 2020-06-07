@@ -5,7 +5,7 @@ export default class CreateTagCommand extends Command {
     super(client, {
       help: 'Creates a new tag',
       aliases: ['ctag', 'ntag', 'newtag'],
-      requiredPermissions: ['MANAGE_MESSAGES'],
+      ownerOnly: true,
       arguments: [
         { name: 'trigger', type: 'string', required: true },
         { name: 'reply', type: 'string', required: true },

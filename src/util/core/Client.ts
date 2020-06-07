@@ -1,4 +1,4 @@
-import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
+import { Client as client, ClientOptions as clientOptions, Collection, Invite, BaseClient } from 'discord.js';
 import path from 'path';
 import { Database } from '../database';
 import { CommandStore } from '../stores/CommandStore';
