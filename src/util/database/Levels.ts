@@ -17,6 +17,7 @@ export default class Levels {
         'messageCount INTEGER,',
         'xp INTEGER,',
         'remainingXp INTEGER,',
+        'currentXp INTEGER,',
         'level INTEGER',
         ')',
       ].join('\n')
@@ -60,20 +61,22 @@ export default class Levels {
     if (!this._users) await this.getUsers();
     if (this._users.has(user.id))
       this.database.run(
-        `UPDATE User SET messageCount = ?, xp = ?, remainingXp = ?, level = ? WHERE id = ?`,
+        `UPDATE User SET messageCount = ?, xp = ?, remainingXp = ?, currentXp = ?, level = ? WHERE id = ?`,
         user.messageCount,
         user.xp,
         user.remainingXp,
+        user.currentXp,
         user.level,
         user.id
       );
     else
       this.database.run(
-        `INSERT INTO User (id, messageCount, xp, remainingXp, level) VALUES (?, ?, ?, ?, ?)`,
+        `INSERT INTO User (id, messageCount, xp, remainingXp, currentXp, level) VALUES (?, ?, ?, ?, ?, ?)`,
         user.id,
         user.messageCount,
         user.xp,
         user.remainingXp,
+        user.currentXp,
         user.level
       );
 
@@ -142,6 +145,7 @@ export default class Levels {
         usr.messageCount = u.message_count;
         usr.xp = u.xp;
         usr.remainingXp = u.detailed_xp[1];
+        usr.currentXp = u.detailed_xp[0];
 
         this.updateUser(usr);
       });

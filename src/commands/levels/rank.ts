@@ -37,11 +37,11 @@ export default class RankCommand extends Command {
         .addField('Level', data.level, true)
         .addField('\u200b', '\u200b', true)
         .addField(
-          'XP (remaining)',
-          `${this.client.util.formatThousand(data.xp)} (${this.client.util.formatThousand(data.remainingXp)})`,
+          'XP (current/remaining)',
+          `${this.client.util.formatNumber(data.xp)} (${this.client.util.formatNumber(data.currentXp)}/${this.client.util.formatNumber(data.remainingXp)})`,
           true
         )
-        .addField('Message Count', this.client.util.formatThousand(data.messageCount), true)
+        .addField('Message Count', this.client.util.formatNumber(data.messageCount), true)
     );
   }
 }

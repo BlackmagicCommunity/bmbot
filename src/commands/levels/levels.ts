@@ -34,7 +34,7 @@ export default class LeaderboardCommand extends Command {
       })
     );
     const lengthName = Math.max(...lengthNameArray);
-    const lengthXp = Math.max(...parts[page - 1].map((u) => this.client.util.formatThousand(parts[page - 1][0].xp).length));
+    const lengthXp = Math.max(...parts[page - 1].map((u) => this.client.util.formatNumber(parts[page - 1][0].xp).length));
 
     msg.channel.send(
       `${parts[page - 1]
@@ -46,7 +46,7 @@ export default class LeaderboardCommand extends Command {
             .username.substr(0, lengthName)
             .padStart(lengthName)}#${this.client.users.cache.get(u.id).discriminator} - level ${u.level
             .toString()
-            .padStart(parts[page - 1][0].level.toString().length)} - ${this.client.util.formatThousand(u.xp).padStart(lengthXp)} xp`;
+            .padStart(parts[page - 1][0].level.toString().length)} - ${this.client.util.formatNumber(u.xp).padStart(lengthXp)} xp`;
         })
         .join('\n')}\n\nYour rank: ${userRank}\nPage ${page}/${parts.length}`,
       { code: 'yaml' }

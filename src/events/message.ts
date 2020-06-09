@@ -27,16 +27,19 @@ export default class MessageEvent extends Event {
           user.level = 0;
           user.remainingXp = Levels.exp(0);
           user.messageCount = 0;
+          user.currentXp = 0;
         }
 
         user.messageCount++;
         user.xp += xp;
         user.remainingXp -= xp;
+        user.currentXp += xp;
 
         // level up?
         if (user.remainingXp <= 0) {
           user.level++;
           user.remainingXp = Levels.exp(user.level);
+          user.currentXp = 0;
 
           message.channel.send(process.env.LEVEL_UP.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, user.level.toString()));
 

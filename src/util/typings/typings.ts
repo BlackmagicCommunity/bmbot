@@ -35,6 +35,7 @@ export interface User extends user {
   level: number;
   xp: number;
   remainingXp: number;
+  currentXp: number;
   client: Client;
 }
 
@@ -48,7 +49,6 @@ export interface CommandOptions {
   guildOnly?: boolean;
   developerOnly?: boolean;
   arguments?: CommandArguments[];
-  parameters?: CommandParameters[];
   requiredPermissions?: PermissionString[];
   allowedChannels?: string[];
   allowedRoles?: string[];

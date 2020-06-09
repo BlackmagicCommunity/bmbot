@@ -17,9 +17,10 @@ export class ClientUtil {
     return process.env.DEVELOPER.includes(id);
   }
 
-  public formatThousand(xp: number) {
-    if (xp >= 1000) return `${(xp / 1000).toFixed(1)}k`;
-    return xp.toString();
+  public formatNumber(number: number) {
+    if (number >= 1000000) return `${(number / 1000000).toFixed(1)}M`;
+    if (number >= 1000) return `${(number / 1000).toFixed(1)}K`;
+    return number.toString();
   }
 
   public clean(text: string) {
@@ -33,13 +34,13 @@ export class ClientUtil {
     if (message.mentions.users.size !== 0) return message.mentions.users.first();
     if (/[0-9]{16,18}/.test(arg)) return this.client.users.fetch(arg);
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/) return message.guild.members.cache.find((member) => member.user.username.toLowerCase().includes(arg)).user;
+    if (/[a-zA-Z]{1,30}/.test(arg)) return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user
     return null;
   }
 
   public async getMember(message: Message, arg: string): Promise<GuildMember> {
     const user = await this.getUser(message, arg);
-    const member = message.guild.members.fetch({ user });
+    const member = await message.guild.members.fetch({ user });
     if (member) return member;
     return null;
   }
