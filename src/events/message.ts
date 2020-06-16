@@ -1,7 +1,6 @@
 import { Collection, Snowflake, TextChannel } from 'discord.js';
-import { Client, Event, Message, RunArguments } from '../util';
+import { Client, Event, Message, RunArguments, Level, LevelRole } from '../util';
 import { Levels } from '../util/database';
-import { Role, User } from '../util/typings/typings';
 
 export default class MessageEvent extends Event {
   private readonly levelCooldown = new Collection<Snowflake, number>();
@@ -22,8 +21,7 @@ export default class MessageEvent extends Event {
         const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
         let user = await this.client.database.levels.getUser(message.author.id);
         if (!user) {
-          user = message.author as User;
-          user.xp = 0;
+          user.totalXp = 0;
           user.level = 0;
           user.remainingXp = Levels.exp(0);
           user.messageCount = 0;
@@ -31,7 +29,7 @@ export default class MessageEvent extends Event {
         }
 
         user.messageCount++;
-        user.xp += xp;
+        user.totalXp += xp;
         user.remainingXp -= xp;
         user.currentXp += xp;
 
@@ -46,15 +44,15 @@ export default class MessageEvent extends Event {
           if (message.guild.me.permissions.has('MANAGE_ROLES')) {
             // check roles
             const roles = await this.client.database.levels.getRoles(user.level);
-            let highest: Role;
+            let highest: LevelRole;
             for (const [snow, role] of roles) {
               if (role.level <= user.level && (!highest || highest.level < role.level)) highest = role;
             }
 
             if (highest && highest.single) {
-              roles.forEach((r) => message.member.roles.remove(r.id, 'Levels - Single Role'));
-              message.member.roles.add(highest.id, 'Levels - Level Up');
-            } else roles.forEach((r) => message.member.roles.add(r.id, 'Levels - Level Up'));
+              roles.forEach((r) => message.member.roles.remove(r.roleId, 'Levels - Single Role'));
+              message.member.roles.add(highest.roleId, 'Levels - Level Up');
+            } else roles.forEach((r) => message.member.roles.add(r.roleId, 'Levels - Level Up'));
           }
         }
 

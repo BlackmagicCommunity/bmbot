@@ -1,99 +1,76 @@
-import { Collection, Snowflake, User as DUser } from 'discord.js';
+import { Collection, Snowflake } from 'discord.js';
 import fetch from 'node-fetch';
 import { Database } from 'sqlite3';
 import { Client } from '../core/Client';
-import { Role, User } from '../typings/typings';
+import { Level, LevelRole } from '../index';
 
 export default class Levels {
   public client: Client;
   constructor(client: Client, database: Database) {
     Object.defineProperty(this, 'client', { value: client });
     this.database = database;
-    // create tables if not exists
-    this.database.run(
-      [
-        'CREATE TABLE IF NOT EXISTS User (',
-        'id TEXT PRIMARY KEY,',
-        'messageCount INTEGER,',
-        'xp INTEGER,',
-        'remainingXp INTEGER,',
-        'currentXp INTEGER,',
-        'level INTEGER',
-        ')',
-      ].join('\n')
-    );
-
-    this.database.run(
-      [
-        'CREATE TABLE IF NOT EXISTS Role (',
-        'id TEXT PRIMARY KEY,',
-        'level INTEGER,',
-        'single INTEGER', // 0 - false, 1 - true
-        ')',
-      ].join('\n')
-    );
   }
   private readonly database: Database;
-  private _roles: Collection<Snowflake, Role>;
-  private _users: Collection<Snowflake, User>;
+  private _roles: Collection<Snowflake, LevelRole>;
+  private _users: Collection<Snowflake, Level>;
   public static exp = (lvl: number) => 5 * lvl ** 2 + 50 * lvl + 100; // from mee6 source
 
-  public getUsers(): Promise<Collection<Snowflake, User>> {
+  public getUsers(): Promise<Collection<Snowflake, Level>> {
     return new Promise((resolve) => {
       if (!this._users) {
-        this._users = new Collection<Snowflake, User>();
+        this._users = new Collection<Snowflake, Level>();
 
         this.database.each(
-          `SELECT * FROM User`,
-          (err, row: User) => this._users.set(row.id, row),
+          `SELECT * FROM Level`,
+          (err, row: Level) => this._users.set(row.userId, row),
           () => resolve(this._users)
         );
       } else resolve(this._users);
     });
   }
 
-  public async getUser(id: Snowflake): Promise<User> {
+  public async getUser(id: Snowflake): Promise<Level> {
     if (!this._users) await this.getUsers();
     return this._users.get(id);
   }
 
-  public async updateUser(user: User): Promise<Collection<Snowflake, User>> {
+  public async updateUser(user: Level): Promise<Collection<Snowflake, Level>> {
     if (!this._users) await this.getUsers();
-    if (this._users.has(user.id))
+    if (this._users.has(user.userId))
       this.database.run(
-        `UPDATE User SET messageCount = ?, xp = ?, remainingXp = ?, currentXp = ?, level = ? WHERE id = ?`,
+        `UPDATE Level SET messageCount = ?, totalXp = ?, remainingXp = ?, currentXp = ?, level = ? WHERE userId = ?`,
         user.messageCount,
-        user.xp,
+        user.totalXp,
         user.remainingXp,
         user.currentXp,
         user.level,
-        user.id
+        user.userId
       );
     else
       this.database.run(
-        `INSERT INTO User (id, messageCount, xp, remainingXp, currentXp, level) VALUES (?, ?, ?, ?, ?, ?)`,
-        user.id,
+        `INSERT INTO Level (userId, messageCount, totalXp, remainingXp, currentXp, level) VALUES (?, ?, ?, ?, ?, ?)`,
+        user.userId,
         user.messageCount,
-        user.xp,
+        user.totalXp,
         user.remainingXp,
         user.currentXp,
         user.level
       );
 
-    this._users.set(user.id, user);
+    this._users.set(user.userId, user);
     return this._users;
   }
 
-  public getRoles(lvl = -1): Promise<Collection<Snowflake, Role>> {
+  public getRoles(lvl = -1): Promise<Collection<Snowflake, LevelRole>> {
     return new Promise((resolve) => {
       if (!this._roles) {
-        this._roles = new Collection<Snowflake, Role>();
+        this._roles = new Collection<Snowflake, LevelRole>();
 
         this.database.each(
           `SELECT * FROM Role`,
-          (err, row: Role) => {
+          (err, row: LevelRole) => {
             row.single = row.single === 1;
-            this._roles.set(row.id, row);
+            this._roles.set(row.roleId, row);
           },
           () => {
             const roles = this._roles.clone();
@@ -108,17 +85,17 @@ export default class Levels {
     });
   }
 
-  public async getRole(id: Snowflake): Promise<Role> {
+  public async getRole(id: Snowflake): Promise<LevelRole> {
     if (!this._roles) await this.getRoles();
     return this._roles.get(id);
   }
 
-  public async updateRole(role: Role): Promise<Collection<Snowflake, Role>> {
+  public async updateRole(role: LevelRole): Promise<Collection<Snowflake, LevelRole>> {
     if (!this._roles) await this.getRoles();
-    if (this._roles.has(role.id)) this.database.run(`UPDATE Role SET level = ?, single = ? WHERE id = ?`, role.level, role.single, role.id);
-    else this.database.run(`INSERT INTO Role (id, level, single) VALUES (?, ?, ?)`, role.id, role.level, role.single);
+    if (this._roles.has(role.roleId)) this.database.run(`UPDATE Role SET level = ?, single = ? WHERE roleId = ?`, role.level, role.single, role.roleId);
+    else this.database.run(`INSERT INTO Role (roleId, level, single) VALUES (?, ?, ?)`, role.roleId, role.level, role.single);
 
-    this._roles.set(role.id, role);
+    this._roles.set(role.roleId, role);
     return this._roles;
   }
 
@@ -135,17 +112,12 @@ export default class Levels {
 
       amount += data.players.length;
       data.players.forEach((u: any) => {
-        const usr = new DUser(this.client, {
-          id: u.id,
-          discriminator: u.discriminator,
-          username: u.username,
-        }) as User;
-
-        usr.level = u.level;
-        usr.messageCount = u.message_count;
-        usr.xp = u.xp;
-        usr.remainingXp = u.detailed_xp[1];
-        usr.currentXp = u.detailed_xp[0];
+        const usr = new Level(u["id"]);
+        usr.level = u["level"];
+        usr.messageCount = u["message_count"];
+        usr.totalXp = u["xp"];
+        usr.remainingXp = u["detailed_xp"][1];
+        usr.currentXp = u["detailed_xp"][0];
 
         this.updateUser(usr);
       });

@@ -1,7 +1,6 @@
 import { createCanvas, registerFont, loadImage } from 'canvas'
-import { Client, Command, RunArgumentsOptions } from '../../util';
+import { Client, Command, RunArgumentsOptions, Level } from '../../util';
 import { User as DUser } from 'discord.js';
-import { User } from '../../util/typings/typings';
 import { Levels } from '../../util/database';
 
 registerFont('src/assets/fonts/Roboto-Regular.ttf', { family: 'Roboto' });
@@ -19,7 +18,7 @@ export default class TestCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    let userData: User
+    let userData: Level
     let user: DUser;
     if(!args[0]) { 
       userData = await this.client.database.levels.getUser(msg.author.id)
@@ -34,13 +33,13 @@ export default class TestCommand extends Command {
 
     const rank =
       (await this.client.database.levels.getUsers())
-        .sort((a: User, b: User) => {
-          if (a.xp < b.xp) return 1;
-          else if (a.xp > b.xp) return -1;
+        .sort((a: Level, b: Level) => {
+          if (a.totalXp < b.totalXp) return 1;
+          else if (a.totalXp > b.totalXp) return -1;
           else return 0;
         })
         .array()
-        .findIndex((u) => u.id === user.id) + 1;
+        .findIndex((u) => u.userId === user.id) + 1;
     const neededXp = Levels.exp(userData.level);
     const message = await msg.channel.send('Processing...');
     const canvas = createCanvas(900, 270);
