@@ -14,12 +14,12 @@ interface ClientOptions extends clientOptions {
 }
 
 export class Client extends client {
+  public readonly prefixes = JSON.parse(process.env.PREFIX) as string[];
   public commands = new CommandStore();
   public events = new EventStore();
   public util = new ClientUtil(this);
   public invites = new Collection<string, Collection<string, Invite>>();
   public logger = new Logger(this);
-  public readonly prefix: string = process.env.PREFIX;
   public codeBaseDir: string;
   public database: Database = new Database(this);
 

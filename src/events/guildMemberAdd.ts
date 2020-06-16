@@ -16,7 +16,7 @@ export default class MemberAddEvent extends Event {
       const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
       await channel
         .send(
-          `${member}, welcome to the ${member.guild.name}! Please read <#${process.env.RULES_CHANNEL}> and assign yourself <#${process.env.ROLES_CHANNEL}>.\nType \`${this.client.prefix} help\` to learn how to use me, and \`${this.client.prefix} channels\` to get a quick introduction.`
+          `${member}, welcome to the ${member.guild.name}! Please read <#${process.env.RULES_CHANNEL}> and assign yourself <#${process.env.ROLES_CHANNEL}>.\nType \`${this.client.prefixes[0]} help\` to learn how to use me, and \`${this.client.prefixes[0]} channels\` to get a quick introduction.`
         )
         .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
 
