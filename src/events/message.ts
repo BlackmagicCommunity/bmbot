@@ -21,6 +21,7 @@ export default class MessageEvent extends Event {
         const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
         let user = await this.client.database.levels.getUser(message.author.id);
         if (!user) {
+          user = new Level(message.author.id);
           user.totalXp = 0;
           user.level = 0;
           user.remainingXp = Levels.exp(0);
