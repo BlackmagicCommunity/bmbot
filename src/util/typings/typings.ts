@@ -1,15 +1,11 @@
 import {
-  APIMessage,
   Guild,
   Message as message,
-  MessageAdditions,
-  MessageOptions,
   PermissionString,
-  Role as role,
+  Role,
   Snowflake,
-  StringResolvable,
   TextChannel,
-  User as user,
+  User,
 } from 'discord.js';
 import { Client } from '../core/Client';
 import { Command } from '../structures/command/Command';
@@ -24,20 +20,6 @@ export interface Message extends message {
   client: Client;
 }
 
-export interface Role extends role {
-  level: number;
-  single: boolean | number;
-  client: Client;
-}
-
-export interface User extends user {
-  messageCount: number;
-  level: number;
-  xp: number;
-  remainingXp: number;
-  client: Client;
-}
-
 export interface CommandOptions {
   aliases?: string[];
   help: string;
@@ -48,7 +30,6 @@ export interface CommandOptions {
   guildOnly?: boolean;
   developerOnly?: boolean;
   arguments?: CommandArguments[];
-  parameters?: CommandParameters[];
   requiredPermissions?: PermissionString[];
   allowedChannels?: string[];
   allowedRoles?: string[];

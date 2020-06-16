@@ -1,6 +1,5 @@
 import { MessageEmbed, User as DUser } from 'discord.js';
-import { Client, Command, RunArgumentsOptions } from '../../util';
-import { User } from '../../util/typings/typings';
+import { Client, Command, RunArgumentsOptions, Level } from '../../util';
 
 export default class RankCommand extends Command {
   constructor(client: Client) {
@@ -19,13 +18,13 @@ export default class RankCommand extends Command {
 
     const rank =
       (await this.client.database.levels.getUsers())
-        .sort((a: User, b: User) => {
-          if (a.xp < b.xp) return 1;
-          else if (a.xp > b.xp) return -1;
+        .sort((a: Level, b: Level) => {
+          if (a.totalXp < b.totalXp) return 1;
+          else if (a.totalXp > b.totalXp) return -1;
           else return 0;
         })
         .array()
-        .findIndex((u) => u.id === user.id) + 1;
+        .findIndex((u) => u.userId === user.id) + 1;
 
     const data = await this.client.database.levels.getUser(user.id);
     if (!data) return msg.channel.send(':x: User has no rank.');
@@ -37,11 +36,11 @@ export default class RankCommand extends Command {
         .addField('Level', data.level, true)
         .addField('\u200b', '\u200b', true)
         .addField(
-          'XP (remaining)',
-          `${this.client.util.formatThousand(data.xp)} (${this.client.util.formatThousand(data.remainingXp)})`,
+          'XP (current/remaining)',
+          `${this.client.util.formatNumber(data.totalXp)} (${this.client.util.formatNumber(data.currentXp)}/${this.client.util.formatNumber(data.remainingXp)})`,
           true
         )
-        .addField('Message Count', this.client.util.formatThousand(data.messageCount), true)
+        .addField('Message Count', this.client.util.formatNumber(data.messageCount), true)
     );
   }
 }

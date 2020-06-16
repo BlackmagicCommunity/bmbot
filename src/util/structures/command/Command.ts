@@ -56,9 +56,8 @@ export class Command {
     if (this.developerOnly && !this.client.util.isDeveloper(message.author.id)) return false;
 
     // Guild Permissions
-    for (const permission of this.requiredPermissions) {
+    for (const permission of this.requiredPermissions)
       if (!message.member.hasPermission(permission) || !message.guild.me.hasPermission(permission)) return false;
-    }
 
     // Allowed Channels
     if (this.allowedChannels.length !== 0) {

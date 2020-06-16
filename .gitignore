@@ -1,5 +1,5 @@
 node_modules/
 .env
 dist
-database.sqlite3
-database.sqlite3-journal
+bmdbot.sqlite3
+bmdbot.sqlite3-journal

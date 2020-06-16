@@ -1,5 +1,4 @@
-import { Client, Command, RunArgumentsOptions } from '../../util';
-import { Role } from '../../util/typings/typings';
+import { Client, Command, RunArgumentsOptions, LevelRole } from '../../util';
 
 export default class RoleCommand extends Command {
   constructor(client: Client) {
@@ -21,7 +20,7 @@ export default class RoleCommand extends Command {
     if (isNaN(level)) return msg.channel.send(":x: That's not a number.");
     const single = args[2] && ['y', 'yes', 't', 'true'].includes(args[2]);
 
-    const roleLevel = role as Role;
+    const roleLevel = new LevelRole(role.id);
     roleLevel.level = level;
     roleLevel.single = single;
 
