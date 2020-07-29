@@ -17,8 +17,5 @@ export default class SwissCommand extends Command {
         "Huere Michi Grind", "Schafsäcku", "Degenerierts Layer-8-Phänomen", "Spezifikations-GAU", "Grachteschnäpfe", "Gopfverdammi", "Shit!", "Scheisse", "Dummi Chueh", "Gopferdecku", "Schofseckel", "Gwaggli", "Gumslä", "Sürel", "Habasch", "Halbschue", "Täschbäsä", "Chotzbrocke", "Totsch", "Tschumpel", "Säuniggel"
     ]
     ));
-    if (msg.deletable) {
-      msg.delete();
-    }
   }
 }
