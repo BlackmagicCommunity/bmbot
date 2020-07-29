@@ -1,8 +1,7 @@
 import { randomOf } from '@reverse/random';
 import { Client, Command, RunArgumentsOptions } from '../../util';
-import compliment_data from './compliment_data';
 
-export default class ComplimentCommand extends Command {
+export default class SwissCommand extends Command {
   constructor(client: Client) {
     super(client, {
       disabled: false,
