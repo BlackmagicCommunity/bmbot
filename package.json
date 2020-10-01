@@ -16,7 +16,7 @@
     "fs-extra": "^9.0.0",
     "knowledge": "github:davecaruso/software-knowledge",
     "node-cache": "^5.1.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "os-utils": "0.0.14",
     "sqlite3": "^4.2.0"
   },
