@@ -41,7 +41,7 @@ export default class TestCommand extends Command {
         .array()
         .findIndex((u) => u.userId === user.id) + 1;
     const neededXp = Levels.exp(userData.level);
-    const message = await msg.channel.send('Processing...');
+    msg.channel.startTyping();
     const canvas = createCanvas(900, 270);
     const ctx = canvas.getContext('2d');
 
@@ -59,19 +59,24 @@ export default class TestCommand extends Command {
     const card = await loadImage('src/assets/img/card.png');
     ctx.drawImage(card, 0, 0, 900, 270);
 
-    // titles
-    ctx.font = '30px "Roboto"';
-    ctx.fillText('LEVEL', 750, 96);
-
     // values
     ctx.font = '20px "Roboto"';
     ctx.fillStyle = '#ffffff'
-    ctx.fillText(`${this.client.util.formatNumber(userData.currentXp)} / ${this.client.util.formatNumber(neededXp)} XP`.padStart(15), 468, 182);
+    const xpText = `${this.client.util.formatNumber(userData.currentXp)} / ${this.client.util.formatNumber(neededXp)} XP`;
+    const xpLength = ctx.measureText(xpText).width;
+    ctx.fillText(xpText, 580-xpLength, 182);
     ctx.font = '60px "Roboto"';
-    ctx.fillText(`#${rank}`, 576, 96);
+    ctx.fillText(`#${rank}`, 211, 182);
+    // Level
     ctx.fillStyle = '#ff6800'
-    ctx.fillText(userData.level.toString(), 835, 96);
+    const levelText = `${userData.level.toString()}`;
+    const levelLength = ctx.measureText(levelText).width;
+    ctx.fillText(levelText, 835-levelLength, 211);
+    // Level text
+    ctx.font = '30px "Roboto"';
+    ctx.fillText('LEVEL', 835 - levelLength - ctx.measureText("LEVEL").width, 211);
 
-    msg.reply({ files: [ canvas.toBuffer()]}).then(() => message.delete());
+    msg.reply({ files: [ canvas.toBuffer()]});
+    msg.channel.stopTyping();
   }
 }
