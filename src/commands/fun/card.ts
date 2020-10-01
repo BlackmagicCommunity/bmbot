@@ -5,12 +5,10 @@ import { Levels } from '../../util/database';
 
 registerFont('src/assets/fonts/Roboto-Regular.ttf', { family: 'Roboto' });
 
-export default class TestCommand extends Command {
+export default class CardCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: 'Replicates your message.',
-      hidden: true,
-      aliases: ['t'],
+      help: 'Shows your profile card.',
       arguments: [
         { name: 'user', type: 'User' }
       ]
