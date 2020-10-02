@@ -4,12 +4,12 @@ import { roleList } from './ready';
 
 export default class ReactionRemoveEvent extends Event {
   constructor(client: Client) {
-    super(client, {});
+    super(client);
   }
 
-  async main(reaction: MessageReaction, user: User): Promise<any> {
+  public async main(reaction: MessageReaction, user: User): Promise<any> {
     if (user.bot) return;
-    if (reaction.message.channel.id !== process.env.ROLES_CHANNEL) return; // it's not a reaction from the gettable list
+    if (reaction.message.channel.id !== this.client.settings.channels.roles) return; // it's not a reaction from the gettable list
     const rID: string = roleList[reaction.message.id][reaction.emoji.name];
     if (!rID) return;
     const member: GuildMember = reaction.message.guild.member(user.id);

@@ -1,13 +1,12 @@
-import { Client, Event, Message } from '../util';
+import { Message } from 'discord.js';
+import { Client, Event } from '../util';
 
 export default class MessageDeleteEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  main(message: Message): any {
+  public main(message: Message): any {
     if (message.author.bot) return;
     this.client.logger.message(message, 'Message Delete');
   }

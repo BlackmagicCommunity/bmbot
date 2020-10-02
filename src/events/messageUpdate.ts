@@ -1,13 +1,12 @@
-import { Client, Event, Message } from '../util';
+import { Message } from 'discord.js';
+import { Client, Event } from '../util';
 
 export default class MessageUpdateEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  main(oldMessage: Message, newMessage: Message): any {
+  public main(oldMessage: Message, newMessage: Message): any {
     if (newMessage.author.bot) return;
     this.client.emit('message', newMessage);
     if (oldMessage.embeds.length !== newMessage.embeds.length) return; // no need to log when a link resolves to an embed

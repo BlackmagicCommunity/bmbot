@@ -25,7 +25,7 @@ export default class HelpCommand extends Command {
         else categories[cmd.category].push(cmd);
       }
 
-      const embed: MessageEmbed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(process.env.DEFAULTCOLOR);
+      const embed: MessageEmbed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(this.client.settings.colors.info);
       for (const categoryName in categories) {
         const category: Command[] = categories[categoryName];
         let categoryCommands = '';

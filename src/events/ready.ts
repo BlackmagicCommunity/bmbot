@@ -7,16 +7,14 @@ const emojiRgx = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1
 
 export default class ReadyEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  async main(): Promise<any> {
+  public async main(): Promise<any> {
     // add channels to logger
-    this.client.logger.channels.joins = await this.client.channels.fetch(process.env.JOINS_CHANNEL).catch((_) => null);
-    this.client.logger.channels.infractions = await this.client.channels.fetch(process.env.INFRACTIONS_CHANNEL).catch((_) => null);
-    this.client.logger.channels.messages = await this.client.channels.fetch(process.env.MESSAGES_CHANNEL).catch((_) => null);
+    this.client.logger.channels.joins = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
+    this.client.logger.channels.infractions = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
+    this.client.logger.channels.messages = await this.client.channels.fetch(this.client.settings.channels.logMessages).catch((_) => null);
 
     // get all invites
     this.client.guilds.cache.forEach((guild) => {
@@ -28,7 +26,7 @@ export default class ReadyEvent extends Event {
     });
 
     // clean rules channel
-    const rulesChannel = (await this.client.channels.fetch(process.env.RULES_CHANNEL)) as TextChannel;
+    const rulesChannel = (await this.client.channels.fetch(this.client.settings.channels.rules)) as TextChannel;
     if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
       const rulesMessages = await rulesChannel.messages.fetch();
       rulesMessages.forEach((m) => {
@@ -36,7 +34,7 @@ export default class ReadyEvent extends Event {
       });
     }
 
-    const rolesChannel = (await this.client.channels.fetch(process.env.ROLES_CHANNEL)) as TextChannel;
+    const rolesChannel = (await this.client.channels.fetch(this.client.settings.channels.roles)) as TextChannel;
     const rolesMessages = await rolesChannel.messages.fetch();
     await rolesMessages.forEach((m) => {
       roleList[m.id] = {};

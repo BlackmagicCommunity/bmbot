@@ -13,7 +13,7 @@ function formatDownloads(downloads: DownloadsObject) {
 }
 
 export class BaseVersionLookup extends Command {
-  software: keyof WebCrawlerData;
+  public software: keyof WebCrawlerData;
 
   constructor(client: Client, software: keyof WebCrawlerData) {
     super(client, {

@@ -8,10 +8,10 @@ const events: any = {
 
 export default class RawEvent extends Event {
   constructor(client: Client) {
-    super(client, {});
+    super(client);
   }
 
-  async main(event: any): Promise<any> {
+  public async main(event: any): Promise<any> {
     const { d: data } = event;
 
     if (event.t === 'MESSAGE_REACTION_ADD' || event.t === 'MESSAGE_REACTION_REMOVE') {

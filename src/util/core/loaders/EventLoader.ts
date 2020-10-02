@@ -12,9 +12,7 @@ export default async (client: Client, path: string) => {
         const event: Event = new eventFile(client);
         event.name = file.slice(0, -3);
         client.events.set(event.name, event);
-        if (!event.disabled) {
-          client.on(event.name, (...args: any): Promise<any | void> => event.main(...args));
-        }
+        client.on(event.name, (...args: any): Promise<any | void> => event.main(...args));
       });
   } catch (e) {
     console.log(e);
