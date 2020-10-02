@@ -27,7 +27,7 @@ export default class SayCommand extends Command {
     if (!channel) channel = msg.channel as TextChannel;
     else {
       try {
-        await channel.send(args[1]);
+        await channel.send(args.join(' '));
       } catch {
         msg.channel.send(`:x: Can't send messages there.`);
       }

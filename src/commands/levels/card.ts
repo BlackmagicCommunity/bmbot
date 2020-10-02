@@ -1,6 +1,6 @@
 import { createCanvas, loadImage, registerFont } from 'canvas';
 import { User } from 'discord.js';
-import { Client, Command, Level, RunArgumentsOptions } from '../../util';
+import { Client, Command, RunArgumentsOptions } from '../../util';
 import { Levels } from '../../util/database';
 
 registerFont('src/assets/fonts/Roboto-Regular.ttf', { family: 'Roboto' });
@@ -17,7 +17,7 @@ export default class CardCommand extends Command {
     let user: User;
     if (!args[0]) user = await msg.author.fetchData();
     else {
-      user = await this.client.util.getUser(msg, args[0]);
+      user = await this.client.util.getUser(msg, args.join(' '));
       if (!user) return msg.channel.send(':x: User not found.');
       user = await user.fetchData();
     }

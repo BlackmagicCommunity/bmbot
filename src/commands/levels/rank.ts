@@ -16,7 +16,7 @@ export default class RankCommand extends Command {
     let user: User;
     if (!args[0]) user = await msg.author.fetchData();
     else {
-      user = await this.client.util.getUser(msg, args[0]);
+      user = await this.client.util.getUser(msg, args.join(' '));
       if (!user) return msg.channel.send(':x: User not found.');
       user = await user.fetchData();
     }
