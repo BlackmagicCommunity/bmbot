@@ -8,6 +8,7 @@ export default class ReactionAddEvent extends Event {
   }
 
   public async main(reaction: MessageReaction, user: User): Promise<any> {
+    if (reaction.partial) await reaction.fetch();
     if (user.bot) return;
     if (reaction.message.channel.id !== this.client.settings.channels.roles) return; // it's not a reaction from the gettable list
     const rID = roleList.get(reaction.message.id).get(reaction.emoji.name);
