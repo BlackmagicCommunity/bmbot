@@ -1,5 +1,6 @@
-import { MessageEmbed, User as DUser } from 'discord.js';
-import { Client, Command, RunArgumentsOptions, Level } from '../../util';
+import { MessageEmbed, User } from 'discord.js';
+import { Client, Command, Level, RunArgumentsOptions } from '../../util';
+import { Levels } from '../../util/database';
 
 export default class RankCommand extends Command {
   constructor(client: Client) {
@@ -12,35 +13,33 @@ export default class RankCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    let user: DUser;
-    if (!args[0]) user = msg.author;
-    else user = (await this.client.util.getUser(msg, args[0])) || msg.author;
+    let user: User;
+    if (!args[0]) user = await msg.author.fetchData();
+    else {
+      user = await this.client.util.getUser(msg, args[0]);
+      if (!user) return msg.channel.send(':x: User not found.');
+      user = await user.fetchData();
+    }
 
-    const rank =
-      (await this.client.database.levels.getUsers())
-        .sort((a: Level, b: Level) => {
-          if (a.totalXp < b.totalXp) return 1;
-          else if (a.totalXp > b.totalXp) return -1;
-          else return 0;
-        })
-        .array()
-        .findIndex((u) => u.userId === user.id) + 1;
+    if (!user.data?.totalXp) return msg.channel.send(':x: User has no rank.');
 
-    const data = await this.client.database.levels.getUser(user.id);
-    if (!data) return msg.channel.send(':x: User has no rank.');
+    const rank = await this.client.database.levels.getUserRank(user.id);
+    const requiredXp = Levels.exp(user.data.level);
     msg.channel.send(
       new MessageEmbed()
         .setThumbnail(user.displayAvatarURL())
-        .setColor(process.env.DEFAULTCOLOR)
+        .setColor(this.client.settings.colors.info)
         .addField('Rank', rank, true)
-        .addField('Level', data.level, true)
+        .addField('Level', user.data.level, true)
         .addField('\u200b', '\u200b', true)
         .addField(
-          'XP (current/remaining)',
-          `${this.client.util.formatNumber(data.totalXp)} (${this.client.util.formatNumber(data.currentXp)}/${this.client.util.formatNumber(data.remainingXp)})`,
+          'XP (current/required)',
+          `${this.client.util.formatNumber(user.data.totalXp)} (${this.client.util.formatNumber(user.data.currentXp)}/${this.client.util.formatNumber(
+            requiredXp
+          )})`,
           true
         )
-        .addField('Message Count', this.client.util.formatNumber(data.messageCount), true)
+        .addField('Message Count', this.client.util.formatNumber(user.data.msgCount), true)
     );
   }
 }
