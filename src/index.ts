@@ -12,6 +12,7 @@ import './util/extensions/User';
 
 getData().then((data) => {
   new Client({
+    partials: ['REACTION'],
     disableMentions: 'everyone',
     presence: {
       activity: { name: `DaVinci Resolve ${data.resolve.latest}`, type: 'PLAYING' },
