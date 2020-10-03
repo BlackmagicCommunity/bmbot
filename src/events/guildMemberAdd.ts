@@ -1,5 +1,4 @@
 import { Collection, GuildMember, MessageEmbed, Snowflake, TextChannel } from 'discord.js';
-import { cached } from 'sqlite3';
 import { Client, Event } from '../util';
 
 const hasPermission = (channel: TextChannel): boolean => channel.permissionsFor(channel.guild.id).has('VIEW_CHANNEL');
