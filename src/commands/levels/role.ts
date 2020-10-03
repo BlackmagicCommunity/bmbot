@@ -1,4 +1,4 @@
-import { Client, Command, RunArgumentsOptions, LevelRole } from '../../util';
+import { Client, Command, LevelRole, RunArgumentsOptions } from '../../util';
 
 export default class RoleCommand extends Command {
   constructor(client: Client) {

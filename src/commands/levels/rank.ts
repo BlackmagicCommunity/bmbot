@@ -1,5 +1,5 @@
 import { MessageEmbed, User as DUser } from 'discord.js';
-import { Client, Command, RunArgumentsOptions, Level } from '../../util';
+import { Client, Command, Level, RunArgumentsOptions } from '../../util';
 
 export default class RankCommand extends Command {
   constructor(client: Client) {
@@ -37,7 +37,9 @@ export default class RankCommand extends Command {
         .addField('\u200b', '\u200b', true)
         .addField(
           'XP (current/remaining)',
-          `${this.client.util.formatNumber(data.totalXp)} (${this.client.util.formatNumber(data.currentXp)}/${this.client.util.formatNumber(data.remainingXp)})`,
+          `${this.client.util.formatNumber(data.totalXp)} (${this.client.util.formatNumber(data.currentXp)}/${this.client.util.formatNumber(
+            data.remainingXp
+          )})`,
           true
         )
         .addField('Message Count', this.client.util.formatNumber(data.messageCount), true)

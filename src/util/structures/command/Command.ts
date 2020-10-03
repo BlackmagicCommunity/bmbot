@@ -76,7 +76,7 @@ export class Command {
 
     // Allowed Roles
     if (this.allowedRoles.length !== 0) {
-      console.log('b')
+      console.log('b');
       let allowed = false;
       allowed = false;
       for (const rol of this.allowedRoles) {

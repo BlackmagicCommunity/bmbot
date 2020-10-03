@@ -92,7 +92,8 @@ export default class Levels {
 
   public async updateRole(role: LevelRole): Promise<Collection<Snowflake, LevelRole>> {
     if (!this._roles) await this.getRoles();
-    if (this._roles.has(role.roleId)) this.database.run(`UPDATE Role SET level = ?, single = ? WHERE roleId = ?`, role.level, role.single, role.roleId);
+    if (this._roles.has(role.roleId))
+      this.database.run(`UPDATE Role SET level = ?, single = ? WHERE roleId = ?`, role.level, role.single, role.roleId);
     else this.database.run(`INSERT INTO Role (roleId, level, single) VALUES (?, ?, ?)`, role.roleId, role.level, role.single);
 
     this._roles.set(role.roleId, role);
@@ -112,12 +113,12 @@ export default class Levels {
 
       amount += data.players.length;
       data.players.forEach((u: any) => {
-        const usr = new Level(u["id"]);
-        usr.level = u["level"];
-        usr.messageCount = u["message_count"];
-        usr.totalXp = u["xp"];
-        usr.remainingXp = u["detailed_xp"][1];
-        usr.currentXp = u["detailed_xp"][0];
+        const usr = new Level(u.id);
+        usr.level = u.level;
+        usr.messageCount = u.message_count;
+        usr.totalXp = u.xp;
+        usr.remainingXp = u.detailed_xp[1];
+        usr.currentXp = u.detailed_xp[0];
 
         this.updateUser(usr);
       });

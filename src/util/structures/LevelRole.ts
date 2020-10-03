@@ -1,11 +1,11 @@
-import { Snowflake } from "discord.js";
+import { Snowflake } from 'discord.js';
 
 export class LevelRole {
-	public readonly roleId: Snowflake;
-	public level: number;
-	public single: number | boolean;
+  public readonly roleId: Snowflake;
+  public level: number;
+  public single: number | boolean;
 
-	constructor(roleId: Snowflake) {
-		this.roleId = roleId;
-	}
+  constructor(roleId: Snowflake) {
+    this.roleId = roleId;
+  }
 }

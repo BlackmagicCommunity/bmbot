@@ -1,4 +1,4 @@
-import { Client, Command, RunArgumentsOptions, Level } from '../../util';
+import { Client, Command, Level, RunArgumentsOptions } from '../../util';
 
 export default class LeaderboardCommand extends Command {
   constructor(client: Client) {
@@ -28,7 +28,7 @@ export default class LeaderboardCommand extends Command {
 
     const lengthNameArray = await Promise.all(
       parts[page - 1].map(async (u) => {
-        const usr = (await this.client.users.fetch(u.userId).catch((_) => null))
+        const usr = await this.client.users.fetch(u.userId).catch((_) => null);
         return usr.username.length;
       })
     );

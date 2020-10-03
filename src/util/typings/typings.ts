@@ -1,12 +1,4 @@
-import {
-  Guild,
-  Message as message,
-  PermissionString,
-  Role,
-  Snowflake,
-  TextChannel,
-  User,
-} from 'discord.js';
+import { Guild, Message as message, PermissionString, Role, Snowflake, TextChannel, User } from 'discord.js';
 import { Client } from '../core/Client';
 import { Command } from '../structures/command/Command';
 

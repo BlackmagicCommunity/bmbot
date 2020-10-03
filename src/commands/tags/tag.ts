@@ -11,8 +11,8 @@ export default class CreateTagCommand extends Command {
   public async main({ msg, args }: RunArgumentsOptions) {
     const tag = await this.client.database.tags.getTag(args[0]);
     if (!tag) return msg.react('❓');
-    
+
     msg.channel.send(tag.reply);
-    if(msg.deletable) msg.delete(); // delete if replied
+    if (msg.deletable) msg.delete(); // delete if replied
   }
 }

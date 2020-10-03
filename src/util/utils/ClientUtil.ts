@@ -17,10 +17,11 @@ export class ClientUtil {
     return process.env.DEVELOPER.includes(id);
   }
 
-  public formatNumber(number: number) {
-    if (number >= 1000000) return `${(number / 1000000).toFixed(1)}M`;
-    if (number >= 1000) return `${(number / 1000).toFixed(1)}K`;
-    return number.toString();
+  public formatNumber(value: number) {
+    if (value >= 1000000000) return `${(value / 1000000000).toFixed(1)}B`;
+    if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+    return value.toString();
   }
 
   public clean(text: string) {
@@ -34,7 +35,8 @@ export class ClientUtil {
     if (message.mentions.users.size !== 0) return message.mentions.users.first();
     if (/[0-9]{16,18}/.test(arg)) return this.client.users.fetch(arg);
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/.test(arg)) return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user
+    if (/[a-zA-Z]{1,30}/.test(arg))
+      return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user;
     return null;
   }
 
