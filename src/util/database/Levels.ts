@@ -18,7 +18,7 @@ export default class Levels {
 
   public async getUserRank(id: Snowflake) {
     return new Promise((resolve) => {
-      this.sqlite.get(`SELECT COUNT(*) AS 'Rank' FROM User WHERE totalXp < (SELECT totalXp FROM User WHERE id = ?)`, id, (err, row) => {
+      this.sqlite.get(`SELECT COUNT(*) AS 'Rank' FROM User WHERE totalXp >= (SELECT totalXp FROM User WHERE id = ?)`, id, (err, row) => {
         resolve(row.Rank);
       });
     });
