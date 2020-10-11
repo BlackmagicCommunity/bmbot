@@ -1,4 +1,5 @@
-import { Collection, GuildMember, Invite, Message, MessageEmbed, Snowflake, TextChannel, User } from 'discord.js';
+import DateFormat from 'dateformat';
+import { Collection, GuildMember, Invite, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel, User } from 'discord.js';
 import { Client } from '../../util';
 import { LoggerChannels } from '../typings/typings';
 
@@ -26,7 +27,48 @@ export class Logger {
 
     if (message instanceof Collection) {
       // bulk delete
-      embed.addField('Amount of messages', message.size).addField('Channel', `${message.first().channel}`);
+      let str = '';
+      message
+        .sort((a, b) => {
+          return a.createdTimestamp > b.createdTimestamp ? -1 : a.createdTimestamp < b.createdTimestamp ? 1 : 0;
+        })
+        .forEach((m: Message) => {
+          str += `<tr><td>${m.author.id}</td><td>${m.author.tag}</td><td>${m.content}</td><td>${DateFormat(
+            m.createdTimestamp,
+            'yyyy-mm-dd h:MM TT'
+          )}</td></tr>\n`;
+        });
+      const file = `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bulk Delete at ${new Date()}</title>
+        <style>
+        table, td, th {
+          border: 1px solid black;
+        }
+        td {
+          padding:5px;
+        }
+        table {
+          border-collapse: collapse;
+        }
+        tr:nth-child(even) {
+          background:#eee;
+        }</style>
+      </head>
+      <body>
+        <table>
+          <tr><th>id</th> <th>tag</th> <th>content</th> <th>date</th></tr>
+          ${str}
+        </table>
+      </body>
+      </html>`;
+      embed
+        .addField('Amount of messages', message.size)
+        .addField('Channel', `${message.first().channel}`)
+        .attachFiles([new MessageAttachment(Buffer.from(file), 'message_list.html')]);
     } else {
       if (message.content) embed.setDescription(message.cleanContent);
       if (otherData instanceof Message && otherData.content)

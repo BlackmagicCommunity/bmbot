@@ -1,4 +1,4 @@
-import { BaseClient, Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
+import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
 import path from 'path';
 import settings from '../../settings';
 import { Database } from '../database';
