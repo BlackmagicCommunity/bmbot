@@ -14,7 +14,7 @@ export default {
     danger: 0xff0000,
   },
   cronJobs: {
-    challengeVoting: '* * * * *',
+    challengeVoting: '0 17 * * SAT',
     challengeResults: '0 20 * * SUN'
   },
   developers: ['244905301059436545', '131857875973701633', '429983129739067413'], // dave, lucks, tim
