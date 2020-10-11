@@ -18,6 +18,14 @@ export default {
   },
   owner: '131857875973701633',
   prefix: '&',
+  raid: {
+    memberJoinInterval: 10000, // in ms
+    okWait: 1200000, // in ms
+    threshold: 10,
+    raidVerificationLevel: 'HIGH',
+    okVerificationLevel: 'LOW',
+    kickMessage: 'You have been automatically kicked from Blackmagic Community since the server is in lockdown. Try again later.',
+  },
   roles: {
     private: '761336867223896085',
   },

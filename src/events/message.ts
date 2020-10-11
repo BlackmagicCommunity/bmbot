@@ -9,48 +9,58 @@ export default class MessageEvent extends Event {
     super(client);
   }
 
+  private async handleLeveling(message: Message) {
+    if (!this.levelCooldown.has(message.author.id) || this.levelCooldown.get(message.author.id) < Date.now()) {
+      const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
+      if (!message.author.data) await message.author.fetchData();
+      let data = message.author.data;
+      if (!data)
+        data = {
+          totalXp: 0,
+          level: 0,
+          msgCount: 0,
+          currentXp: 0,
+        };
+
+      data.msgCount++;
+      data.totalXp += xp;
+      data.currentXp += xp;
+
+      const diff = data.currentXp - Levels.exp(data.level);
+      if (diff >= 0) {
+        data.level++;
+        data.currentXp = 0;
+
+        // don't send to the "DND" ones
+        if (!message.member.roles.cache.has(this.client.settings.roles.private))
+          message.channel.send(process.env.LEVEL_UP.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()));
+
+        if (message.guild.me.permissions.has('MANAGE_ROLES')) {
+          // check roles
+          const roles = await this.client.database.levels.getRolesFromLevel(data.level);
+          const higher = roles.first();
+          if (higher && !message.member.roles.cache.has(higher.id)) {
+            if (higher.single)
+              await message.member.roles.set(
+                message.member.roles.cache.filter((r) => !roles.has(r.id)),
+                'LevelUP - Single Role'
+              );
+            await message.member.roles.add(higher.id, 'LevelUP - Add Role');
+          }
+        }
+      }
+
+      // update db & cooldown
+      await message.author.commitData(data);
+      this.levelCooldown.set(message.author.id, Date.now() + 60000);
+    }
+  }
+
   public async main(message: Message): Promise<any> {
     if (message.author.bot) return;
     if (message.guild && !(message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) return;
 
-    // handle leveling
-    if (!message.editedAt || !message.guild) {
-      if (!this.levelCooldown.has(message.author.id) || this.levelCooldown.get(message.author.id) < Date.now()) {
-        const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
-        if (!message.author.data) await message.author.fetchData();
-        let data = message.author.data;
-        if (!data) data = { currentXp: 0, level: 0, msgCount: 0, totalXp: 0 };
-        data.currentXp += xp;
-        const diff = data.currentXp - Levels.exp(data.level);
-        if (diff >= 0) {
-          data.level++;
-          data.currentXp = diff;
-
-          if (!message.member.roles.cache.has(this.client.settings.roles.private))
-            message.channel.send(
-              this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString())
-            );
-          if (message.guild.me.hasPermission('MANAGE_ROLES')) {
-            const roles = await this.client.database.levels.getRolesFromLevel(data.level);
-            const higher = roles.first();
-            if (higher && !message.member.roles.cache.has(higher.id)) {
-              if (higher.single)
-                await message.member.roles.set(
-                  message.member.roles.cache.filter((r) => !roles.has(r.id)),
-                  'LevelUP - Single Role'
-                );
-              await message.member.roles.add(higher.id, 'LevelUP - Add Role');
-            }
-          }
-        }
-
-        data.msgCount++;
-        data.totalXp += xp;
-
-        await message.author.commitData(data);
-        this.levelCooldown.set(message.author.id, Date.now() + 60000);
-      }
-    }
+    if (!message.editedAt) await this.handleLeveling(message);
 
     const commandPrefix = this.client.settings.prefix;
     const prefix = new RegExp(`<@!?${this.client.user.id}> |^${this.regExpEsc(commandPrefix)}`).exec(message.content);

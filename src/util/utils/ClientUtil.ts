@@ -35,7 +35,7 @@ export class ClientUtil {
     if (/[0-9]{16,18}/.test(arg)) return this.client.users.fetch(arg);
     arg = arg.toLowerCase();
     if (/[a-zA-Z]{1,30}/.test(arg))
-      return (await message.guild.members.fetch()).find((member: GuildMember) => member.user.username.toLowerCase().includes(arg))?.user;
+      return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user;
     return null;
   }
 

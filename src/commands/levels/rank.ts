@@ -1,5 +1,5 @@
 import { MessageEmbed, User } from 'discord.js';
-import { Client, Command, Level, RunArgumentsOptions } from '../../util';
+import { Client, Command, RunArgumentsOptions } from '../../util';
 import { Levels } from '../../util/database';
 
 export default class RankCommand extends Command {
