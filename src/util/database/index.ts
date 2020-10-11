@@ -28,7 +28,7 @@ export class Database {
       'level INTEGER NOT NULL',
       ');',
       'CREATE TABLE IF NOT EXISTS Role (',
-      'id TEXT PRIMARY KEY,,',
+      'id TEXT PRIMARY KEY,',
       'single INTEGER NOT NULL,',
       'level INTEGER NOT NULL',
       ');',
@@ -37,6 +37,13 @@ export class Database {
       'description TEXT,',
       'reply TEXT',
       ');',
+      'CREATE TABLE IF NOT EXISTS Guild (',
+      'id TEXT PRIMARY KEY,',
+      'challTopic TEXT,',
+      'challTitle TEXT,',
+      'challDesc TEXT,',
+      'challStart TEXT',
+      ');'
     ];
 
     this.sqlite.run(query.join('\n'));

@@ -58,3 +58,11 @@ export interface IRoleData {
   single: boolean | number;
   level: number;
 }
+
+export interface GuildData {
+  id?: string;
+  challTopic: string;
+  challTitle: string;
+  challDesc: string;
+  challStart: string;
+}

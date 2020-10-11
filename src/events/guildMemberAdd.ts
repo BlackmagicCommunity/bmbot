@@ -14,14 +14,11 @@ export default class MemberAddEvent extends Event {
 
   private async kickMember(member: GuildMember) {
     try {
-      await member.send(this.client.settings.raid.kickMessage);
-    } catch {
+      await member.send(this.client.settings.messages.raidKickMessage);
     } finally {
-      // dms closed or something
-      if (member)
-        await member.kick(
-          `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
-        );
+      await member.kick(
+        `AntiRaid - ${this.client.settings.raid.memberCount} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+      );
     }
   }
 
@@ -30,26 +27,26 @@ export default class MemberAddEvent extends Event {
     // remove all old members who joined more than x seconds ago
     this.raidMembersCache.set(member.id, now);
     // count how many joins in latest x seconds
-    const members = this.raidMembersCache.filter((v) => now - v <= this.client.settings.raid.threshold);
+    const members = this.raidMembersCache.filter((v) => now - v <= this.client.settings.raid.memberCount);
     const { guild } = member;
-    if (members.size >= this.client.settings.raid.threshold) {
+    if (members.size >= this.client.settings.raid.memberCount) {
       if (!this.isBeingRaided) {
         // set lockdown
         if (guild.me.hasPermission('MANAGE_GUILD')) {
           await guild.setVerificationLevel(
             this.client.settings.raid.raidVerificationLevel as VerificationLevel,
-            `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+            `AntiRaid - ${this.client.settings.raid.memberCount} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
           );
           this.client.setTimeout(() => {
             guild.setVerificationLevel(
               this.client.settings.raid.okVerificationLevel as VerificationLevel,
-              `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+              `AntiRaid - ${this.client.settings.raid.memberCount} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
             );
           }, this.client.settings.raid.okWait);
 
           if (guild.me.hasPermission('KICK_MEMBERS')) {
-            members.forEach(async (v, k) => {
-              this.kickMember(await guild.member(k));
+            members.forEach((v, k) => {
+              this.kickMember(guild.member(k));
             });
           }
         }
