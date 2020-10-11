@@ -1,14 +1,12 @@
-import { Collection, Snowflake } from 'discord.js';
-import { Client, Event, Message } from '../util';
+import { Collection, Message, Snowflake } from 'discord.js';
+import { Client, Event } from '../util';
 
 export default class MessageDeleteBulkEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  main(messages: Collection<Snowflake, Message>): any {
+  public main(messages: Collection<Snowflake, Message>): any {
     this.client.logger.message(messages, 'Message Bulk Delete');
   }
 }

@@ -8,8 +8,6 @@ export default class Tags {
   constructor(client: Client, database: Database) {
     Object.defineProperty(this, 'client', { value: client });
     this.database = database;
-    // create table if not exists
-    this.database.run(['CREATE TABLE IF NOT EXISTS Tag (', 'name TEXT PRIMARY KEY,', 'description TEXT,', 'reply TEXT', ')'].join('\n'));
   }
   private readonly database: Database;
   private _tags: Collection<string, Tag>;

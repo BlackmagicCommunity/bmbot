@@ -1,53 +1,51 @@
-import { Collection, GuildMember, MessageEmbed, Snowflake, TextChannel } from 'discord.js';
+import { Collection, GuildMember, MessageEmbed, Snowflake, TextChannel, VerificationLevel } from 'discord.js';
 import { Client, Event } from '../util';
 
 const hasPermission = (channel: TextChannel): boolean => channel.permissionsFor(channel.guild.id).has('VIEW_CHANNEL');
 
 export default class MemberAddEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
   private cachedEmbed: MessageEmbed = null;
-  private latestMembers = new Collection<Snowflake, number>(); // uid, time
-  private readonly latestMembersThreshold = 10000;
-  private readonly raidOkLevelWait = 1200000;
-  private readonly raidThreshold = 10;
-  private readonly raidVerificationLevel = 'HIGH';
-  private readonly raidOkLevel = 'LOW';
-  private readonly raidKickMessage = 'You have been automatically kicked from Blackmagic Community since the server is in lockdown. Try again later.';
+  private raidMembersCache = new Collection<Snowflake, number>();
   private isBeingRaided = false;
 
   private async kickMember(member: GuildMember) {
     try {
-      await member.send(this.raidKickMessage);
+      await member.send(this.client.settings.raid.kickMessage);
     } catch {
     } finally {
       // dms closed or something
-      if (member) await member.kick(`AntiRaid - ${this.raidThreshold} joins in ${this.latestMembersThreshold / 1000} seconds.`);
+      if (member)
+        await member.kick(
+          `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+        );
     }
   }
 
   private async handleRaid(member: GuildMember) {
     const now = Date.now();
     // remove all old members who joined more than x seconds ago
-    this.latestMembers.set(member.id, now);
+    this.raidMembersCache.set(member.id, now);
     // count how many joins in latest x seconds
-    const members = this.latestMembers.filter((v) => now - v <= this.latestMembersThreshold);
+    const members = this.raidMembersCache.filter((v) => now - v <= this.client.settings.raid.threshold);
     const { guild } = member;
-    if (members.size >= this.raidThreshold) {
+    if (members.size >= this.client.settings.raid.threshold) {
       if (!this.isBeingRaided) {
         // set lockdown
         if (guild.me.hasPermission('MANAGE_GUILD')) {
           await guild.setVerificationLevel(
-            this.raidVerificationLevel,
-            `AntiRaid - ${this.raidThreshold} joins in ${this.latestMembersThreshold / 1000} seconds.`
+            this.client.settings.raid.raidVerificationLevel as VerificationLevel,
+            `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
           );
           this.client.setTimeout(() => {
-            guild.setVerificationLevel(this.raidOkLevel, `AntiRaid - ${this.raidThreshold} joins in ${this.latestMembersThreshold / 1000} seconds.`);
-          }, this.raidOkLevelWait);
+            guild.setVerificationLevel(
+              this.client.settings.raid.okVerificationLevel as VerificationLevel,
+              `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+            );
+          }, this.client.settings.raid.okWait);
 
           if (guild.me.hasPermission('KICK_MEMBERS')) {
             members.forEach(async (v, k) => {

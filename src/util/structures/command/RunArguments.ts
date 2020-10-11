@@ -1,4 +1,5 @@
-import { Message, RunArgumentsOptions } from '../../typings/typings';
+import { Message } from 'discord.js';
+import { RunArgumentsOptions } from '../../typings/typings';
 
 export const RunArguments = (message: Message, args: string[]) => {
   return {

@@ -1,7 +1,7 @@
-import { Collection, MessageEmbed, PermissionString, Role, Snowflake, TextChannel } from 'discord.js';
+import { Collection, Message, MessageEmbed, PermissionString, Snowflake, TextChannel } from 'discord.js';
 import { resolve as Resolve } from 'path';
 import { Client } from '../../core/Client';
-import { CommandArguments, CommandOptions, Message, RunArgumentsOptions } from '../../typings/typings';
+import { CommandArguments, CommandOptions, RunArgumentsOptions } from '../../typings/typings';
 
 export class Command {
   public name: string;
@@ -76,7 +76,6 @@ export class Command {
 
     // Allowed Roles
     if (this.allowedRoles.length !== 0) {
-      console.log('b');
       let allowed = false;
       allowed = false;
       for (const rol of this.allowedRoles) {
@@ -93,7 +92,7 @@ export class Command {
   }
 
   public helpMessage(message: Message, command: Command = this): MessageEmbed {
-    const embed = new MessageEmbed().setTitle(`${message.client.user.username}'s Commands`).setColor(process.env.DEFAULTCOLOR);
+    const embed = new MessageEmbed().setTitle(`${message.client.user.username}'s Commands`).setColor(this.client.settings.colors.info);
 
     embed.setDescription(command.help).addField('Command', `${command.name} (${command.category})`, true);
 

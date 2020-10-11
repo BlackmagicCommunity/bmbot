@@ -1,6 +1,5 @@
-import { Channel, Guild, GuildChannel, GuildMember, Role, TextChannel, User, VoiceChannel } from 'discord.js';
+import { Guild, GuildChannel, GuildMember, Message, Role, TextChannel, User } from 'discord.js';
 import { Client } from '../core/Client';
-import { Message } from '../typings/typings';
 
 export class ClientUtil {
   public client: Client;
@@ -10,11 +9,11 @@ export class ClientUtil {
   }
 
   public isOwner(id: string): boolean {
-    return process.env.OWNER.includes(id);
+    return this.client.settings.owner === id;
   }
 
   public isDeveloper(id: string): boolean {
-    return process.env.DEVELOPER.includes(id);
+    return this.client.settings.developers.includes(id);
   }
 
   public formatNumber(value: number) {
@@ -51,7 +50,7 @@ export class ClientUtil {
     if (message.mentions.roles.size !== 0) return message.mentions.roles.first();
     if (/[0-9]{16,18}/.test(arg)) return message.guild.roles.fetch(arg);
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/) return message.guild.roles.cache.find((role) => role.name.toLowerCase().includes(arg));
+    if (/[a-zA-Z]{1,30}/) return message.guild.roles.cache.find((role: Role) => role.name.toLowerCase().includes(arg));
     return null;
   }
 
@@ -60,7 +59,7 @@ export class ClientUtil {
     if (/[0-9]{16,18}/.test(arg)) return message.guild.channels.cache.get(arg) as GuildChannel;
     arg = arg.toLowerCase();
     if (/[a-zA-Z]{1,30}/)
-      return message.guild.channels.cache.find((channel) => {
+      return message.guild.channels.cache.find((channel: GuildChannel) => {
         if (textOnly && channel.type !== 'text') return;
         return channel.name.toLowerCase().includes(arg);
       });

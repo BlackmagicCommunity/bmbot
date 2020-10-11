@@ -20,10 +20,10 @@ export default class RulesCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    const embed = new MessageEmbed().setColor(process.env.DEFAULTCOLOR).setTitle('Blackmagic Community - Rules');
+    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setTitle('Blackmagic Community - Rules');
 
-    const channel = msg.guild.channels.cache.get(process.env.RULES_CHANNEL) as TextChannel;
-    const { content } = await channel.messages.fetch(process.env.RULES_MESSAGE);
+    const channel = msg.guild.channels.cache.get(this.client.settings.channels.rules) as TextChannel;
+    const { content } = await channel.messages.fetch(this.client.settings.messages.rules);
 
     if (args.length === 0) {
       embed.setDescription(content.substring(content.indexOf(map[0]), content.indexOf('https')));

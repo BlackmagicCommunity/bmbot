@@ -1,18 +1,20 @@
 import { GuildMember, MessageReaction, User } from 'discord.js';
+import { read } from 'fs';
 import { Client, Event } from '../util';
 import { roleList } from './ready';
 
 export default class ReactionRemoveEvent extends Event {
   constructor(client: Client) {
-    super(client, {});
+    super(client);
   }
 
-  async main(reaction: MessageReaction, user: User): Promise<any> {
+  public async main(reaction: MessageReaction, user: User): Promise<any> {
+    if (reaction.partial) await reaction.fetch();
     if (user.bot) return;
-    if (reaction.message.channel.id !== process.env.ROLES_CHANNEL) return; // it's not a reaction from the gettable list
-    const rID: string = roleList[reaction.message.id][reaction.emoji.name];
+    if (reaction.message.channel.id !== this.client.settings.channels.roles) return; // it's not a reaction from the gettable list
+    const rID = roleList.get(reaction.message.id).get(reaction.emoji.name);
     if (!rID) return;
-    const member: GuildMember = reaction.message.guild.member(user.id);
+    const member = reaction.message.guild.member(user.id);
     await member.roles.remove(rID, 'ReactionRoles - User un-reacted.');
   }
 }
