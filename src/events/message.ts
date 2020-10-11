@@ -33,7 +33,7 @@ export default class MessageEvent extends Event {
 
         // don't send to the "DND" ones
         if (!message.member.roles.cache.has(this.client.settings.roles.private))
-          message.channel.send(process.env.LEVEL_UP.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()));
+          message.channel.send(this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()));
 
         if (message.guild.me.permissions.has('MANAGE_ROLES')) {
           // check roles
