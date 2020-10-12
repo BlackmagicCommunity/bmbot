@@ -1,6 +1,5 @@
-import { TextChannel, Snowflake, Collection } from 'discord.js';
-import { CronJob } from 'cron';
-import { Client, Event } from '../util';
+import { Collection, Snowflake, TextChannel } from 'discord.js';
+import { Challenge, Client, Event } from '../util';
 
 export let roleList: Collection<Snowflake, Collection<string, Snowflake>> = new Collection();
 
@@ -54,36 +53,9 @@ export default class ReadyEvent extends Event {
     super(client);
   }
 
-  private async handleChallenge() {
-    const channel = await this.client.channels.fetch(this.client.settings.channels.challenges) as TextChannel;
-    const winnersChannel = await this.client.channels.fetch(this.client.settings.channels.challengeWinners) as TextChannel;
-    // voting phase
-    new CronJob(this.client.settings.cronJobs.challengeVoting, async () => {
-      if(!channel.permissionsFor(channel.guild.id).has('SEND_MESSAGES')) return;
-
-      await channel.overwritePermissions([{
-        id: channel.guild.id,
-        deny: 'SEND_MESSAGES'
-      }], 'Challenges - Voting phase.');
-
-      await channel.send(`<@&${this.client.settings.roles.challenge}> ${this.client.settings.messages.challengeVoting}`);
-    }, null, true).start();
-
-
-    // results phase
-    new CronJob(this.client.settings.cronJobs.challengeResults, async () => {
-      // see who got the most votes
-      const user = 'winner';
-
-      // post on winners channel
-      const { data } = await channel.guild.fetchData();
-      const message = this.client.settings.messages.challengeWinner.replace(/%title%/g, data.challTitle).replace(/%topic%/g, data.challTopic).replace(/%mention%/g, user.toString());
-      channel.send(message);
-      winnersChannel.send(message);
-    }).start();
-  }
-
   public async main(): Promise<void> {
+    this.client.challenge = new Challenge(this.client);
+
     // add channels to logger
     this.client.logger.channels.joins = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
     this.client.logger.channels.infractions = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
@@ -108,8 +80,6 @@ export default class ReadyEvent extends Event {
     }
 
     cacheRoles(this.client, true);
-
-    this.handleChallenge();
 
     console.log(`Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`);
     return;

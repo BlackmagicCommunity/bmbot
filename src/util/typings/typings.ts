@@ -64,5 +64,12 @@ export interface GuildData {
   challTopic: string;
   challTitle: string;
   challDesc: string;
-  challStart: string;
+  challMessage: string;
+}
+
+export interface ChallengeOptions {
+  topic: string;
+  title: string;
+  description: string;
+  message: Message;
 }

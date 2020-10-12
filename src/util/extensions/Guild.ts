@@ -19,14 +19,14 @@ export default Structures.extend('Guild', (guild) => {
     }
 
     public async commitData(data: GuildData) {
-      const { challDesc, challStart, challTitle, challTopic } = data;
+      const { challDesc, challMessage, challTitle, challTopic } = data;
       this.client.database.sqlite.run(
-        `INSERT OR REPLACE INTO Guild (id, challTopic, challTitle, challDesc, challStart) VALUES (?, ?, ?, ?, ?)`,
+        `INSERT OR REPLACE INTO Guild (id, challTopic, challTitle, challDesc, challMessage) VALUES (?, ?, ?, ?, ?)`,
         this.id,
         challTopic,
         challTitle,
         challDesc,
-        challStart
+        challMessage
       );
 
       this.data = data;

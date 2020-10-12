@@ -4,6 +4,7 @@ import { Command } from '../structures/command/Command';
 
 declare module 'discord.js' {
   export interface Message {
+    client: Client;
     command: Command;
     prefix: string;
     reply(): Promise<Message>;
@@ -13,11 +14,13 @@ declare module 'discord.js' {
 
 export default Structures.extend('Message', (message) => {
   class Message extends message {
+    public client: Client;
     public prefix: string;
     public command: Command;
 
     constructor(client: Client, data: any, channel: DMChannel | TextChannel) {
       super(client, data, channel);
+      Object.defineProperty(this, 'client', { value: client });
     }
 
     public reply(content?: any, options?: any): Promise<any> {

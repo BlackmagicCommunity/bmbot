@@ -1,3 +1,4 @@
+import { MessageEmbed } from 'discord.js';
 import { Collection, Message, Snowflake, TextChannel } from 'discord.js';
 import { Client, Event, Level, RunArguments } from '../util';
 import { Levels } from '../util/database';
@@ -33,7 +34,9 @@ export default class MessageEvent extends Event {
 
         // don't send to the "DND" ones
         if (!message.member.roles.cache.has(this.client.settings.roles.private))
-          message.channel.send(this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()));
+          message.channel.send(
+            this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString())
+          );
 
         if (message.guild.me.permissions.has('MANAGE_ROLES')) {
           // check roles
@@ -79,7 +82,8 @@ export default class MessageEvent extends Event {
     message.command = command;
     const commandArguments = RunArguments(message, args);
     try {
-      await command.handleCommand(commandArguments);
+      const res = await command.handleCommand(commandArguments);
+      if (typeof res === 'string' || res instanceof MessageEmbed) message.channel.send(res);
     } catch (e) {
       console.log(e);
     }

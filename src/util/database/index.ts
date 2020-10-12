@@ -19,34 +19,12 @@ export class Database {
   }
 
   private _init(): void {
-    const query = [
-      'CREATE TABLE IF NOT EXISTS User (',
-      'id TEXT PRIMARY KEY,',
-      'msgCount INTEGER NOT NULL,',
-      'totalXp INTEGER NOT NULL,',
-      'currentXp INTEGER NOT NULL,',
-      'level INTEGER NOT NULL',
-      ');',
-      'CREATE TABLE IF NOT EXISTS Role (',
-      'id TEXT PRIMARY KEY,',
-      'single INTEGER NOT NULL,',
-      'level INTEGER NOT NULL',
-      ');',
-      'CREATE TABLE IF NOT EXISTS Tag (',
-      'name TEXT PRIMARY KEY,',
-      'description TEXT,',
-      'reply TEXT',
-      ');',
-      'CREATE TABLE IF NOT EXISTS Guild (',
-      'id TEXT PRIMARY KEY,',
-      'challTopic TEXT,',
-      'challTitle TEXT,',
-      'challDesc TEXT,',
-      'challStart TEXT',
-      ');'
-    ];
-
-    this.sqlite.run(query.join('\n'));
+    this.sqlite.run(
+      'CREATE TABLE IF NOT EXISTS User (id TEXT PRIMARY KEY, msgCount INTEGER NOT NULL, totalXp INTEGER NOT NULL, currentXp INTEGER NOT NULL, level INTEGER NOT NULL);'
+    );
+    this.sqlite.run('CREATE TABLE IF NOT EXISTS Role (id TEXT PRIMARY KEY, single INTEGER NOT NULL, level INTEGER NOT NULL);');
+    this.sqlite.run('CREATE TABLE IF NOT EXISTS Tag (name TEXT PRIMARY KEY, description TEXT, reply TEXT);');
+    this.sqlite.run('CREATE TABLE IF NOT EXISTS Guild (id TEXT PRIMARY KEY, challTopic TEXT, challTitle TEXT, challDesc TEXT, challMessage TEXT);');
   }
 }
 
