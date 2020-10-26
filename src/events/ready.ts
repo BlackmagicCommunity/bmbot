@@ -1,7 +1,5 @@
-import { Collection } from 'discord.js';
-import { Snowflake } from 'discord.js';
-import { TextChannel } from 'discord.js';
-import { Client, Event } from '../util';
+import { Collection, Snowflake, TextChannel } from 'discord.js';
+import { Challenge, Client, Event } from '../util';
 
 const ora = require('ora');
 const chalk = require('chalk')
@@ -62,6 +60,7 @@ export default class ReadyEvent extends Event {
   }
 
   public async main(): Promise<void> {
+    this.client.challenge = new Challenge(this.client);
     spinner.succeed("GrantBot pre initialisation has completed.") 
     spinner.start("Binding channels.")
     // add channels to logger

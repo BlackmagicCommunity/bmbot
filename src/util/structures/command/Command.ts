@@ -110,7 +110,7 @@ export class Command {
     return embed;
   }
 
-  public handleCommand(runArguments: RunArgumentsOptions): any {
+  public async handleCommand(runArguments: RunArgumentsOptions): Promise<any> {
     if (runArguments.message.command.disabled) return;
     if (!runArguments.message.command.hasPermission(runArguments.message)) return runArguments.message.react('❌');
 
@@ -130,8 +130,8 @@ export class Command {
       return runArguments.message.channel.send(this.helpMessage(runArguments.message));
 
     this.usageCount++;
-    this.main(runArguments);
     if (this.deletable && runArguments.message.deletable) runArguments.message.delete();
+    return await this.main(runArguments);
   }
 
   public main(runArguments: RunArgumentsOptions): any {
