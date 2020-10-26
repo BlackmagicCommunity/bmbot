@@ -32,11 +32,10 @@ export default class FinishChallengeCommand extends Command {
 
       if (!['yes', 'y', 't', 'true', 'go', 'start'].includes(res.content)) {
         const winners = await this.client.challenge.findWinners(this.client.challenge.options.message, new Collection());
-        message.reply(
-          `Winner(s) is/are ${winners.map((w) => `\`${w.author.tag}\` (${w.author.id})`).join(', ')} with ${winners
+        if (!winners) return 'Nobody won.';
+        return `Winner(s) is/are ${winners.map((w) => `\`${w.author.tag}\` (${w.author.id})`).join(', ')} with ${winners
             .first()
-            .reactions.cache.get(this.client.settings.emotes.challengeVote)} votes`
-        );
+            .reactions.cache.get(this.client.settings.emotes.challengeVote).count} votes`;
       } else {
         await this.client.challenge.announceResults();
         return 'Posted!';

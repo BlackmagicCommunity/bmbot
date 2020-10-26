@@ -26,7 +26,7 @@ export default {
     levelUp: "Congratulations %mention%! You're now level %level%.",
     raidKickMessage: 'You have been automatically kicked from Blackmagic Community since the server is in lockdown. Try again later.',
     challengeVoting: 'Voting phase has begun! React with :thumbsup: or :thumbsdown: to your favourite!',
-    challengeStart: 'This challenge is titled `%title`. We want stuff that meets the `%topic%` topic\n\n%desc%\n\nRemember - have fun!',
+    challengeStart: 'This challenge is titled `%title%`. We want stuff that meets the `%topic%` topic\n\n%desc%\n\nRemember - have fun!',
     challengeWinner:
       '**%title%** (%topic%) challenge voting phase has ended and the winner is (drumroll please)....\n\n%mention% with %votes% votes!!!!\nCheck out what they made by clicking on %messageLink%!', // %messageLink% is replaced with [here](url)
     challengeWinners:

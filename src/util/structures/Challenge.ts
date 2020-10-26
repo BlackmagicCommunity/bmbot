@@ -1,5 +1,5 @@
 import { CronJob } from 'cron';
-import { Collection, Message, MessageEmbed, Snowflake, TextChannel } from 'discord.js';
+import { Collection, Message, MessageEmbed, Snowflake, TextChannel, MessageAttachment } from 'discord.js';
 import { Client } from '../core/Client';
 import { ChallengeOptions } from '../typings/typings';
 
@@ -19,7 +19,11 @@ export class Challenge {
       this.channel = c;
 
       this.channel.guild.fetchData().then((g) => {
-        if (!g.data) return;
+        if (!g.data) {
+          this.ready = true;
+          return;
+        }
+        
         const { challDesc, challMessage, challTitle, challTopic } = g.data;
         this.options = {
           description: challDesc,
@@ -82,8 +86,9 @@ export class Challenge {
 
     // TODO: generate image
     const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
-
     const m = await this.channel.send(`Calling all ${this.role}, there's a new channel in town!`, embed);
+    
+    this.options = { description, message: m, title, topic }
     await this.channel.guild.commitData({ challDesc: description, challMessage: m.id, challTitle: title, challTopic: topic });
     await this.channel.setName(`${topic.split(' ').join('-')}-challenge`, 'Challenges - Create challenge');
     await this.channel.overwritePermissions(
@@ -123,7 +128,7 @@ export class Challenge {
     await rec(this.options.message.id);
 
     // Announce voting
-    await this.channel.send(`${this.role}> ${this.client.settings.messages.challengeVoting}`);
+    await this.channel.send(`${this.role} ${this.client.settings.messages.challengeVoting}`);
   }
 
   public async findWinners(after: Message, max: Collection<Snowflake, Message>): Promise<Collection<Snowflake, Message>> {
@@ -146,19 +151,22 @@ export class Challenge {
   public async announceResults() {
     await this.waitUntilReady();
 
-    const channel = (await this.client.channels.fetch(this.client.settings.channels.challenges)) as TextChannel;
     const winnersChannel = (await this.client.channels.fetch(this.client.settings.channels.challengeWinners)) as TextChannel;
 
     const winners = await this.findWinners(this.options.message, new Collection());
 
     let message = this.client.settings.messages.challengeWinner;
+    let msgAttachment: MessageAttachment;
     if (winners.size === 1) {
-      message
+      message = message
         .replace(/%title%/g, this.options.title)
         .replace(/%topic%/g, this.options.topic)
         .replace(/%mention%/g, winners.first().author.toString())
         .replace(/%messageLink%/g, `[here](${winners.first().url})`)
         .replace(/%votes%/g, this.reactionCountFromMessage(winners.first()).toString());
+
+      const { attachments } = winners.first();
+      if (attachments.size) msgAttachment = attachments.find(a => a.size <= 8e9);
     } else {
       message = this.client.settings.messages.challengeWinners
         .replace(/%title%/g, this.options.title)
@@ -168,9 +176,15 @@ export class Challenge {
         .replace(/%votes%/g, this.reactionCountFromMessage(winners.first()).toString());
     }
 
-    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
+    const embed = new MessageEmbed()
+    .setColor(this.client.settings.colors.info)
+    .setDescription(message);
+
+    if (msgAttachment) {
+      embed.setImage(`attachment://${msgAttachment.name}`);
+      embed.attachFiles([ msgAttachment ]);
+    }
 
     winnersChannel.send(embed);
-    channel.send(`Hey ${this.role}! Join me as I unveil this challenge's ${winners.size === 1 ? 'winner' : 'winners'}`, embed);
   }
 }
