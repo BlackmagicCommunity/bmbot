@@ -15,7 +15,6 @@ export default class MemberAddEvent extends Event {
   private async kickMember(member: GuildMember) {
     try {
       await member.send(this.client.settings.raid.kickMessage);
-    } catch {
     } finally {
       // dms closed or something
       if (member)
