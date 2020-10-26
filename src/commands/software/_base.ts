@@ -13,7 +13,7 @@ function formatDownloads(downloads: DownloadsObject) {
 }
 
 export class BaseVersionLookup extends Command {
-  software: keyof WebCrawlerData;
+  public software: keyof WebCrawlerData;
 
   constructor(client: Client, software: keyof WebCrawlerData) {
     super(client, {
@@ -31,7 +31,7 @@ export class BaseVersionLookup extends Command {
 
   public async main({ msg, args }: RunArgumentsOptions) {
     const data = (await getData())[this.software];
-    const version = args[0] ?? data.latest;
+    const version = args.join(' ') ?? data.latest;
 
     if (version === 'list-all') {
       msg.channel.send(data.versions.map((y) => y.version).join(' / '));

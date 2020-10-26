@@ -1,5 +1,6 @@
-import { Client as client, ClientOptions as clientOptions, Collection, Invite, BaseClient } from 'discord.js';
+import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
 import path from 'path';
+import settings from '../../settings';
 import { Database } from '../database';
 import { CommandStore } from '../stores/CommandStore';
 import { EventStore } from '../stores/EventStore';
@@ -7,7 +8,6 @@ import { Logger } from '../structures/Logger';
 import { ClientUtil } from '../utils/ClientUtil';
 import CommandLoader from './loaders/CommandLoader';
 import EventLoader from './loaders/EventLoader';
-import ExtensionsLoader from './loaders/ExtensionsLoader';
 
 interface ClientOptions extends clientOptions {
   codeBaseDir: string;
@@ -22,6 +22,7 @@ export class Client extends client {
   public logger = new Logger(this);
   public codeBaseDir: string;
   public database: Database = new Database(this);
+  public settings = settings;
 
   constructor(clientOptions: ClientOptions) {
     super(clientOptions);
@@ -29,7 +30,6 @@ export class Client extends client {
   }
 
   public start(): void {
-    ExtensionsLoader(this, path.join(__dirname, '../extensions'));
     CommandLoader(this, path.join(this.codeBaseDir, 'commands'));
     EventLoader(this, path.join(this.codeBaseDir, 'events'));
     super.login(process.env.TOKEN);

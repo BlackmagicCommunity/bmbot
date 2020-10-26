@@ -15,15 +15,13 @@
         "class-name": true,
         "comment-format": [true, "check-space"],
         "import-spacing": true,
-        "interface-name": [true, "never-prefix"],
         "interface-over-type-literal": true,
         "label-position": true,
-        "member-access": false,
         "member-ordering": [
-        true,
-        {
-            "order": ["static-field", "instance-field", "static-method", "instance-method"]
-        }
+            true,
+            {
+                "order": ["static-field", "instance-field", "static-method", "instance-method"]
+            }
         ],
         "no-arg": true,
         "no-bitwise": true,

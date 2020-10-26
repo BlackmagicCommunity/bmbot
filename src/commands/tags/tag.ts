@@ -5,14 +5,14 @@ export default class CreateTagCommand extends Command {
     super(client, {
       help: 'Replies with the tag content.',
       arguments: [{ name: 'name', type: 'string', required: true }],
+      deletable: true,
     });
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    const tag = await this.client.database.tags.getTag(args[0]);
+    const tag = await this.client.database.tags.getTag(args.join(' '));
     if (!tag) return msg.react('❓');
-    
+
     msg.channel.send(tag.reply);
-    if(msg.deletable) msg.delete(); // delete if replied
   }
 }

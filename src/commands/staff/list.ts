@@ -53,6 +53,6 @@ export default class EvalCommand extends Command {
     </body>
     </html>`;
 
-    msg.channel.send('Here is the Member List', new MessageAttachment(new Buffer(file), 'user_list.html'));
+    msg.channel.send('Here is the Member List', new MessageAttachment(Buffer.from(file), 'user_list.html'));
   }
 }

@@ -3,12 +3,10 @@ import { Client, Event } from '../util';
 
 export default class GuildBanRemoveEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  main(guild: Guild, user: User): any {
+  public main(guild: Guild, user: User): any {
     setTimeout(async () => {
       // get reason + mod from audit logs, needs time
       let { entries } = await guild.fetchAuditLogs({ type: 'MEMBER_BAN_REMOVE' });

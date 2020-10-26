@@ -1,24 +1,4 @@
-import {
-  Guild,
-  Message as message,
-  PermissionString,
-  Role,
-  Snowflake,
-  TextChannel,
-  User,
-} from 'discord.js';
-import { Client } from '../core/Client';
-import { Command } from '../structures/command/Command';
-
-export interface EventOptions {
-  disabled?: boolean;
-}
-
-export interface Message extends message {
-  prefix: string;
-  command: Command;
-  client: Client;
-}
+import { Guild, Message, PermissionString, TextChannel, User } from 'discord.js';
 
 export interface CommandOptions {
   aliases?: string[];
@@ -65,8 +45,16 @@ export interface ConfigChannels {
   rules?: TextChannel;
 }
 
-export interface LevelRow {
-  user_id: Snowflake;
-  xp: number;
-  message_count: number;
+export interface UserData {
+  id?: string;
+  msgCount: number;
+  totalXp: number;
+  currentXp: number;
+  level: number;
+}
+
+export interface IRoleData {
+  id: string;
+  single: boolean | number;
+  level: number;
 }

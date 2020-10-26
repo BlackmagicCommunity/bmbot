@@ -1,5 +1,5 @@
 import { inspect } from 'util';
-import { Client, Command, Message, RunArgumentsOptions } from '../../util';
+import { Client, Command, RunArgumentsOptions } from '../../util';
 
 const evalGlobals = ['discord.js'].map(require);
 

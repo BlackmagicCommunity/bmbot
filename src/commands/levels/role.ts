@@ -1,4 +1,4 @@
-import { Client, Command, RunArgumentsOptions, LevelRole } from '../../util';
+import { Client, Command, RunArgumentsOptions } from '../../util';
 
 export default class RoleCommand extends Command {
   constructor(client: Client) {
@@ -20,11 +20,7 @@ export default class RoleCommand extends Command {
     if (isNaN(level)) return msg.channel.send(":x: That's not a number.");
     const single = args[2] && ['y', 'yes', 't', 'true'].includes(args[2]);
 
-    const roleLevel = new LevelRole(role.id);
-    roleLevel.level = level;
-    roleLevel.single = single;
-
-    await this.client.database.levels.updateRole(roleLevel);
+    await role.commitData({ id: role.id, level, single });
 
     msg.channel.send(`Role \`${role.name}\` is now achieved at level \`${level}\`.\nIt ${single ? 'is' : "isn't"} single.`);
   }

@@ -3,12 +3,10 @@ import { Client, Event } from '../util';
 
 export default class InviteCreateEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  main(invite: Invite): any {
+  public main(invite: Invite): any {
     // add invite to cached invites
     this.client.invites.get(invite.guild.id).set(invite.code, invite);
   }

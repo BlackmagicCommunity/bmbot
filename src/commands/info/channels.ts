@@ -20,7 +20,7 @@ export default class ChannelsCommand extends Command {
   }
 
   public async main({ msg, guild, args }: RunArgumentsOptions) {
-    const embed: MessageEmbed = new MessageEmbed().setColor(process.env.DEFAULTCOLOR);
+    const embed = new MessageEmbed().setColor(this.client.settings.colors.info);
 
     if (args.length === 0) {
       embed.setTitle(`${guild.name} - Channels`);

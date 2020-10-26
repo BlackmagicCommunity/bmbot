@@ -9,7 +9,7 @@ export default class CreateTagCommand extends Command {
       arguments: [
         { name: 'name', type: 'string', required: true },
         { name: 'reply', type: 'string', required: true },
-        { name: 'description', type: 'string', required: true }
+        { name: 'description', type: 'string', required: true },
       ],
     });
   }

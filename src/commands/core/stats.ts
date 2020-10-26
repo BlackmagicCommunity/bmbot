@@ -61,7 +61,7 @@ export default class StatsCommand extends Command {
     const embed: MessageEmbed = new MessageEmbed()
       .setDescription(description)
       .setTitle(`${this.client.user.username}'s statistics`)
-      .setColor(process.env.DEFAULTCOLOR)
+      .setColor(this.client.settings.colors.info)
       .addField('System Usage', systemUsage, true)
       .addField('Source', `[Github Repository](${homepage})`, true)
       .addField('Version', version, true)

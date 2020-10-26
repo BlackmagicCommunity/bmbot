@@ -1,26 +1,71 @@
-import { GuildMember, MessageEmbed, TextChannel } from 'discord.js';
+import { Collection, GuildMember, MessageEmbed, Snowflake, TextChannel, VerificationLevel } from 'discord.js';
 import { Client, Event } from '../util';
 
 const hasPermission = (channel: TextChannel): boolean => channel.permissionsFor(channel.guild.id).has('VIEW_CHANNEL');
 
 export default class MemberAddEvent extends Event {
   constructor(client: Client) {
-    super(client, {
-      disabled: false,
-    });
+    super(client);
   }
 
-  async main(member: GuildMember): Promise<any> {
-    try {
-      this.client.logger.join(member);
-      const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
-      await channel
-        .send(
-          `${member}, welcome to the ${member.guild.name}! Please read <#${process.env.RULES_CHANNEL}> and assign yourself <#${process.env.ROLES_CHANNEL}>.\nType \`${this.client.prefixes[0]} help\` to learn how to use me, and \`${this.client.prefixes[0]} channels\` to get a quick introduction.`
-        )
-        .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
+  private cachedEmbed: MessageEmbed = null;
+  private raidMembersCache = new Collection<Snowflake, number>();
+  private isBeingRaided = false;
 
-      const embed: MessageEmbed = new MessageEmbed()
+  private async kickMember(member: GuildMember) {
+    try {
+      await member.send(this.client.settings.raid.kickMessage);
+    } finally {
+      // dms closed or something
+      if (member)
+        await member.kick(
+          `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+        );
+    }
+  }
+
+  private async handleRaid(member: GuildMember) {
+    const now = Date.now();
+    // remove all old members who joined more than x seconds ago
+    this.raidMembersCache.set(member.id, now);
+    // count how many joins in latest x seconds
+    const members = this.raidMembersCache.filter((v) => now - v <= this.client.settings.raid.threshold);
+    const { guild } = member;
+    if (members.size >= this.client.settings.raid.threshold) {
+      if (!this.isBeingRaided) {
+        // set lockdown
+        if (guild.me.hasPermission('MANAGE_GUILD')) {
+          await guild.setVerificationLevel(
+            this.client.settings.raid.raidVerificationLevel as VerificationLevel,
+            `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+          );
+          this.client.setTimeout(() => {
+            guild.setVerificationLevel(
+              this.client.settings.raid.okVerificationLevel as VerificationLevel,
+              `AntiRaid - ${this.client.settings.raid.threshold} joins in ${this.client.settings.raid.memberJoinInterval / 1000} seconds.`
+            );
+          }, this.client.settings.raid.okWait);
+
+          if (guild.me.hasPermission('KICK_MEMBERS')) {
+            members.forEach(async (v, k) => {
+              this.kickMember(await guild.member(k));
+            });
+          }
+        }
+      } else this.kickMember(member);
+    }
+  }
+
+  private async handleMessages(member: GuildMember) {
+    const channel = this.client.channels.cache.get(process.env.WELCOME_CHANNEL) as TextChannel;
+    await channel
+      .send(
+        `${member}, welcome to the ${member.guild.name}! Please read <#${process.env.RULES_CHANNEL}> and assign yourself <#${process.env.ROLES_CHANNEL}>.\nType \`${this.client.settings.prefix} help\` to learn how to use me, and \`${this.client.settings.prefix} channels\` to get a quick introduction.`
+      )
+      .then((m) => m.delete({ timeout: 5 * 60 * 1000, reason: 'Automatic removal of welcome message.' }));
+
+    if (!this.cachedEmbed) {
+      this.cachedEmbed = new MessageEmbed()
         .setColor(process.env.DEFAULTCOLOR)
         .setTitle('Blackmagic Community')
         .setDescription("Welcome to the Blackmagic Community Discord! Here's an overview of all channels:");
@@ -28,7 +73,7 @@ export default class MemberAddEvent extends Event {
       const channels = member.guild.channels.cache.filter((e) => e.type === 'text').array() as TextChannel[];
       for (const channel of channels) {
         if (hasPermission(channel))
-          embed.addField(
+          this.cachedEmbed.addField(
             channel.name,
             `${channel.topic ? channel.topic + '\n' : ''}[Take me there!](https://discordapp.com/channels/${member.guild.id}/${channel.id}/${
               channel.lastMessageID
@@ -36,12 +81,16 @@ export default class MemberAddEvent extends Event {
             true
           );
       }
-
-      await member.send(embed);
-    } catch {
-      // user has dms off
     }
 
-    return;
+    try {
+      await member.send(this.cachedEmbed);
+    } catch {}
+  }
+
+  public async main(member: GuildMember): Promise<void> {
+    this.client.logger.join(member);
+    await this.handleRaid(member);
+    await this.handleMessages(member);
   }
 }
