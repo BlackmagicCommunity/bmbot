@@ -3,6 +3,12 @@ import { Snowflake } from 'discord.js';
 import { TextChannel } from 'discord.js';
 import { Client, Event } from '../util';
 
+const ora = require('ora');
+const chalk = require('chalk')
+
+const spinner = ora("GrantBot pre initialisation has started...").start();
+
+
 export let roleList: Collection<Snowflake, Collection<string, Snowflake>> = new Collection();
 
 export const emojiRgx = /[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]/gu;
@@ -56,11 +62,14 @@ export default class ReadyEvent extends Event {
   }
 
   public async main(): Promise<void> {
+    spinner.succeed("GrantBot pre initialisation has completed.") 
+    spinner.start("Binding channels.")
     // add channels to logger
     this.client.logger.channels.joins = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
     this.client.logger.channels.infractions = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
     this.client.logger.channels.messages = await this.client.channels.fetch(this.client.settings.channels.logMessages).catch((_) => null);
-
+    spinner.succeed("Binding Complete.")
+    spinner.start("Getting All Invites & Adding them to DB.")
     // get all invites
     this.client.guilds.cache.forEach((guild) => {
       if (guild.me.permissions.has('MANAGE_MESSAGES')) {
@@ -69,7 +78,8 @@ export default class ReadyEvent extends Event {
         });
       }
     });
-
+    spinner.succeed("All invites where grabed.")
+    spinner.start("Running StartupClean")
     // clean rules channel
     const rulesChannel = (await this.client.channels.fetch(this.client.settings.channels.rules)) as TextChannel;
     if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
@@ -78,10 +88,14 @@ export default class ReadyEvent extends Event {
         if (m.author.bot) m.delete({ reason: 'WelcomeMessages - Startup Clean' });
       });
     }
+    spinner.succeed("StartupClean Completed.")
+    spinner.start("Awaiting cacheRoles() to finsh..")
 
-    cacheRoles(this.client, true);
+    await cacheRoles(this.client, true);
 
-    console.log(`Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`);
+    spinner.succeed("Roles Cached Sucesssfuly.")
+    console.log(chalk.green("[INFO] Bot initialisation complete. Displying Start Message..."))
+    console.log(chalk.green(`[INFO] Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`));
     return;
   }
 }
