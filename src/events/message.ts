@@ -65,10 +65,9 @@ export default class MessageEvent extends Event {
 
     if (!message.editedAt) await this.handleLeveling(message);
 
-    const commandPrefix = this.client.settings.prefix;
-    const prefix = new RegExp(`<@!?${this.client.user.id}> |^${this.regExpEsc(commandPrefix)}`).exec(message.content);
+    const prefix = new RegExp(`${this.client.prefixes.join('|')}`).exec(message.content);
     if (!prefix) return;
-    message.prefix = commandPrefix;
+    message.prefix = prefix[0];
     const args = message.content
       .slice(prefix[0].length)
       .trim()
@@ -76,9 +75,16 @@ export default class MessageEvent extends Event {
       .map((a: string) => {
         if (a[0] === '"' && a[a.length - 1]) return a.slice(1, -1);
         return a;
-      }) as string[];
-    const command = this.client.commands.get(args.shift().toLowerCase());
-    if (!command) return;
+      });
+    const cmd = args.shift().toLowerCase();
+    const command = this.client.commands.get(cmd);
+    // handle tag
+    if (!command) {
+      const tag = await this.client.database.tags.getTag(cmd);
+      if(!tag) return;
+      return message.channel.send(tag.reply);
+    }
+
     message.command = command;
     const commandArguments = RunArguments(message, args);
     try {
@@ -87,9 +93,5 @@ export default class MessageEvent extends Event {
     } catch (e) {
       console.log(e);
     }
-  }
-
-  private regExpEsc(str: string) {
-    return str.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
   }
 }
