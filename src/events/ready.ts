@@ -1,11 +1,9 @@
 import { Collection, Snowflake, TextChannel } from 'discord.js';
 import { Challenge, Client, Event } from '../util';
-
-const ora = require('ora');
-const chalk = require('chalk')
+import ora from 'ora';
+import chalk from 'chalk';
 
 const spinner = ora("GrantBot pre initialisation has started...").start();
-
 
 export let roleList: Collection<Snowflake, Collection<string, Snowflake>> = new Collection();
 

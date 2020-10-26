@@ -19,6 +19,7 @@ export class Challenge {
       this.channel = c;
 
       this.channel.guild.fetchData().then((g) => {
+        if (!g.data) return;
         const { challDesc, challMessage, challTitle, challTopic } = g.data;
         this.options = {
           description: challDesc,

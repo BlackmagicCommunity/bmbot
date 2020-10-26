@@ -14,7 +14,6 @@ interface ClientOptions extends clientOptions {
 }
 
 export class Client extends client {
-  public readonly prefixes = JSON.parse(process.env.PREFIX) as string[];
   public commands = new CommandStore();
   public events = new EventStore();
   public util = new ClientUtil(this);

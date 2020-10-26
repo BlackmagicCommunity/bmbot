@@ -33,7 +33,7 @@ export default {
       '**%title%** (%topic%) challenge voting phase has ended and we got a... tie!!! The winners are (drumroll please).... \n\n%mentions% with %votes% votes!!!!\nCheck out what they made by clicking on %messageLinks%!', // %messageLinks% is replaced with [Username#discrim](url), [Username#discrim](url2)
   },
   owner: '131857875973701633',
-  prefix: '&',
+  prefixes: ['&', '!bmd '],
   raid: {
     memberJoinInterval: 10000, // in ms
     okWait: 1200000, // in ms
