@@ -23,7 +23,7 @@ export default class PingCommand extends Command {
 
   public main({ msg }: RunArgumentsOptions) {
     msg.channel.send(
-      `${responses[Math.floor(Math.random() * responses.length)]}.\nMath: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${
+      `${responses[Math.floor(Math.random() * responses.length)]}.\nTime taken: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${
         this.client.ws.ping
       }ms.`
     );

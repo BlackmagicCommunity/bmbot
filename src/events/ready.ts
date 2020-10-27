@@ -13,8 +13,10 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
   const rolesChannel = (await client.channels.fetch(client.settings.channels.roles)) as TextChannel;
   const guildRoles = (await rolesChannel.guild.roles.fetch()).cache;
   const rolesMessages = await rolesChannel.messages.fetch();
+
   await rolesMessages.forEach((m) => {
     roleList.set(m.id, new Collection());
+
     // add roles to roleList
     const content = m.content.split('\n');
     content.forEach((a) => {
@@ -30,22 +32,22 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
 
     // sync
     if (sync && rolesChannel.permissionsFor(client.user).has('MANAGE_ROLES')) {
-      m.reactions.cache.forEach(async (rs) => {
-        const users = await rs.users.fetch();
-        const r = roleList.get(m.id).get(rs.emoji.name);
+      m.reactions.cache.forEach(async (reaction) => {
+        const users = await reaction.users.fetch();
+        const roleId = roleList.get(m.id).get(reaction.emoji.name);
 
         // add role to members that don't have the role
         if (users)
-          users.forEach((u) => {
-            const member = m.guild.member(u.id);
-            if (!member) return rs.users.remove(u.id);
-            member.roles.add(r, 'ReactionRoles - Startup Sync');
+          users.forEach(async (user) => {
+            const member = await m.guild.members.fetch(user.id);
+            if (!member) return reaction.users.remove(user.id);
+            member.roles.add(roleId, 'ReactionRoles - Startup Sync');
           });
 
         // remove from members that un-reacted
-        const role = guildRoles.get(r);
+        const role = guildRoles.get(roleId);
         role.members.forEach((u) => {
-          if (!users.has(u.id)) u.roles.remove(r, 'ReactionRoles - Startup Sync');
+          if (!users.has(u.id)) u.roles.remove(roleId, 'ReactionRoles - Startup Sync');
         });
       });
     }

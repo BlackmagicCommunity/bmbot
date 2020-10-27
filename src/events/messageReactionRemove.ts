@@ -14,7 +14,7 @@ export default class ReactionRemoveEvent extends Event {
     if (reaction.message.channel.id !== this.client.settings.channels.roles) return; // it's not a reaction from the gettable list
     const rID = roleList.get(reaction.message.id).get(reaction.emoji.name);
     if (!rID) return;
-    const member = reaction.message.guild.member(user.id);
+    const member = await reaction.message.guild.members.fetch(user.id);
     await member.roles.remove(rID, 'ReactionRoles - User un-reacted.');
   }
 }
