@@ -1,5 +1,6 @@
 import { config as DotEnvConfig } from 'dotenv';
 import { Client } from './util';
+import { Intents } from 'discord.js';
 
 DotEnvConfig();
 
@@ -13,6 +14,9 @@ import './util/extensions/User';
 getData().then((data) => {
   new Client({
     partials: ['REACTION'],
+    ws: {
+      intents: Intents.ALL
+    },
     disableMentions: 'everyone',
     presence: {
       activity: { name: `DaVinci Resolve ${data.resolve.latest}`, type: 'PLAYING' },

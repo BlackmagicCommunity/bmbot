@@ -70,7 +70,7 @@ export default class ReadyEvent extends Event {
     spinner.succeed("Binding Complete.")
     spinner.start("Getting All Invites & Adding them to DB.")
     // get all invites
-    this.client.guilds.cache.forEach((guild) => {
+    this.client.guilds.cache.forEach(async (guild) => {
       if (guild.me.permissions.has('MANAGE_MESSAGES')) {
         guild.fetchInvites().then((invites) => {
           this.client.invites.set(guild.id, invites);

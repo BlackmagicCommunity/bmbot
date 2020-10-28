@@ -70,6 +70,7 @@ export class Logger {
         .addField('Channel', `${message.first().channel}`)
         .attachFiles([new MessageAttachment(Buffer.from(file), 'message_list.html')]);
     } else {
+      if (!message.guild) return; // don't want it from dms
       if (message.content) embed.setDescription(message.cleanContent);
       if (otherData instanceof Message && otherData.content)
         embed.addField('Old Content', otherData.content.length > 1024 ? `${otherData.content.substring(0, 1021)}...` : otherData.content);
