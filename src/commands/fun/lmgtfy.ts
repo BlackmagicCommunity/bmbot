@@ -42,7 +42,7 @@ export default class LMGTFYCommand extends Command {
 
     const uri = query.map(encodeURIComponent).join('+');
     msg.channel.send(
-      `We're happy to help you on questions that are not easy to google. But you can literally google your message.\n<https://lmgtfy.com/?q=${uri}>`
+      `We're happy to help you on questions that are not easy to google.\n<https://lmgtfy.com/?q=${uri}>`
     );
   }
 }
