@@ -68,11 +68,12 @@ export default class MessageEvent extends Event {
     const prefix = new RegExp(`^${this.client.settings.prefixes.join('|^')}`).exec(message.content);
     if (!prefix) return;
     message.prefix = prefix[0];
-    const args = message.content
+    const matched = message.content
       .slice(prefix[0].length)
       .trim()
-      .match(/("[^"]*")|[^ ]+/g)
-      .map((a: string) => {
+      .match(/("[^"]*")|[^ ]+/g);
+    if (!matched) return;
+    const args = matched.map((a: string) => {
         if (a[0] === '"' && a[a.length - 1]) return a.slice(1, -1);
         return a;
       });
