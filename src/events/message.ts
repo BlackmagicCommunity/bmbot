@@ -65,7 +65,7 @@ export default class MessageEvent extends Event {
 
     if (!message.editedAt) await this.handleLeveling(message);
 
-    const prefix = new RegExp(`${this.client.settings.prefixes.join('|')}`).exec(message.content);
+    const prefix = new RegExp(`^${this.client.settings.prefixes.join('|^')}`).exec(message.content);
     if (!prefix) return;
     message.prefix = prefix[0];
     const args = message.content

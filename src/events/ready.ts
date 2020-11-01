@@ -35,6 +35,10 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
       m.reactions.cache.forEach(async (reaction) => {
         const users = await reaction.users.fetch();
         const roleId = roleList.get(m.id).get(reaction.emoji.name);
+        if (!roleId) {
+          console.log(chalk.bgRed('Reaction Roles:'), 'A role is invalid. Check roles channel.')
+          return;
+        }
 
         // add role to members that don't have the role
         if (users)
