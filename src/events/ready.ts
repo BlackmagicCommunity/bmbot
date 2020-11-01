@@ -40,18 +40,21 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
           return;
         }
 
+        const reverse = client.settings.roles.inverse.includes(roleId);
+
         // add role to members that don't have the role
         if (users)
           users.forEach(async (user) => {
             const member = await m.guild.members.fetch(user.id);
             if (!member) return reaction.users.remove(user.id);
-            member.roles.add(roleId, 'ReactionRoles - Startup Sync');
+            if (reverse) member.roles.remove(roleId, 'ReactionRoles - Startup Sync');
+            else member.roles.add(roleId, 'ReactionRoles - Startup Sync');
           });
 
         // remove from members that un-reacted
         const role = guildRoles.get(roleId);
         role.members.forEach((u) => {
-          if (!users.has(u.id)) u.roles.remove(roleId, 'ReactionRoles - Startup Sync');
+          if (!users.has(u.id) && !reverse) u.roles.remove(roleId, 'ReactionRoles - Startup Sync');
         });
       });
     }
