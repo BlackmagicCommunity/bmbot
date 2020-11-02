@@ -1,5 +1,6 @@
+import chalk from 'chalk';
 import { CronJob } from 'cron';
-import { Collection, Message, MessageEmbed, Snowflake, TextChannel, MessageAttachment } from 'discord.js';
+import { Collection, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel } from 'discord.js';
 import { Client } from '../core/Client';
 import { ChallengeOptions } from '../typings/typings';
 
@@ -23,7 +24,7 @@ export class Challenge {
           this.ready = true;
           return;
         }
-        
+
         const { challDesc, challMessage, challTitle, challTopic } = g.data;
         this.options = {
           description: challDesc,
@@ -76,7 +77,7 @@ export class Challenge {
     }
   }
 
-  public async create({ title, topic, description }: ChallengeOptions) {
+  public async create({ author, title, topic, assets, description }: ChallengeOptions) {
     await this.waitUntilReady();
 
     const message = this.client.settings.messages.challengeStart
@@ -86,9 +87,17 @@ export class Challenge {
 
     // TODO: generate image
     const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
-    const m = await this.channel.send(`Calling all ${this.role}, there's a new channel in town!`, embed);
-    
-    this.options = { description, message: m, title, topic }
+    const m = await this.channel.send(`${author || this.client.user}, the all mighty, is summoning ${this.role} for a new challenge!`, embed);
+
+    if (assets && assets.length) {
+      try {
+        await this.channel.send('Here are the assets:', { files: assets });
+      } catch (err) {
+        this.client.logger.error('Challenge Create', `${err.message} - this is likely caused because attachments are too large.`);
+      }
+    }
+
+    this.options = { description, message: m, title, topic };
     await this.channel.guild.commitData({ challDesc: description, challMessage: m.id, challTitle: title, challTopic: topic });
     await this.channel.setName(`${topic.split(' ').join('-')}-challenge`, 'Challenges - Create challenge');
     await this.channel.overwritePermissions(
@@ -166,7 +175,7 @@ export class Challenge {
         .replace(/%votes%/g, this.reactionCountFromMessage(winners.first()).toString());
 
       const { attachments } = winners.first();
-      if (attachments.size) msgAttachment = attachments.find(a => a.size <= 8e9);
+      if (attachments.size) msgAttachment = attachments.find((a) => a.size <= 8e9);
     } else {
       message = this.client.settings.messages.challengeWinners
         .replace(/%title%/g, this.options.title)
@@ -176,13 +185,11 @@ export class Challenge {
         .replace(/%votes%/g, this.reactionCountFromMessage(winners.first()).toString());
     }
 
-    const embed = new MessageEmbed()
-    .setColor(this.client.settings.colors.info)
-    .setDescription(message);
+    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
 
     if (msgAttachment) {
       embed.setImage(`attachment://${msgAttachment.name}`);
-      embed.attachFiles([ msgAttachment ]);
+      embed.attachFiles([msgAttachment]);
     }
 
     winnersChannel.send(embed);

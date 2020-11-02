@@ -1,9 +1,9 @@
-import { Collection, Snowflake, TextChannel } from 'discord.js';
-import { Challenge, Client, Event } from '../util';
-import ora from 'ora';
 import chalk from 'chalk';
+import { Collection, Snowflake, TextChannel } from 'discord.js';
+import ora from 'ora';
+import { Challenge, Client, Event } from '../util';
 
-const spinner = ora("GrantBot pre initialisation has started...").start();
+const spinner = ora('GrantBot pre initialisation has started...').start();
 
 export let roleList: Collection<Snowflake, Collection<string, Snowflake>> = new Collection();
 
@@ -36,7 +36,7 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
         const users = await reaction.users.fetch();
         const roleId = roleList.get(m.id).get(reaction.emoji.name);
         if (!roleId) {
-          console.log(chalk.bgRed('Reaction Roles:'), 'A role is invalid. Check roles channel.')
+          console.log(chalk.bgRed('Reaction Roles:'), 'A role is invalid. Check roles channel.');
           return;
         }
 
@@ -68,14 +68,12 @@ export default class ReadyEvent extends Event {
 
   public async main(): Promise<void> {
     this.client.challenge = new Challenge(this.client);
-    spinner.succeed("GrantBot pre initialisation has completed.") 
-    spinner.start("Binding channels.")
+    spinner.succeed('GrantBot pre initialisation has completed.');
+    spinner.start('Binding channels.');
     // add channels to logger
-    this.client.logger.channels.joins = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
-    this.client.logger.channels.infractions = await this.client.channels.fetch(this.client.settings.channels.logJoins).catch((_) => null);
-    this.client.logger.channels.messages = await this.client.channels.fetch(this.client.settings.channels.logMessages).catch((_) => null);
-    spinner.succeed("Binding Complete.")
-    spinner.start("Getting All Invites & Adding them to DB.")
+    this.client.logger.channel = await this.client.channels.fetch(this.client.settings.channels.logs).catch((_) => null);
+    spinner.succeed('Binding Complete.');
+    spinner.start('Getting All Invites & Adding them to DB.');
     // get all invites
     this.client.guilds.cache.forEach(async (guild) => {
       if (guild.me.permissions.has('MANAGE_MESSAGES')) {
@@ -84,8 +82,8 @@ export default class ReadyEvent extends Event {
         });
       }
     });
-    spinner.succeed("All invites where grabed.")
-    spinner.start("Running StartupClean")
+    spinner.succeed('All invites where grabed.');
+    spinner.start('Running StartupClean');
     // clean rules channel
     const rulesChannel = (await this.client.channels.fetch(this.client.settings.channels.rules)) as TextChannel;
     if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
@@ -94,13 +92,13 @@ export default class ReadyEvent extends Event {
         if (m.author.bot) m.delete({ reason: 'WelcomeMessages - Startup Clean' });
       });
     }
-    spinner.succeed("StartupClean Completed.")
-    spinner.start("Awaiting cacheRoles() to finsh..")
+    spinner.succeed('StartupClean Completed.');
+    spinner.start('Awaiting cacheRoles() to finsh..');
 
     await cacheRoles(this.client, true);
 
-    spinner.succeed("Roles Cached Sucesssfuly.")
-    console.log(chalk.green("[INFO] Bot initialisation complete. Displying Start Message..."))
+    spinner.succeed('Roles Cached Sucesssfuly.');
+    console.log(chalk.green('[INFO] Bot initialisation complete. Displying Start Message...'));
     console.log(chalk.green(`[INFO] Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`));
     return;
   }

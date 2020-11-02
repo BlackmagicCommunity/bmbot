@@ -74,15 +74,15 @@ export default class MessageEvent extends Event {
       .match(/("[^"]*")|[^ ]+/g);
     if (!matched) return;
     const args = matched.map((a: string) => {
-        if (a[0] === '"' && a[a.length - 1]) return a.slice(1, -1);
-        return a;
-      });
+      if (a[0] === '"' && a[a.length - 1]) return a.slice(1, -1);
+      return a;
+    });
     const cmd = args.shift().toLowerCase();
     const command = this.client.commands.get(cmd);
     // handle tag
     if (!command) {
       const tag = await this.client.database.tags.getTag(cmd);
-      if(!tag) return;
+      if (!tag) return;
       return message.channel.send(tag.reply);
     }
 
@@ -91,8 +91,8 @@ export default class MessageEvent extends Event {
     try {
       const res = await command.handleCommand(commandArguments);
       if (typeof res === 'string' || res instanceof MessageEmbed) message.channel.send(res);
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      this.client.logger.error('Message Event', err.message);
     }
   }
 }

@@ -47,9 +47,9 @@ export default class StartChallengeCommand extends Command {
       if (!['yes', 'y', 't', 'true', 'go', 'start'].includes(res.content)) return 'Challenge creation aborted.';
       await res.react('👌');
 
-      await this.client.challenge.create({ title, topic, description, message: null });
+      await this.client.challenge.create({ author: message.author, title, topic, description, assets: message.attachments.array(), message: null });
     } catch (err) {
-      return `Something went wrong:\n\`\`\`${err.message}\n\`\`\``;
+      this.client.logger.error('Start Command', err.message);
     }
   }
 }

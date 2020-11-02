@@ -30,6 +30,10 @@ export class Client extends client {
   }
 
   public start(): void {
+    process.on('uncaughtException', (err) => {
+      this.logger.error(`Uncaught Exception - ${err.stack}`, err.message);
+    });
+
     CommandLoader(this, path.join(this.codeBaseDir, 'commands'));
     EventLoader(this, path.join(this.codeBaseDir, 'events'));
     super.login(process.env.TOKEN);

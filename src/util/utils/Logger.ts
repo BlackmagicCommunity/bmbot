@@ -1,6 +1,7 @@
+import chalk from 'chalk';
 import DateFormat from 'dateformat';
 import { Collection, GuildMember, Invite, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel, User } from 'discord.js';
-import { Client } from '../../util';
+import { Client } from '..';
 import { LoggerChannels } from '../typings/typings';
 
 const colors: any = {
@@ -12,7 +13,7 @@ const colors: any = {
 };
 
 export class Logger {
-  public channels: LoggerChannels = {};
+  public channel: TextChannel;
   public client: Client;
 
   constructor(client: Client) {
@@ -20,9 +21,7 @@ export class Logger {
   }
 
   public message(message: Message | Collection<Snowflake, Message>, action: string, otherData?: any) {
-    if (this.channels.messages === null) return;
-    const channel = this.channels.messages as TextChannel;
-
+    if (this.channel === null) return;
     const embed = new MessageEmbed().setColor(colors[action]).setTitle(action).setTimestamp();
 
     if (message instanceof Collection) {
@@ -78,12 +77,11 @@ export class Logger {
         embed.addField('Link', `[Jump to Message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`);
     }
 
-    channel.send(embed);
+    this.channel.send(embed);
   }
 
   public async join(member: GuildMember, left: boolean = false) {
-    if (this.channels.joins === null) return;
-    const channel = this.channels.joins as TextChannel;
+    if (this.channel === null) return;
 
     let used: Invite;
     if (!left) {
@@ -102,12 +100,11 @@ export class Logger {
       .setTimestamp();
     if (used) embed.addField('Invited by', `**${used.inviter.username}**#${used.inviter.discriminator} (${used.inviter.id}) - ${used.uses} uses`);
 
-    channel.send(embed);
+    this.channel.send(embed);
   }
 
   public infraction(action: string, reason: string, moderator: User, target: User): void {
-    if (this.channels.infractions === null) return;
-    const channel = this.channels.infractions as TextChannel;
+    if (this.channel === null) return;
 
     const embed = new MessageEmbed().setTitle(action).setColor(colors[action]).setThumbnail(target.displayAvatarURL());
     if (reason) embed.addField('Reason', reason, true);
@@ -115,6 +112,24 @@ export class Logger {
       .addField('Target', `**${target.username}**#${target.discriminator} (${target.id})`)
       .addField('Moderator', `**${moderator.username}**#${moderator.discriminator} (${moderator.id})`)
       .setTimestamp();
-    channel.send(embed);
+    this.channel.send(embed);
+  }
+
+  public async error(origin: string, description: string, isWarn = false) {
+    console.log(isWarn ? chalk.bgYellow('WARN') : chalk.bgRed('ERROR'), `From: ${origin}\n${description}\n\n`);
+
+    if (!this.client.readyAt) return;
+    const channel = (await this.client.channels.fetch(this.client.settings.channels.boterrors)) as TextChannel;
+    if (!channel) {
+      console.log(chalk.bgYellow('WARN'), 'No logger error channel defined.');
+      return;
+    }
+
+    await channel.send(
+      new MessageEmbed()
+        .setTitle(origin)
+        .setDescription(`\`\`\`js\n${description}\`\`\``)
+        .setColor(isWarn ? this.client.settings.colors.warning : this.client.settings.colors.danger)
+    );
   }
 }

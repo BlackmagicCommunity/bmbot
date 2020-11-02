@@ -8,7 +8,7 @@ export { Tag } from './structures/Tag';
 export { Level } from './structures/Level';
 
 export { Challenge } from './structures/Challenge';
-export { Logger } from './structures/Logger';
+export { Logger } from './utils/Logger';
 
 // typings
 export { RunArgumentsOptions } from './typings/typings';

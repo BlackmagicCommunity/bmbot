@@ -83,7 +83,9 @@ export default class MemberAddEvent extends Event {
 
     try {
       await member.send(this.cachedEmbed);
-    } catch {}
+    } catch (err) {
+      this.client.logger.error('Member Add Event', err.message, true);
+    }
   }
 
   public async main(member: GuildMember): Promise<void> {

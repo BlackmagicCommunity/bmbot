@@ -20,7 +20,7 @@ export default (client: Client, path: string): void => {
           client.commands.set(command.name, command);
         });
     });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    client.logger.error('Command Loader', err.message);
   }
 };

@@ -27,7 +27,7 @@ export default class VoteChallengeCommand extends Command {
       await this.client.challenge.votePhase();
       await message.reply('Vote phase has begun!');
     } catch (err) {
-      return `Something went wrong:\n\`\`\`${err.message}\n\`\`\``;
+      this.client.logger.error('Vote Command', err.message);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Guild, Message, PermissionString, TextChannel, User } from 'discord.js';
+import { Guild, Message, MessageAttachment, PermissionString, TextChannel, User } from 'discord.js';
 
 export interface CommandOptions {
   aliases?: string[];
@@ -68,6 +68,8 @@ export interface GuildData {
 }
 
 export interface ChallengeOptions {
+  author?: User;
+  assets?: MessageAttachment[];
   topic: string;
   title: string;
   description: string;

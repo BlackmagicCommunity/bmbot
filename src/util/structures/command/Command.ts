@@ -146,8 +146,9 @@ export class Command {
         const command: Command = new commandFile(this.client);
         this.client.commands.delete(this.name);
         this.client.commands.set(command.name, command);
-      } catch (e) {
-        reject(e);
+      } catch (err) {
+        reject(err);
+        this.client.logger.error('Reload Command', err.message);
       }
     });
   }

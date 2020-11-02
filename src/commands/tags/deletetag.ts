@@ -17,7 +17,7 @@ export default class CreateTagCommand extends Command {
       await this.client.database.tags.deleteTag(tag);
       msg.channel.send(`Tag \`${tag.name}\` deleted.`);
     } catch (err) {
-      msg.channel.send(`:x: ${err}`);
+      this.client.logger.error('Delete Tag Command', err.message);
     }
   }
 }

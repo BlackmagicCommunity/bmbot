@@ -14,7 +14,7 @@ export default async (client: Client, path: string) => {
         client.events.set(event.name, event);
         client.on(event.name, (...args: any): Promise<any | void> => event.main(...args));
       });
-  } catch (e) {
-    console.log(e);
+  } catch (err) {
+    client.logger.error('Event Loader', err.message);
   }
 };

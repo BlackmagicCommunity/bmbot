@@ -14,7 +14,7 @@ export default class ReactionAddEvent extends Event {
     const rID = roleList.get(reaction.message.id).get(reaction.emoji.name);
     if (!rID) return;
     const member = await reaction.message.guild.members.fetch(user.id);
-    if (this.client.settings.roles.inverse.includes(rID)) await member.roles.remove(rID, 'ReactionRoles - User reacted')
+    if (this.client.settings.roles.inverse.includes(rID)) await member.roles.remove(rID, 'ReactionRoles - User reacted');
     else await member.roles.add(rID, 'ReactionRoles - User reacted');
   }
 }

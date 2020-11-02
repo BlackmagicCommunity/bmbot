@@ -1,6 +1,6 @@
+import { Intents } from 'discord.js';
 import { config as DotEnvConfig } from 'dotenv';
 import { Client } from './util';
-import { Intents } from 'discord.js';
 
 DotEnvConfig();
 
@@ -15,7 +15,7 @@ getData().then((data) => {
   new Client({
     partials: ['REACTION'],
     ws: {
-      intents: Intents.ALL
+      intents: Intents.ALL,
     },
     disableMentions: 'everyone',
     presence: {

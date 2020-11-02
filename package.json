@@ -1,6 +1,6 @@
 {
   "name": "bmbot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Blackmagic Design Community Discord Bot based on Discord.js. Feel free to use and adapt this script.",
   "main": "dist/index.js",
   "dependencies": {
