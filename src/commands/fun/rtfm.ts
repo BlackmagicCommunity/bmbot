@@ -1,4 +1,5 @@
 import { TextChannel } from 'discord.js';
+import { randomOf } from '@reverse/random';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
 export default class RTFMCommand extends Command {
