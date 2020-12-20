@@ -33,6 +33,7 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
     // sync
     if (sync && rolesChannel.permissionsFor(client.user).has('MANAGE_ROLES')) {
       m.reactions.cache.forEach(async (reaction) => {
+        if (reaction.partial) reaction = await reaction.fetch();
         const users = await reaction.users.fetch();
         const roleId = roleList.get(m.id).get(reaction.emoji.name);
         if (!roleId) {
@@ -45,10 +46,14 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
         // add role to members that don't have the role
         if (users)
           users.forEach(async (user) => {
-            const member = await m.guild.members.fetch(user.id);
-            if (!member) return reaction.users.remove(user.id);
-            if (reverse) member.roles.remove(roleId, 'ReactionRoles - Startup Sync');
-            else member.roles.add(roleId, 'ReactionRoles - Startup Sync');
+            try {
+              const member = await m.guild.member(user.id);
+              if (reverse && member.roles.cache.has(roleId)) await member.roles.remove(roleId, 'ReactionRoles - Startup Sync');
+              else if (!member.roles.cache.has(roleId)) await member.roles.add(roleId, 'ReactionRoles - Startup Sync');
+            } catch {
+              // means the user left
+              await reaction.users.remove(user.id);
+            }
           });
 
         // remove from members that un-reacted
