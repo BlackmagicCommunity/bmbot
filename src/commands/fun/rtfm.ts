@@ -18,7 +18,7 @@ export default class RTFMCommand extends Command {
 
   public async main({ msg, args }: RunArgumentsOptions) {
     msg.channel.send(
-      "https://coloraggio.github.io/davinci-resolve-manuals/ " +
+      "You can find a collection of manuals here: https://coloraggio.github.io/davinci-resolve-manuals/ " +
       randomOf([
         'https://sd.keepcalms.com/i/keep-calm-and-read-the-fucking-manual-2.png',
         'https://static.giga.de/wp-content/uploads/2017/02/RTFM-Meme.jpg',
