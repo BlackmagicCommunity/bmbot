@@ -22,7 +22,7 @@ export default class PurgeCommand extends Command {
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    const amount = Math.min(10000, Math.max(0, parseInt(args.shift()))) ?? 15;
+    const amount = Math.min(10000, Math.max(0, parseInt(args.shift()) + 1));
     let user: User = null;
     let messages: Collection<string, Message>;
     if (args[0]) {
