@@ -1,27 +1,28 @@
-import { MessageEmbed } from 'discord.js';
-import { Collection, Message, Snowflake, TextChannel } from 'discord.js';
-import { Client, Event, Level, RunArguments } from '../util';
+import {
+  Collection, Message, Snowflake, TextChannel,
+} from 'discord.js';
+import {
+  Event, RunArguments,
+} from '../util';
 import { Levels } from '../util/database';
 
 export default class MessageEvent extends Event {
   private readonly levelCooldown = new Collection<Snowflake, number>();
 
-  constructor(client: Client) {
-    super(client);
-  }
-
   private async handleLeveling(message: Message) {
-    if (!this.levelCooldown.has(message.author.id) || this.levelCooldown.get(message.author.id) < Date.now()) {
+    if (!this.levelCooldown.has(message.author.id)
+     || this.levelCooldown.get(message.author.id) < Date.now()) {
       const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
       if (!message.author.data) await message.author.fetchData();
-      let data = message.author.data;
-      if (!data)
+      let { data } = message.author;
+      if (!data) {
         data = {
           totalXp: 0,
           level: 0,
           msgCount: 0,
           currentXp: 0,
         };
+      }
 
       data.msgCount++;
       data.totalXp += xp;
@@ -33,21 +34,23 @@ export default class MessageEvent extends Event {
         data.currentXp = 0;
 
         // don't send to the "DND" ones
-        if (!message.member.roles.cache.has(this.client.settings.roles.private))
+        if (!message.member.roles.cache.has(this.client.settings.roles.private)) {
           message.channel.send(
-            this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString())
+            this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()),
           );
+        }
 
         if (message.guild.me.permissions.has('MANAGE_ROLES')) {
           // check roles
           const roles = await this.client.database.levels.getRolesFromLevel(data.level);
           const higher = roles.first();
           if (higher && !message.member.roles.cache.has(higher.id)) {
-            if (higher.single)
+            if (higher.single) {
               await message.member.roles.set(
                 message.member.roles.cache.filter((r) => !roles.has(r.id)),
-                'LevelUP - Single Role'
+                'LevelUP - Single Role',
               );
+            }
             await message.member.roles.add(higher.id, 'LevelUP - Add Role');
           }
         }
@@ -67,12 +70,16 @@ export default class MessageEvent extends Event {
 
     const prefix = new RegExp(`^${this.client.settings.prefixes.join('|^')}`).exec(message.content);
     if (!prefix) return;
-    message.prefix = prefix[0];
+
+    // eslint-disable-next-line no-param-reassign
+    [message.prefix] = prefix;
+
     const matched = message.content
       .slice(prefix[0].length)
       .trim()
       .match(/("[^"]*")|[^ ]+/g);
     if (!matched) return;
+
     const args = matched.map((a: string) => {
       if (a[0] === '"' && a[a.length - 1]) return a.slice(1, -1);
       return a;
@@ -82,15 +89,15 @@ export default class MessageEvent extends Event {
     // handle tag
     if (!command) {
       const tag = await this.client.database.tags.getTag(cmd);
-      if (!tag) return;
-      return message.channel.send(tag.reply);
+      if (tag) message.channel.send(tag.reply);
+      return;
     }
 
+    // eslint-disable-next-line no-param-reassign
     message.command = command;
     const commandArguments = RunArguments(message, args);
     try {
-      const res = await command.handleCommand(commandArguments);
-      if (typeof res === 'string' || res instanceof MessageEmbed) message.channel.send(res);
+      await message.reply(await command.handleCommand(commandArguments));
     } catch (err) {
       this.client.logger.error('Message Event', err.message);
     }

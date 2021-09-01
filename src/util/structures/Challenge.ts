@@ -1,14 +1,19 @@
-import chalk from 'chalk';
 import { CronJob } from 'cron';
-import { Collection, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel } from 'discord.js';
+import {
+  Collection, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel,
+} from 'discord.js';
 import { Client } from '../core/Client';
 import { ChallengeOptions } from '../typings/typings';
 
 export class Challenge {
   public ready = false;
+
   public client: Client;
+
   public options: ChallengeOptions;
+
   public channel: TextChannel;
+
   public role: string;
 
   constructor(client: Client) {
@@ -25,7 +30,9 @@ export class Challenge {
           return;
         }
 
-        const { challDesc, challMessage, challTitle, challTopic } = g.data;
+        const {
+          challDesc, challMessage, challTitle, challTopic,
+        } = g.data;
         this.options = {
           description: challDesc,
           title: challTitle,
@@ -48,7 +55,7 @@ export class Challenge {
         this.votePhase();
       },
       null,
-      true
+      true,
     ).start();
 
     new CronJob(
@@ -57,7 +64,7 @@ export class Challenge {
         this.announceResults();
       },
       null,
-      true
+      true,
     ).start();
   }
 
@@ -77,7 +84,9 @@ export class Challenge {
     }
   }
 
-  public async create({ author, title, topic, assets, description }: ChallengeOptions) {
+  public async create({
+    author, title, topic, assets, description,
+  }: ChallengeOptions) {
     await this.waitUntilReady();
 
     const message = this.client.settings.messages.challengeStart
@@ -86,21 +95,27 @@ export class Challenge {
       .replace(/%desc%/g, description);
 
     // TODO: generate image
-    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
-    const m = await this.channel.send(`${author || this.client.user}, the all mighty, is summoning ${this.role} for a new challenge!`, embed);
+    const embed = new MessageEmbed()
+      .setColor(this.client.settings.colors.info)
+      .setDescription(message);
+    const m = await this.channel.send({ content: `${author || this.client.user}, the all mighty, is summoning ${this.role} for a new challenge!`, embeds: [embed] });
 
-    if (assets && assets.length) {
+    if (assets && assets.size) {
       try {
-        await this.channel.send('Here are the assets:', { files: assets });
+        await this.channel.send({ content: 'Here are the assets:', files: Array.from(assets.values()) });
       } catch (err) {
         this.client.logger.error('Challenge Create', `${err.message} - this is likely caused because attachments are too large.`);
       }
     }
 
-    this.options = { description, message: m, title, topic };
-    await this.channel.guild.commitData({ challDesc: description, challMessage: m.id, challTitle: title, challTopic: topic });
+    this.options = {
+      description, message: m, title, topic,
+    };
+    await this.channel.guild.commitData({
+      challDesc: description, challMessage: m.id, challTitle: title, challTopic: topic,
+    });
     await this.channel.setName(`${topic.split(' ').join('-')}-challenge`, 'Challenges - Create challenge');
-    await this.channel.overwritePermissions(
+    await this.channel.permissionOverwrites.set(
       [
         {
           id: this.channel.guild.id,
@@ -108,7 +123,7 @@ export class Challenge {
           deny: 'ADD_REACTIONS',
         },
       ],
-      'Challenges - Create challenge'
+      'Challenges - Create challenge',
     );
   }
 
@@ -116,20 +131,23 @@ export class Challenge {
     await this.waitUntilReady();
 
     // lock channel
-    await this.channel.overwritePermissions(
+    await this.channel.permissionOverwrites.set(
       [
         {
           id: this.channel.guild.id,
           deny: ['SEND_MESSAGES', 'ADD_REACTIONS'],
         },
       ],
-      'Challenges - Voting phase.'
+      'Challenges - Voting phase.',
     );
 
     // mass react
     const rec = async (after: string) => {
-      const messages = await this.channel.messages.fetch({ limit: 100, after }, false);
-      const filtered = messages.filter((m) => !m.reactions.cache.has(this.client.settings.emotes.challengeVote));
+      const messages = await this.channel.messages.fetch({ limit: 100, after });
+      const filtered = messages.filter(
+        (m) => !m.reactions.cache.has(this.client.settings.emotes.challengeVote),
+      );
+
       await filtered.forEach((m) => m.react(this.client.settings.emotes.challengeVote));
       if (messages.size === 100) rec(messages.last().id);
     };
@@ -140,27 +158,34 @@ export class Challenge {
     await this.channel.send(`${this.role} ${this.client.settings.messages.challengeVoting}`);
   }
 
-  public async findWinners(after: Message, max: Collection<Snowflake, Message>): Promise<Collection<Snowflake, Message>> {
+  public async findWinners(after: Message, max: Collection<Snowflake, Message>):
+  Promise<Collection<Snowflake, Message>> {
     await this.waitUntilReady();
 
-    const messages = await after.channel.messages.fetch({ limit: 100, after: after.id }, false);
+    const messages = await after.channel.messages.fetch({ limit: 100, after: after.id });
     const bestVotes = messages.reduce((acc, val) => {
       const count = this.reactionCountFromMessage(val);
       if (count > acc) return count;
-      else return acc;
+      return acc;
     }, 0);
 
     const maxVotes = this.reactionCountFromMessage(max.first());
-    if (bestVotes > maxVotes) max = messages.filter((m) => this.reactionCountFromMessage(m) === bestVotes);
+    if (bestVotes > maxVotes) {
+      // eslint-disable-next-line no-param-reassign
+      max = messages.filter(
+        (m) => this.reactionCountFromMessage(m) === bestVotes,
+      );
+    }
 
-    if (messages.size === 100) return await this.findWinners(messages.last(), max);
-    else return max;
+    if (messages.size === 100) return this.findWinners(messages.last(), max);
+    return max;
   }
 
   public async announceResults() {
     await this.waitUntilReady();
 
-    const winnersChannel = (await this.client.channels.fetch(this.client.settings.channels.challengeWinners)) as TextChannel;
+    const winnersChannel = (await this.client.channels
+      .fetch(this.client.settings.channels.challengeWinners)) as TextChannel;
 
     const winners = await this.findWinners(this.options.message, new Collection());
 
@@ -185,13 +210,16 @@ export class Challenge {
         .replace(/%votes%/g, this.reactionCountFromMessage(winners.first()).toString());
     }
 
-    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(message);
+    const embed = new MessageEmbed()
+      .setColor(this.client.settings.colors.info)
+      .setDescription(message);
 
+    const msgObj: {embeds: MessageEmbed[], files?: MessageAttachment[]} = { embeds: [embed] };
     if (msgAttachment) {
       embed.setImage(`attachment://${msgAttachment.name}`);
-      embed.attachFiles([msgAttachment]);
+      msgObj.files = [msgAttachment];
     }
 
-    winnersChannel.send(embed);
+    winnersChannel.send(msgObj);
   }
 }

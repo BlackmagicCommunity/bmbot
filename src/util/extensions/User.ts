@@ -13,15 +13,12 @@ declare module 'discord.js' {
 export default Structures.extend('User', (user) => {
   class User extends user {
     public client: Client;
-    public data: UserData = null;
 
-    constructor(client: Client, data: any) {
-      super(client, data);
-    }
+    public data: UserData = null;
 
     public async fetchData(): Promise<User> {
       return new Promise<User>((resolve, reject) => {
-        this.client.database.sqlite.get(`SELECT * FROM User WHERE id = ?`, [this.id], (err, row) => {
+        this.client.database.sqlite.get('SELECT * FROM User WHERE id = ?', [this.id], (err, row) => {
           if (err) reject(null);
           this.data = row;
           resolve(this);
@@ -30,15 +27,17 @@ export default Structures.extend('User', (user) => {
     }
 
     public async commitData(data: UserData) {
-      const { msgCount, totalXp, currentXp, level } = data;
+      const {
+        msgCount, totalXp, currentXp, level,
+      } = data;
 
       this.client.database.sqlite.run(
-        `INSERT OR REPLACE INTO User (id, msgCount, totalXp, currentXp, level) VALUES (?, ?, ?, ?, ?)`,
+        'INSERT OR REPLACE INTO User (id, msgCount, totalXp, currentXp, level) VALUES (?, ?, ?, ?, ?)',
         this.id,
         msgCount,
         totalXp,
         currentXp,
-        level
+        level,
       );
       this.data = data;
     }

@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 import { readdirSync } from 'fs';
 import { resolve as Resolve } from 'path';
 import { Event } from '../../structures/Event';
@@ -9,6 +11,7 @@ export default async (client: Client, path: string) => {
       .filter((x) => x.endsWith('js') || x.endsWith('ts'))
       .forEach((file) => {
         const eventFile: any = require(Resolve(path, file)).default;
+        // eslint-disable-next-line new-cap
         const event: Event = new eventFile(client);
         event.name = file.slice(0, -3);
         client.events.set(event.name, event);

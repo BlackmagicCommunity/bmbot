@@ -1,11 +1,7 @@
 import { Guild, User } from 'discord.js';
-import { Client, Event } from '../util';
+import { Event } from '../util';
 
 export default class GuildBanRemoveEvent extends Event {
-  constructor(client: Client) {
-    super(client);
-  }
-
   public main(guild: Guild, user: User): any {
     setTimeout(async () => {
       // get reason + mod from audit logs, needs time

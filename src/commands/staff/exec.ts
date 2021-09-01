@@ -11,10 +11,10 @@ export default class ExecCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
-    childProcess.exec(args.join(' '), { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, (err, stdout, stderr) => {
-      if (err) return msg.channel.send(`\`\`\`\n${err.message}\n\`\`\``);
-      msg.channel.send(`\`\`\`bash\n${stdout}\n\`\`\``);
+  public async main({ args }: RunArgumentsOptions) {
+    childProcess.exec(args.join(' '), { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, (err, stdout) => {
+      if (err) return `\`\`\`\n${err.message}\n\`\`\``;
+      return `\`\`\`bash\n${stdout}\n\`\`\``;
     });
   }
 }

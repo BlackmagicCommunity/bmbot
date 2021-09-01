@@ -13,6 +13,6 @@ export default class CreateTagCommand extends Command {
     const tag = await this.client.database.tags.getTag(args.join(' '));
     if (!tag) return msg.react('❓');
 
-    msg.channel.send(tag.reply);
+    return tag.reply;
   }
 }

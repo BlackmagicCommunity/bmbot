@@ -29,7 +29,7 @@ export default class SayCommand extends Command {
       try {
         await channel.send(args[1]);
       } catch {
-        msg.channel.send(`:x: Can't send messages there.`);
+        throw new Error('Can\'t send messages there.');
       }
     }
   }

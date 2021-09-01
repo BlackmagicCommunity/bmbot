@@ -17,7 +17,7 @@ export default class UserInfoCommand extends Command {
     let m = msg.member;
     if (args[0]) {
       m = await this.client.util.getMember(msg, args.join(' '));
-      if (!m) return msg.channel.send(`:x: Could not find member \`${args.join(' ')}\`.`);
+      if (!m) throw new Error(`Could not find member \`${args.join(' ')}\`.`);
     }
 
     const roles = m.roles.cache
@@ -33,19 +33,22 @@ export default class UserInfoCommand extends Command {
         .addField('Display Name', `${m.displayName} (\`${m.displayHexColor}\`)`, true)
         .addField('ID', `${m.user.id}`, true)
         .addField('Joined On', `${DateFormat(m.joinedTimestamp, 'yyyy-mm-dd h:MM TT')}`, true);
-      if (roles.length !== 0)
+      if (roles.length !== 0) {
         embed.addField(
           'Roles',
           m.roles.cache
             .filter((x) => x.name !== '@everyone')
             .map((x) => `- ${x.name}`)
             .join('\n'),
-          true
+          true,
         );
-      embed.addField('Status', `${m.user.presence.status}\n${m.user.presence.activities.slice(0, 1).map((x) => `${x.state}`)}`, true);
-      msg.channel.send(embed);
-    } else {
-      msg.channel.send('Cannot find ' + args[0]);
+      }
+
+      // eslint-disable-next-line max-len
+      // embed.addFieldreturn('Status', `${m.user.presence.status}\n${m.user.presence.activities.slice(0, 1).map((x) => `${x.state}`)}`, true);
+      return { embeds: [embed] };
     }
+
+    throw new Error(`Cannot find ${args[0]}`);
   }
 }

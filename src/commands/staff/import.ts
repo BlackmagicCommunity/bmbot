@@ -12,13 +12,15 @@ export default class UpdateCommand extends Command {
 
   public async main({ msg }: RunArgumentsOptions) {
     const message = await msg.channel.send('Starting update...');
-    await childProcess.exec('git pull', { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, async (err, stdout, stderr) => {
-      if (stdout.includes('up to date')) return message.edit(':x: Already up to date.');
-      if (err) return message.edit(':x: Something went wrong when getting pulling from github.');
+    await childProcess.exec('git pull', { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, async (err, stdout) => {
+      if (stdout.includes('up to date')) throw new Error('Already up to date.');
+
+      if (err) throw new Error('Something went wrong when getting pulling from github.');
 
       await message.edit('Pulled from github successfully. Building...');
-      await childProcess.exec('npm run build', { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, async (err, stdout, stderr) => {
-        if (err) return message.edit(':x: Something went wrong when building.');
+      await childProcess.exec('npm run build', { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, async () => {
+        if (err) throw new Error('Something went wrong when building.');
+
         await message.edit('Done! Restarting...');
         process.exit(0);
       });

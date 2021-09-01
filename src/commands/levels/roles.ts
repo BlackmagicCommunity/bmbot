@@ -9,17 +9,19 @@ export default class RolesCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ msg }: RunArgumentsOptions) {
     const dbRoles = await this.client.database.levels.getRolesFromLevel(-1);
-    const guildRoles = (await msg.guild.roles.fetch()).cache;
+    const guildRoles = await msg.guild.roles.fetch();
     let text = '';
     dbRoles.forEach((r) => {
       const role = guildRoles.get(r.id);
       if (role) text += `\`${role.name}\` - level ${r.level}\n`;
     });
 
-    const embed = new MessageEmbed().setColor(this.client.settings.colors.info).setDescription(text);
+    const embed = new MessageEmbed()
+      .setColor(this.client.settings.colors.info)
+      .setDescription(text);
 
-    msg.channel.send(embed);
+    return { embeds: [embed] };
   }
 }

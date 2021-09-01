@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 import { readdirSync } from 'fs';
 import { resolve as Resolve } from 'path';
 import { Command } from '../../structures/command/Command';
@@ -14,6 +16,7 @@ export default (client: Client, path: string): void => {
           const commandFile: any = require(Resolve(path, folder, file)).default;
           if (!commandFile) return;
           if (!(commandFile.prototype instanceof Command)) return;
+          // eslint-disable-next-line new-cap
           const command: Command = new commandFile(client);
           command.name = file.slice(0, -3);
           command.category = upperFirst(folder);

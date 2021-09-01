@@ -1,4 +1,6 @@
-import { Client, Command, RunArgumentsOptions, Tag } from '../../util';
+import {
+  Client, Command, RunArgumentsOptions, Tag,
+} from '../../util';
 
 export default class CreateTagCommand extends Command {
   constructor(client: Client) {
@@ -10,12 +12,13 @@ export default class CreateTagCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ args }: RunArgumentsOptions) {
     const tag = new Tag(args[0]);
-    tag.reply = args[1];
+    [, tag.reply] = args;
+
     try {
       await this.client.database.tags.deleteTag(tag);
-      msg.channel.send(`Tag \`${tag.name}\` deleted.`);
+      return `Tag \`${tag.name}\` deleted.`;
     } catch (err) {
       this.client.logger.error('Delete Tag Command', err.message);
     }

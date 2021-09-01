@@ -1,4 +1,6 @@
-import { Client as client, ClientOptions as clientOptions, Collection, Invite } from 'discord.js';
+import {
+  Client as client, ClientOptions as clientOptions, Collection, Invite,
+} from 'discord.js';
 import path from 'path';
 import { Challenge, Logger } from '..';
 import settings from '../../settings';
@@ -15,15 +17,24 @@ interface ClientOptions extends clientOptions {
 
 export class Client extends client {
   public commands = new CommandStore();
+
   public events = new EventStore();
+
   public util = new ClientUtil(this);
+
   public invites = new Collection<string, Collection<string, Invite>>();
+
   public logger = new Logger(this);
+
   public codeBaseDir: string;
+
   public database = new Database(this);
+
   public settings = settings;
+
   public challenge: Challenge = null;
 
+  // eslint-disable-next-line no-shadow
   constructor(clientOptions: ClientOptions) {
     super(clientOptions);
     this.codeBaseDir = clientOptions.codeBaseDir;

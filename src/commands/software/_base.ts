@@ -29,36 +29,32 @@ export class BaseVersionLookup extends Command {
     this.software = software;
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ args }: RunArgumentsOptions) {
     const data = (await getData())[this.software];
-    const version = args.join(' ') ?? data.latest;
+    const version = args.join(' ') || data.latest;
 
-    if (version === 'list-all') {
-      msg.channel.send(data.versions.map((y) => y.version).join(' / '));
-      return;
-    }
+    if (version === 'list-all') return data.versions.map((y) => y.version).join(' / ');
 
-    const versionInfo = data.versions.find((x) => x.version === version) || data.versions.find((x) => x.version === version + '.0');
+    const versionInfo = data.versions.find((x) => x.version === version || x.version === `${version}.0`);
 
     if (versionInfo) {
-      const embed = new MessageEmbed() //
+      const embed = new MessageEmbed()
         .setTitle(`${capitalize(this.software)} ${versionInfo.version}`)
         .setURL(versionInfo.readMoreURL)
         .setDescription(versionInfo.shortDescription)
         .addField('Free', formatDownloads(versionInfo.downloads.free), true)
         .addField('Studio', formatDownloads(versionInfo.downloads.studio), true)
         .addField(
-          'Recent Versions of ' + capitalize(this.software),
+          `Recent Versions of ${capitalize(this.software)}`,
           data.versions
             .filter((x) => x.visible)
             .map((x) => x.version)
             .join(' / '),
-          true
+          true,
         )
         .setFooter('Staff does not take responsibility for download links.');
-      msg.channel.send(embed);
-    } else {
-      msg.channel.send(`:x: Such version of ${capitalize(this.software)} does not exist`);
+      return { embeds: [embed] };
     }
+    throw new Error(`Such version of ${capitalize(this.software)} does not exist`);
   }
 }

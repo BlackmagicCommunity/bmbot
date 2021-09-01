@@ -2,8 +2,6 @@ import { Intents } from 'discord.js';
 import { config as DotEnvConfig } from 'dotenv';
 import { Client } from './util';
 
-DotEnvConfig();
-
 // needs to be loaded before client is created
 import getData from './commands/software/web-crawler';
 import './util/extensions/Guild';
@@ -11,15 +9,17 @@ import './util/extensions/Message';
 import './util/extensions/Role';
 import './util/extensions/User';
 
+DotEnvConfig();
+
 getData().then((data) => {
   new Client({
     partials: ['REACTION'],
-    ws: {
-      intents: Intents.ALL,
-    },
-    disableMentions: 'everyone',
+    intents: [Intents.FLAGS.GUILDS,
+      Intents.FLAGS.GUILD_MEMBERS,
+      Intents.FLAGS.GUILD_MESSAGES,
+      Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
     presence: {
-      activity: { name: `DaVinci Resolve ${data.resolve.latest}`, type: 'PLAYING' },
+      activities: [{ name: `DaVinci Resolve ${data.resolve.latest}`, type: 'PLAYING' }],
     },
     codeBaseDir: __dirname,
   }).start();

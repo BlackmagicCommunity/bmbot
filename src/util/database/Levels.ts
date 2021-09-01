@@ -1,12 +1,13 @@
-import { Collection, Snowflake, User } from 'discord.js';
-import fetch from 'node-fetch';
+import { Collection, Snowflake } from 'discord.js';
 import { Database } from 'sqlite3';
 import { Client } from '../core/Client';
 import { IRoleData, UserData } from '../typings/typings';
 
 export default class Levels {
   public client: Client;
+
   public readonly sqlite: Database;
+
   public roles = new Collection<Snowflake, IRoleData>();
 
   constructor(client: Client, sqlite: Database) {
@@ -16,9 +17,9 @@ export default class Levels {
 
   public static exp = (lvl: number) => 5 * lvl ** 2 + 50 * lvl + 100; // from mee6 source
 
-  public async getUserRank(id: Snowflake) {
+  public async getUserRank(id: Snowflake): Promise<string> {
     return new Promise((resolve) => {
-      this.sqlite.get(`SELECT COUNT(*) AS 'Rank' FROM User WHERE totalXp >= (SELECT totalXp FROM User WHERE id = ?)`, id, (err, row) => {
+      this.sqlite.get('SELECT COUNT(*) AS \'Rank\' FROM User WHERE totalXp >= (SELECT totalXp FROM User WHERE id = ?)', id, (err, row) => {
         resolve(row.Rank);
       });
     });
@@ -34,19 +35,19 @@ export default class Levels {
         },
         () => {
           resolve(users.splice(page * 10, 10));
-        }
+        },
       );
     });
   }
 
   private async fetchRoles() {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       this.sqlite.each(
-        `SELECT * FROM Role ORDER BY level DESC`,
+        'SELECT * FROM Role ORDER BY level DESC',
         (err, row: IRoleData) => {
           this.roles.set(row.id, row);
         },
-        () => resolve()
+        () => resolve(),
       );
     });
   }

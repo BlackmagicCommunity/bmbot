@@ -18,15 +18,15 @@ export default class CardCommand extends Command {
     if (!args[0]) user = await msg.author.fetchData();
     else {
       user = await this.client.util.getUser(msg, args.join(' '));
-      if (!user) return msg.channel.send(':x: User not found.');
+      if (!user) throw new Error('User not found.');
       user = await user.fetchData();
     }
 
-    if (!user.data?.totalXp) return msg.channel.send(':x: User has no rank.');
+    if (!user.data?.totalXp) throw new Error('User has no rank.');
 
     const rank = await this.client.database.levels.getUserRank(user.id);
     const requiredXp = Levels.exp(user.data.level);
-    msg.channel.startTyping();
+    msg.channel.sendTyping();
     const canvas = createCanvas(900, 270);
     const ctx = canvas.getContext('2d');
 
@@ -35,7 +35,8 @@ export default class CardCommand extends Command {
     ctx.drawImage(userImage, 28, 60, 150, 150);
 
     // xp bar
-    (ctx.fillStyle = '#99AAB5'), ctx.fillRect(211, 184, 371, 27);
+    ctx.fillStyle = '#99AAB5';
+    ctx.fillRect(211, 184, 371, 27);
     ctx.fillStyle = '#ff6800';
     ctx.fillRect(211, 184, (user.data.currentXp / requiredXp) * 371, 27);
 
@@ -60,7 +61,7 @@ export default class CardCommand extends Command {
     ctx.font = '30px "Roboto"';
     ctx.fillText('LEVEL', 835 - levelLength - ctx.measureText('LEVEL').width, 211);
 
-    msg.reply({ files: [canvas.toBuffer()] });
-    msg.channel.stopTyping();
+    msg.channel.sendTyping();
+    return { files: [canvas.toBuffer()] };
   }
 }

@@ -5,10 +5,6 @@ import { AliasStore } from './AliasStore';
 export class CommandStore extends Collection<string, Command> {
   public aliases: AliasStore = new AliasStore();
 
-  constructor() {
-    super();
-  }
-
   public get(name: string) {
     return super.get(name) || this.aliases.get(name);
   }
@@ -20,9 +16,7 @@ export class CommandStore extends Collection<string, Command> {
   public set(name: string, value: Command): this {
     super.set(name, value);
     if (value.aliases.length) {
-      for (const alias of value.aliases) {
-        this.aliases.set(alias, value);
-      }
+      value.aliases.forEach((alias) => this.aliases.set(alias, value));
     }
     return this;
   }
@@ -34,9 +28,7 @@ export class CommandStore extends Collection<string, Command> {
     }
     super.delete(name);
     if (cmd.aliases && cmd.aliases.length) {
-      for (const alias of cmd.aliases) {
-        this.aliases.delete(alias);
-      }
+      cmd.aliases.forEach(this.aliases.delete);
     }
     return true;
   }
