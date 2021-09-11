@@ -31,7 +31,7 @@ export class BaseVersionLookup extends Command {
 
   public async main({ msg, args }: RunArgumentsOptions) {
     const data = (await getData())[this.software];
-    const version = args.join(' ') ?? data.latest;
+    const version = args.join(' ') || data.latest;
 
     if (version === 'list-all') {
       msg.channel.send(data.versions.map((y) => y.version).join(' / '));
