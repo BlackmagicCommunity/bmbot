@@ -33,7 +33,7 @@ export default class HelpCommand extends Command {
 
       Object.keys(categories).forEach((cat) => {
         const category = categories[cat];
-        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` `\n`')}\``);
+        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` \n`')}\``);
       });
 
       embed.setDescription('You can use any of the following commands by simply typing a message.');

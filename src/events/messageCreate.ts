@@ -1,5 +1,5 @@
 import {
-  Collection, Message, Snowflake, TextChannel,
+  Collection, Message, MessageEmbed, Snowflake, TextChannel,
 } from 'discord.js';
 import {
   Event, RunArguments,
@@ -92,9 +92,16 @@ export default class MessageEvent extends Event {
     // eslint-disable-next-line no-param-reassign
     const commandArguments = RunArguments(message, args);
     try {
-      await message.reply(await command.handleCommand(commandArguments));
+      const res = await command.handleCommand(commandArguments);
+      if (res) return message.reply(res);
     } catch (err) {
       this.client.logger.error('Message Event', err.message);
+      return message.reply({
+        embeds: [new MessageEmbed()
+          .setColor(this.client.settings.colors.danger)
+          .setDescription(err.message),
+        ],
+      });
     }
   }
 }

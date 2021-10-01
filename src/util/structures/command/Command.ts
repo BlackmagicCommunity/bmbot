@@ -141,7 +141,7 @@ export class Command {
       return { embeds: [this.helpMessage(runArguments.message)] } as ReplyMessageOptions;
     }
 
-    this.usageCount++;
+    if (!this.hidden) this.usageCount++;
     if (this.deletable && runArguments.message.deletable) runArguments.message.delete();
     return this.main(runArguments);
   }

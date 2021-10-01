@@ -49,7 +49,7 @@ export class Client extends client {
     this.codeBaseDir = clientOptions.codeBaseDir;
   }
 
-  public start(): void {
+  public start() {
     process.on('uncaughtException', (err) => {
       this.logger.error(`Uncaught Exception - ${err.stack}`, err.message);
     });
@@ -58,5 +58,12 @@ export class Client extends client {
     EventLoader(this, path.join(this.codeBaseDir, 'events'));
 
     super.login(process.env.TOKEN);
+  }
+
+  public initOnReady() {
+    this.challenge = new Challenge(this);
+    this.roleSettings = new RoleSettings(this);
+    this.userSettings = new UserSettings(this);
+    this.guildSettings = new GuildSettings(this);
   }
 }

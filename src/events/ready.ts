@@ -2,10 +2,7 @@
 import chalk from 'chalk';
 import { Collection, Snowflake, TextChannel } from 'discord.js';
 import ora from 'ora';
-import { GuildSettings } from '../util/structures/GuildSettings';
-import { RoleSettings } from '../util/structures/RoleSettings';
-import { UserSettings } from '../util/structures/UserSettings';
-import { Challenge, Client, Event } from '../util';
+import { Client, Event } from '../util';
 
 const spinner = ora('Grant pre-initialisation has started...').start();
 
@@ -74,11 +71,7 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
 
 export default class ReadyEvent extends Event {
   public async main(): Promise<void> {
-    this.client.challenge = new Challenge(this.client);
-    this.client.roleSettings = new RoleSettings(this.client);
-    this.client.userSettings = new UserSettings(this.client);
-    this.client.guildSettings = new GuildSettings(this.client);
-
+    this.client.initOnReady();
     spinner.succeed('Grant pre initialisation has completed.');
     spinner.start('Binding channels...');
 
