@@ -14,7 +14,7 @@ export default class KickCommand extends Command {
     });
   }
 
-  public async main({ msg, args, guild }: RunArgumentsOptions) {
+  public async main({ msg, args, guild }: RunArgumentsOptions): Promise<null> {
     const member = await this.client.util.getMember(msg, args[0]);
     if (!member) throw new Error('Member not found.');
 
@@ -23,5 +23,6 @@ export default class KickCommand extends Command {
 
     await member.kick(`Kicked by ${msg.author.tag} ${args[1] ? `: ${args[1]}` : ''}`);
     msg.react('✅');
+    return null;
   }
 }

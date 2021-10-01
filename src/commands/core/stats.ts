@@ -33,7 +33,7 @@ export default class StatsCommand extends Command {
     });
   }
 
-  public async main({ msg, guild }: RunArgumentsOptions) {
+  public async main({ guild }: RunArgumentsOptions) {
     const cpuPercent = (100 * (await cpu())).toFixed(0);
     const usedMem = ((os.totalmem() - os.freemem()) / 1000).toFixed(1);
     const totalMem = (os.totalmem() / 1000).toFixed(1);

@@ -107,7 +107,7 @@ export class Command {
     if (command.arguments.length !== 0) {
       embed.addField(
         'Usage',
-        `${message.prefix}${command.name} ${command.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`,
+        `${this.client.settings.prefixes[0]}${command.name} ${command.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`,
       );
     }
     if (command.ownerOnly || command.developerOnly) embed.addField('Developer Only', 'Yes');
@@ -118,9 +118,9 @@ export class Command {
   }
 
   public async handleCommand(runArguments: RunArgumentsOptions):
-  Promise<string | MessagePayload | ReplyMessageOptions> {
-    if (runArguments.message.command.disabled) return;
-    if (!runArguments.message.command.hasPermission(runArguments.message)) {
+  Promise<string | MessagePayload | ReplyMessageOptions | null> {
+    if (this.disabled) return;
+    if (!this.hasPermission(runArguments.message)) {
       runArguments.message.react('❌');
       return;
     }

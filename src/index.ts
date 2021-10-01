@@ -4,10 +4,6 @@ import { Client } from './util';
 
 // needs to be loaded before client is created
 import getData from './commands/software/web-crawler';
-import './util/extensions/Guild';
-import './util/extensions/Message';
-import './util/extensions/Role';
-import './util/extensions/User';
 
 DotEnvConfig();
 

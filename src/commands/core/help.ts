@@ -15,7 +15,7 @@ export default class HelpCommand extends Command {
     });
   }
 
-  public main({ msg, args }: RunArgumentsOptions) {
+  public async main({ msg, args }: RunArgumentsOptions) {
     if (args.length === 0) {
       const categories: Record<string, Command[]> = {};
       // Separate by category
@@ -33,7 +33,7 @@ export default class HelpCommand extends Command {
 
       Object.keys(categories).forEach((cat) => {
         const category = categories[cat];
-        embed.addField(cat, `\`${category.map((c) => `${msg.prefix}${c.name}`).join('` `\n`')}\``);
+        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` `\n`')}\``);
       });
 
       embed.setDescription('You can use any of the following commands by simply typing a message.');

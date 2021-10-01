@@ -2,9 +2,12 @@
 import chalk from 'chalk';
 import { Collection, Snowflake, TextChannel } from 'discord.js';
 import ora from 'ora';
+import { GuildSettings } from '../util/structures/GuildSettings';
+import { RoleSettings } from '../util/structures/RoleSettings';
+import { UserSettings } from '../util/structures/UserSettings';
 import { Challenge, Client, Event } from '../util';
 
-const spinner = ora('GrantBot pre initialisation has started...').start();
+const spinner = ora('Grant pre-initialisation has started...').start();
 
 export const roleList: Collection<Snowflake, Collection<string, Snowflake>> = new Collection();
 
@@ -72,41 +75,68 @@ export const cacheRoles = async (client: Client, sync: boolean) => {
 export default class ReadyEvent extends Event {
   public async main(): Promise<void> {
     this.client.challenge = new Challenge(this.client);
-    spinner.succeed('GrantBot pre initialisation has completed.');
-    spinner.start('Binding channels.');
+    this.client.roleSettings = new RoleSettings(this.client);
+    this.client.userSettings = new UserSettings(this.client);
+    this.client.guildSettings = new GuildSettings(this.client);
+
+    spinner.succeed('Grant pre initialisation has completed.');
+    spinner.start('Binding channels...');
 
     // add channels to logger
-    this.client.logger.channel = await this.client.channels
-      .fetch(this.client.settings.channels.logs).catch(() => null);
-    spinner.succeed('Binding Complete.');
-    spinner.start('Getting All Invites & Adding them to DB.');
+    try {
+      this.client.logger.channel = await this.client.channels
+        .fetch(this.client.settings.channels.logs).catch(() => null);
+      spinner.succeed('Binding Complete.');
+    } catch (err) {
+      spinner.fail(`Could not bind channels:${err}`);
+      process.exit(1);
+    }
 
     // get all invites
-    this.client.guilds.cache.forEach(async (guild) => {
-      if (guild.me.permissions.has('MANAGE_MESSAGES')) {
-        guild.invites.fetch().then((invites) => {
-          this.client.invites.set(guild.id, invites);
+    try {
+      spinner.start('Getting all invites & caching them...');
+
+      this.client.guilds.cache.forEach(async (guild) => {
+        if (guild.me.permissions.has('MANAGE_MESSAGES')) {
+          guild.invites.fetch().then((invites) => {
+            this.client.invites.set(guild.id, invites);
+          });
+        }
+      });
+      spinner.succeed('All invites where cached.');
+    } catch (err) {
+      spinner.fail(`Could not get invites: ${err}`);
+      process.exit(1);
+    }
+
+    // clean rules channel
+    try {
+      spinner.start('Running #rules clean...');
+
+      const rulesChannel = (await this.client.channels
+        .fetch(this.client.settings.channels.rules)) as TextChannel;
+
+      if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
+        const rulesMessages = await rulesChannel.messages.fetch();
+        rulesMessages.forEach((m) => {
+          if (m.author.bot) m.delete();
         });
       }
-    });
-    spinner.succeed('All invites where grabed.');
-    spinner.start('Running StartupClean');
-    // clean rules channel
-    const rulesChannel = (await this.client.channels
-      .fetch(this.client.settings.channels.rules)) as TextChannel;
-
-    if (rulesChannel.permissionsFor(this.client.user).has('MANAGE_MESSAGES')) {
-      const rulesMessages = await rulesChannel.messages.fetch();
-      rulesMessages.forEach((m) => {
-        if (m.author.bot) m.delete();
-      });
+      spinner.succeed('Rules clean completed.');
+    } catch (err) {
+      spinner.fail(`Could not clean #rules:${err}`);
+      process.exit(1);
     }
-    spinner.succeed('StartupClean Completed.');
-    spinner.start('Awaiting cacheRoles() to finsh..');
 
-    await cacheRoles(this.client, true);
+    try {
+      spinner.start('Caching roles...');
+      await cacheRoles(this.client, true);
+      spinner.succeed('Roles cached scesssfuly.');
+    } catch (err) {
+      spinner.fail(`Could not cache roles:${err}`);
+      process.exit(1);
+    }
 
-    spinner.succeed('Roles Cached Sucesssfuly.');
     console.log(chalk.green('[INFO] Bot initialisation complete. Displaying Start Message...'));
     console.log(chalk.green(`[INFO] Hello, I'm ${this.client.user.username}, and I'm ready to rock and roll!`));
   }

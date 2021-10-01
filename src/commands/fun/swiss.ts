@@ -1,5 +1,5 @@
 import { randomOf } from '@reverse/random';
-import { Client, Command, RunArgumentsOptions } from '../../util';
+import { Client, Command } from '../../util';
 
 export default class SwissCommand extends Command {
   constructor(client: Client) {
@@ -11,7 +11,7 @@ export default class SwissCommand extends Command {
     });
   }
 
-  public async main({ msg }: RunArgumentsOptions) {
+  public async main() {
     return randomOf([
       'Huere Michi Grind',
       'Schafsäcku',

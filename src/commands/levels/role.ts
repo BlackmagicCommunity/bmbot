@@ -20,7 +20,7 @@ export default class RoleCommand extends Command {
     if (Number.isNaN(level)) throw new Error("That's not a number.");
     const single = args[2] && ['y', 'yes', 't', 'true'].includes(args[2]);
 
-    await role.commitData({ id: role.id, level, single });
+    await this.client.roleSettings.commitData(role.id, { id: role.id, level, single });
 
     return `Role \`${role.name}\` is now achieved at level \`${level}\`.\nIt ${single ? 'is' : "isn't"} single.`;
   }

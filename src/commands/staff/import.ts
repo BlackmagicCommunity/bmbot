@@ -10,7 +10,7 @@ export default class UpdateCommand extends Command {
     });
   }
 
-  public async main({ msg }: RunArgumentsOptions) {
+  public async main({ msg }: RunArgumentsOptions): Promise<null> {
     const message = await msg.channel.send('Starting update...');
     await childProcess.exec('git pull', { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, async (err, stdout) => {
       if (stdout.includes('up to date')) throw new Error('Already up to date.');
@@ -25,5 +25,6 @@ export default class UpdateCommand extends Command {
         process.exit(0);
       });
     });
+    return null;
   }
 }

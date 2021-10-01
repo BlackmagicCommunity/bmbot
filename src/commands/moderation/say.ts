@@ -22,7 +22,7 @@ export default class SayCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ msg, args }: RunArgumentsOptions): Promise<null> {
     let channel = (await this.client.util.getChannel(msg, args[0], true)) as TextChannel;
     if (!channel) channel = msg.channel as TextChannel;
     else {
@@ -32,5 +32,6 @@ export default class SayCommand extends Command {
         throw new Error('Can\'t send messages there.');
       }
     }
+    return null;
   }
 }

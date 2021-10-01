@@ -13,8 +13,7 @@ export default class MessageEvent extends Event {
     if (!this.levelCooldown.has(message.author.id)
      || this.levelCooldown.get(message.author.id) < Date.now()) {
       const xp = Math.floor(Math.random() * (25 - 15 + 1) + 15);
-      if (!message.author.data) await message.author.fetchData();
-      let { data } = message.author;
+      let data = await this.client.userSettings.fetchData(message.author.id);
       if (!data) {
         data = {
           totalXp: 0,
@@ -57,7 +56,7 @@ export default class MessageEvent extends Event {
       }
 
       // update db & cooldown
-      await message.author.commitData(data);
+      await this.client.userSettings.commitData(message.author.id, data);
       this.levelCooldown.set(message.author.id, Date.now() + 60000);
     }
   }
@@ -70,9 +69,6 @@ export default class MessageEvent extends Event {
 
     const prefix = new RegExp(`^${this.client.settings.prefixes.join('|^')}`).exec(message.content);
     if (!prefix) return;
-
-    // eslint-disable-next-line no-param-reassign
-    [message.prefix] = prefix;
 
     const matched = message.content
       .slice(prefix[0].length)
@@ -94,7 +90,6 @@ export default class MessageEvent extends Event {
     }
 
     // eslint-disable-next-line no-param-reassign
-    message.command = command;
     const commandArguments = RunArguments(message, args);
     try {
       await message.reply(await command.handleCommand(commandArguments));

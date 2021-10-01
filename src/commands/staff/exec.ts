@@ -11,10 +11,13 @@ export default class ExecCommand extends Command {
     });
   }
 
-  public async main({ args }: RunArgumentsOptions) {
+  public async main({ msg, args }: RunArgumentsOptions): Promise<null> {
     childProcess.exec(args.join(' '), { shell: process.platform === 'win32' ? 'cmd.exe' : '/bin/bash' }, (err, stdout) => {
-      if (err) return `\`\`\`\n${err.message}\n\`\`\``;
-      return `\`\`\`bash\n${stdout}\n\`\`\``;
+      // todo return these strings instead
+      if (err) return msg.reply(`\`\`\`\n${err.message}\n\`\`\``);
+      return msg.reply(`\`\`\`bash\n${stdout}\n\`\`\``);
     });
+
+    return null;
   }
 }

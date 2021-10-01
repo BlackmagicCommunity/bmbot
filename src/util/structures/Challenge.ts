@@ -24,15 +24,15 @@ export class Challenge {
     this.client.channels.fetch(this.client.settings.channels.challenges).then((c: TextChannel) => {
       this.channel = c;
 
-      this.channel.guild.fetchData().then((g) => {
-        if (!g.data) {
+      this.client.guildSettings.fetchData(this.channel.guildId).then((g) => {
+        if (!g) {
           this.ready = true;
           return;
         }
 
         const {
           challDesc, challMessage, challTitle, challTopic,
-        } = g.data;
+        } = g;
         this.options = {
           description: challDesc,
           title: challTitle,
@@ -111,7 +111,7 @@ export class Challenge {
     this.options = {
       description, message: m, title, topic,
     };
-    await this.channel.guild.commitData({
+    await this.client.guildSettings.commitData(this.channel.guildId, {
       challDesc: description, challMessage: m.id, challTitle: title, challTopic: topic,
     });
     await this.channel.setName(`${topic.split(' ').join('-')}-challenge`, 'Challenges - Create challenge');
