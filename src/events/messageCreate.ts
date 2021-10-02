@@ -105,8 +105,9 @@ export default class MessageEvent extends Event {
       this.client.logger.error('Message Event', err);
       return message.reply({
         embeds: [new MessageEmbed()
+          .setTitle('Error')
           .setColor(this.client.settings.colors.danger)
-          .setDescription(err.message),
+          .setDescription(`:x: ${err.message}`),
         ],
       });
     }

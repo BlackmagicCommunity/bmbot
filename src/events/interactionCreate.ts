@@ -26,12 +26,12 @@ export default class InteractionCreateEvent extends Event {
       const res = await command.handleCommand(commandArguments);
       if (res) return interaction.reply(res);
     } catch (err) {
-      console.log(err);
-      this.client.logger.error('Message Event', err);
+      this.client.logger.error('Interaction Create', err);
       return interaction.reply({
         embeds: [new MessageEmbed()
+          .setTitle('Error')
           .setColor(this.client.settings.colors.danger)
-          .setDescription(err.message),
+          .setDescription(`:x: ${err.message}`),
         ],
       });
     }
