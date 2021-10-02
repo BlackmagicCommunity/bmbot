@@ -34,7 +34,7 @@ export default class MessageEvent extends Event {
 
         // don't send to the "DND" ones
         if (!message.member.roles.cache.has(this.client.settings.roles.private)) {
-          message.channel.send(
+          message.reply(
             this.client.settings.messages.levelUp.replace(/%mention%/g, message.author.toString()).replace(/%level%/g, data.level.toString()),
           );
         }
@@ -85,7 +85,7 @@ export default class MessageEvent extends Event {
     // handle tag
     if (!command) {
       const tag = await this.client.database.tags.getTag(cmd);
-      if (tag) message.channel.send(tag.reply);
+      if (tag) message.reply(tag.reply);
       return;
     }
 
