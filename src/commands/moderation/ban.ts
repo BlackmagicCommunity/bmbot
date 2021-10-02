@@ -29,7 +29,7 @@ export default class BanCommand extends Command {
     await member
       .ban({
         days: 7,
-        reason: `Banned by ${msg.author.tag} ${args[1] ? `: ${args[1]}` : ''}`,
+        reason: `Banned by ${msg.member.user.tag} ${args[1] ? `: ${args[1]}` : ''}`,
       });
     msg.react('✅');
     return null;
