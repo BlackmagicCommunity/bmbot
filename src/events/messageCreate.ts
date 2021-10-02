@@ -1,5 +1,5 @@
 import {
-  Collection, Message, MessageEmbed, MessagePayload, Snowflake, TextChannel,
+  Collection, Message, MessageEmbed, Snowflake, TextChannel,
 } from 'discord.js';
 import {
   Event, RunArguments,
