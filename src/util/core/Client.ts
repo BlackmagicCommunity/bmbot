@@ -3,7 +3,6 @@ import {
 } from 'discord.js';
 import path from 'path';
 import { Challenge, Logger } from '..';
-import settings from '../../settings';
 import { Database } from '../database';
 import { CommandStore } from '../stores/CommandStore';
 import { EventStore } from '../stores/EventStore';
@@ -11,6 +10,7 @@ import { GuildSettings } from '../structures/GuildSettings';
 import { RoleSettings } from '../structures/RoleSettings';
 import { UserSettings } from '../structures/UserSettings';
 import { ClientUtil } from '../utils/ClientUtil';
+import settings from '../../config';
 import CommandLoader from './loaders/CommandLoader';
 import EventLoader from './loaders/EventLoader';
 
@@ -33,7 +33,8 @@ export class Client extends client {
 
   public database = new Database(this);
 
-  public settings = settings;
+  // eslint-disable-next-line global-require
+  public settings = settings.default;
 
   public guildSettings: GuildSettings = null;
 
@@ -52,6 +53,7 @@ export class Client extends client {
   public start() {
     process.on('uncaughtException', (err) => {
       this.logger.error(`Uncaught Exception - ${err.stack}`, err.message);
+      process.exit(1);
     });
 
     CommandLoader(this, path.join(this.codeBaseDir, 'commands'));

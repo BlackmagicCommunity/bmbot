@@ -3,4 +3,4 @@ node_modules/
 dist
 bmdbot.sqlite3
 bmdbot.sqlite3-journal
-src/settings.ts
+src/config/config.dev.ts

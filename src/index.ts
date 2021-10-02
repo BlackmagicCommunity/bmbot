@@ -1,11 +1,13 @@
 import { Intents } from 'discord.js';
 import { config as DotEnvConfig } from 'dotenv';
+// ATTENTION: must be at the start
+DotEnvConfig();
+// eslint-disable-next-line import/first
 import { Client } from './util';
 
 // needs to be loaded before client is created
+// eslint-disable-next-line import/first
 import getData from './commands/software/web-crawler';
-
-DotEnvConfig();
 
 getData().then((data) => {
   new Client({
