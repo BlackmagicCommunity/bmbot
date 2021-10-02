@@ -13,6 +13,9 @@ export default class LMGTFYCommand extends Command {
           type: 'string | url',
         },
       ],
+      optionsData: [{
+        name: 'query', type: 'STRING', description: 'Search query.', required: true,
+      }],
     });
   }
 

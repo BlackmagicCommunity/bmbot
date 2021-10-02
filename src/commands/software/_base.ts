@@ -23,7 +23,10 @@ export class BaseVersionLookup extends Command {
           type: 'string',
         },
       ],
-      help: 'looks up a fusion version',
+      help: 'Looks up a fusion or resolve version.',
+      optionsData: [
+        { name: 'version', description: 'Version to look for.', type: 'STRING' },
+      ],
     });
 
     this.software = software;

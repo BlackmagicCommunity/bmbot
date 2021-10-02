@@ -1,5 +1,6 @@
 import {
   Guild, GuildChannel, GuildMember,
+  Interaction,
   Message, Role, TextChannel, ThreadChannel, User,
 } from 'discord.js';
 import { Client } from '../core/Client';
@@ -33,8 +34,9 @@ export class ClientUtil {
       .replace(new RegExp(`${this.client.token}`, 'g'), 'Token');
   }
 
-  public async getUser(message: Message, arg: string): Promise<User> {
-    if (message.mentions.users.size !== 0) return message.mentions.users.first();
+  public async getUser(message: Message | Interaction, arg: string): Promise<User> {
+    if (message instanceof Message
+      && message.mentions.users.size !== 0) return message.mentions.users.first();
     if (/[0-9]{16,18}/.test(arg)) return this.client.users.fetch(arg);
 
     // eslint-disable-next-line no-param-reassign
@@ -43,15 +45,16 @@ export class ClientUtil {
     return null;
   }
 
-  public async getMember(message: Message, arg: string): Promise<GuildMember> {
+  public async getMember(message: Message | Interaction, arg: string): Promise<GuildMember> {
     const user = await this.getUser(message, arg);
     const member = await message.guild.members.fetch({ user });
     if (member) return member;
     return null;
   }
 
-  public async getRole(message: Message, arg: string): Promise<Role> {
-    if (message.mentions.roles.size !== 0) return message.mentions.roles.first();
+  public async getRole(message: Message | Interaction, arg: string): Promise<Role> {
+    if (message instanceof Message
+      && message.mentions.roles.size !== 0) return message.mentions.roles.first();
     if (/[0-9]{16,18}/.test(arg)) return message.guild.roles.fetch(arg);
 
     // eslint-disable-next-line no-param-reassign
@@ -60,9 +63,10 @@ export class ClientUtil {
     return null;
   }
 
-  public async getChannel(message: Message, arg: string,
+  public async getChannel(message: Message | Interaction, arg: string,
     textOnly: boolean = true): Promise<GuildChannel|ThreadChannel> {
-    if (message.mentions.channels.size !== 0) {
+    if (message instanceof Message
+        && message.mentions.channels.size !== 0) {
       return message.mentions.channels.first() as TextChannel;
     }
 

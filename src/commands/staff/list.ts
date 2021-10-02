@@ -2,7 +2,7 @@ import DateFormat from 'dateformat';
 import { MessageAttachment } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
-export default class EvalCommand extends Command {
+export default class ListCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['ulist', 'users'],

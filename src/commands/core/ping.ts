@@ -18,6 +18,7 @@ export default class PingCommand extends Command {
   constructor(client: Client) {
     super(client, {
       help: 'Test if the bot is available.',
+      optionsData: [],
     });
   }
 

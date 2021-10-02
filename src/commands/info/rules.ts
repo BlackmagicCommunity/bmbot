@@ -16,8 +16,11 @@ export default class RulesCommand extends Command {
         },
       ],
       aliases: ['rule'],
-      help: "Returns the server's rule(s) info",
+      help: "Returns the server's rule(s) info.",
       guildOnly: true,
+      optionsData: [{
+        name: 'rule', description: 'Rule number.', type: 'INTEGER',
+      }],
     });
   }
 
@@ -42,8 +45,8 @@ export default class RulesCommand extends Command {
         if (key === -1) throw new Error('Invalid rule.');
         if (next === -1) next = content.indexOf('http');
         embed.setDescription(content.substring(key, next).trim());
-      } catch {
-        throw new Error('The parameter you specified is not a number.');
+      } catch (err) {
+        throw new Error(err?.message || 'The parameter you specified is not a number.');
       }
     }
 

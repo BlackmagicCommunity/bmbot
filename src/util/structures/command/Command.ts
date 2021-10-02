@@ -1,50 +1,23 @@
 import {
-  Collection, Message, MessageEmbed, MessagePayload,
-  PermissionString, ReplyMessageOptions, Snowflake,
+  Collection, GuildMember, Interaction, Message, MessageEmbed, MessagePayload,
+  ReplyMessageOptions, Snowflake,
 } from 'discord.js';
 import { Client } from '../../core/Client';
-import { CommandArguments, CommandOptions, RunArgumentsOptions } from '../../typings/typings';
+import {
+  autoImplement, CommandOptions, RunArgumentsOptions,
+} from '../../typings/typings';
 
-export class Command {
-  public name: string;
-
-  public category: string;
-
+export class Command extends autoImplement<CommandOptions>() {
   public client: Client;
 
   public usageCount: number;
 
-  public readonly aliases: string[];
-
-  public readonly disabled: boolean;
-
-  public readonly hidden: boolean;
-
   public readonly alias: boolean;
-
-  public readonly guildOnly: boolean;
-
-  public readonly ownerOnly: boolean;
-
-  public readonly developerOnly: boolean;
-
-  public readonly deletable: boolean;
-
-  public readonly help: string;
-
-  public readonly arguments: CommandArguments[];
-
-  public readonly requiredPermissions: PermissionString[];
-
-  public readonly allowedChannels: string[];
-
-  public readonly allowedRoles: string[];
-
-  public readonly cooldown: number;
 
   public readonly cooldowns: Collection<Snowflake, number> | null;
 
   constructor(client: Client, options: CommandOptions) {
+    super();
     Object.defineProperty(this, 'client', { value: client });
     this.alias = false;
     this.aliases = options.aliases || [];
@@ -59,6 +32,7 @@ export class Command {
     this.requiredPermissions = options.requiredPermissions || [];
     this.allowedChannels = options.allowedChannels || [];
     this.allowedRoles = options.allowedRoles || [];
+    this.optionsData = options.optionsData || null;
 
     this.cooldown = options.cooldown || 0;
     this.cooldowns = this.cooldown !== 0 ? new Collection<Snowflake, number>() : null;
@@ -66,18 +40,20 @@ export class Command {
     this.usageCount = 0;
   }
 
-  public hasPermission(message: Message): boolean {
+  public hasPermission(message: Message | Interaction): boolean {
     // Guild only
     if (message.channel.type === 'DM' && this.guildOnly) return false;
 
-    if (this.client.util.isOwner(message.author.id)) return true;
+    const userId = (message instanceof Message ? message.author : message.user).id;
+    if (this.client.util.isOwner(userId)) return true;
     if (this.ownerOnly) return false;
 
-    if (this.developerOnly && !this.client.util.isDeveloper(message.author.id)) return false;
+    if (this.developerOnly && !this.client.util.isDeveloper(userId)) return false;
 
     // Guild Permissions
     if (this.requiredPermissions.some(
-      (perm) => (!message.member.permissions.has(perm) || !message.guild.me.permissions.has(perm)),
+      (perm) => (!(message.member as GuildMember).permissions
+        .has(perm) || !message.guild.me.permissions.has(perm)),
     )) {
       return false;
     }

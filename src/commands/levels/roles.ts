@@ -4,8 +4,9 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class RolesCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: 'Shows level roles',
+      help: 'Shows level roles.',
       aliases: ['levelroles'],
+      optionsData: [],
     });
   }
 
@@ -15,12 +16,13 @@ export default class RolesCommand extends Command {
     let text = '';
     dbRoles.forEach((r) => {
       const role = guildRoles.get(r.id);
-      if (role) text += `\`${role.name}\` - level ${r.level}\n`;
+      if (role) text += `${role} - level ${r.level}\n`;
     });
 
     const embed = new MessageEmbed()
+      .setTitle('Achievable Roles')
       .setColor(this.client.settings.colors.info)
-      .setDescription(text);
+      .setDescription(text || 'no roles set');
 
     return { embeds: [embed] };
   }

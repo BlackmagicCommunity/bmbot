@@ -8,9 +8,11 @@ export default class LeaderboardCommand extends Command {
       aliases: ['leaderboard', 'ranks', 'top'],
       arguments: [{ name: 'page', type: 'Number' }],
       cooldown: 5,
+      optionsData: [{ name: 'page', description: 'Page to view.', type: 'INTEGER' }],
     });
   }
 
+  // TODO implement button pages
   public async main({ msg, args }: RunArgumentsOptions) {
     let page = 0;
     if (args[0]) {
@@ -20,7 +22,7 @@ export default class LeaderboardCommand extends Command {
 
     const leaderboard = await this.client.database.levels.fetchLeaderboard(page);
     if (!leaderboard.length) throw new Error(`No data for page ${page + 1}.`);
-    const userRank = await this.client.database.levels.getUserRank(msg.author.id);
+    const userRank = await this.client.database.levels.getUserRank(msg.member.id);
 
     const lengthNameArray = await Promise.all(
       leaderboard.map(async (u) => {
@@ -51,7 +53,7 @@ export default class LeaderboardCommand extends Command {
               })
               .join('\n')}\n\`\`\``,
           )
-          .setFooter(`Your rank: ${userRank}`, msg.author.displayAvatarURL()),
+          .setFooter(`Your rank: ${userRank}`, msg.member.user.displayAvatarURL()),
       ],
     };
   }

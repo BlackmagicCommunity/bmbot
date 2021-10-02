@@ -18,6 +18,12 @@ export default class PurgeCommand extends Command {
           type: 'Member',
         },
       ],
+      optionsData: [
+        {
+          name: 'amount', description: 'Amount of messages to delete.', type: 'INTEGER', required: true,
+        },
+        { name: 'user', description: 'User to delete the messages from.', type: 'USER' },
+      ],
     });
   }
 

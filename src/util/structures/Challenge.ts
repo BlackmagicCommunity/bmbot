@@ -104,7 +104,7 @@ export class Challenge {
       try {
         await this.channel.send({ content: 'Here are the assets:', files: Array.from(assets.values()) });
       } catch (err) {
-        this.client.logger.error('Challenge Create', `${err.message} - this is likely caused because attachments are too large.`);
+        this.client.logger.error('Challenge Create', new Error(`${err.message} - this is likely caused because attachments are too large.`));
       }
     }
 

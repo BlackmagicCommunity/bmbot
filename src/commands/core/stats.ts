@@ -30,6 +30,7 @@ export default class StatsCommand extends Command {
     super(client, {
       help: "Shows bot's status.",
       aliases: ['status'],
+      optionsData: [],
     });
   }
 

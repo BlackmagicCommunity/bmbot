@@ -10,6 +10,12 @@ export default class BanCommand extends Command {
         { name: 'member', type: 'Member', required: true },
         { name: 'reason', type: 'string' },
       ],
+      optionsData: [
+        {
+          name: 'user', description: 'User to ban.', type: 'USER', required: true,
+        },
+        { name: 'reason', description: 'Reason for the ban.', type: 'STRING' },
+      ],
     });
   }
 
