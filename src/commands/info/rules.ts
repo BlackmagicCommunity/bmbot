@@ -42,7 +42,7 @@ export default class RulesCommand extends Command {
       try {
         const key = content.indexOf(map[parseInt(args[0], 10) - 1]);
         let next = content.indexOf(map[parseInt(args[0], 10)]);
-        if (key === -1) throw new Error('Invalid rule.');
+        if (key === -1) throw new Error(`Unknown rule. Use \`${this.client.settings.prefixes[0]}rules\``);
         if (next === -1) next = content.indexOf('http');
         embed.setDescription(content.substring(key, next).trim());
       } catch (err) {
