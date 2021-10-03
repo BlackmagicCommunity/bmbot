@@ -1,21 +1,19 @@
+/* eslint-disable no-unused-vars */
 import { inspect } from 'util';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
 const evalGlobals = ['discord.js'].map(require);
 
-// tslint:disable: no-var-requires
 const assert = require('assert');
-// tslint:disable-next-line: variable-name
+// eslint-disable-next-line camelcase
 const child_process = require('child_process');
 const Discord = require('discord.js');
 const fetch = require('node-fetch');
 const fs = require('fs-extra');
-const knowledge = require('knowledge');
 const os = require('os');
 const path = require('path');
 const util = require('util');
 const crawl = require('../software/web-crawler').default;
-// tslint:enable: no-var-requires
 
 export default class EvalCommand extends Command {
   constructor(client: Client) {
@@ -34,26 +32,20 @@ export default class EvalCommand extends Command {
     });
   }
 
-  public async main(runArguments: RunArgumentsOptions) {
-    this.getEval(runArguments).then((msg) => runArguments.message.channel.send(msg));
-  }
-
-  public async getEval({ message, args }: RunArgumentsOptions) {
+  public async main({ message, args }: RunArgumentsOptions) {
     const code = args.join(' ');
     const msg = message;
-    const client = message.client;
-    const guild = message.guild;
+    const { client } = message;
+    const { guild } = message;
 
     try {
-      // tslint:disable-next-line:no-eval
+      // eslint-disable-next-line no-eval
       const evaled = eval(
         `(g)=>{${evalGlobals
-          .map((module, i) =>
-            Object.keys(module)
-              .map((key) => `const ${key}=g[${i}]['${key}']`)
-              .join(';')
-          )
-          .join(';')};return eval(\`${code.replace(/(\\|`)/g, '\\$1')}\`)}`
+          .map((module, i) => Object.keys(module)
+            .map((key) => `const ${key}=g[${i}]['${key}']`)
+            .join(';'))
+          .join(';')};return eval(\`${code.replace(/(\\|`)/g, '\\$1')}\`)}`,
       )(evalGlobals);
       let ogeval = evaled;
       if (evaled instanceof Promise) ogeval = await ogeval;
@@ -62,9 +54,9 @@ export default class EvalCommand extends Command {
       const cleanEval = this.client.util.clean(ogeval);
 
       if (ogeval.length > 1950) {
-        return `\`Output:\` **Evaled code was too long**`;
+        return '`Output:` **Evaled code was too long**';
       }
-      const type = this.getComplexType(evaled).type;
+      const { type } = this.getComplexType(evaled);
       return `**Typeof:** \`${type}\`\n\n\`Output:\`\n\`\`\`js\n${cleanEval} \`\`\``;
     } catch (err) {
       return `\`Error:\`\n\`\`\`js\n${err.name}: ${err.message}\`\`\``;

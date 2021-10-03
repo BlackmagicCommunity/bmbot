@@ -13,18 +13,19 @@ export default class BanCommand extends Command {
     });
   }
 
-  public async main({ msg, args, guild }: RunArgumentsOptions) {
+  public async main({ msg, args, guild }: RunArgumentsOptions): Promise<null> {
     const member = await this.client.util.getMember(msg, args[0]);
-    if (!member) return msg.channel.send(':x: Member not found.');
+    if (!member) throw new Error('Member not found.');
 
-    if (member.roles.highest.position > guild.me.roles.highest.position) return msg.channel.send(':x: Can not ban user that is above me.');
-    if (member.roles.highest.position > msg.member.roles.highest.position) return msg.channel.send(':x: Can not ban user that is above you.');
+    if (member.roles.highest.position > guild.me.roles.highest.position) throw new Error('Can not ban user that is above me.');
+    if (member.roles.highest.position > msg.member.roles.highest.position) throw new Error('Can not ban user that is above you.');
 
-    member
+    await member
       .ban({
         days: 7,
         reason: `Banned by ${msg.author.tag} ${args[1] ? `: ${args[1]}` : ''}`,
-      })
-      .then(() => msg.react('✅'));
+      });
+    msg.react('✅');
+    return null;
   }
 }

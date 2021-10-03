@@ -38,7 +38,8 @@ export default {
   raid: {
     memberJoinInterval: 10000, // in ms
     okWait: 1200000, // in ms
-    memberCount: 10, // allow up to memberCount in memberJoinInterval time before activating raid prevention
+    // allow up to memberCount in memberJoinInterval time before activating raid prevention
+    memberCount: 10,
     raidVerificationLevel: 'HIGH',
     okVerificationLevel: 'LOW',
   },

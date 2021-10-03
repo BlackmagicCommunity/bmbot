@@ -14,12 +14,14 @@ export default class VoteChallengeCommand extends Command {
   public async main({ message }: RunArgumentsOptions) {
     message.channel.send(
       `Are you sure? Challenges are scheduled to start vote phase \`${cronToHuman(
-        this.client.settings.cronJobs.challengeVoting
-      )}\`\n\nPlease confirm challenge vote phase with \`yes\` or similar.`
+        this.client.settings.cronJobs.challengeVoting,
+      )}\`\n\nPlease confirm challenge vote phase with \`yes\` or similar.`,
     );
     try {
       const res = (
-        await message.channel.awaitMessages((m: Message) => m.author.id === message.author.id, { max: 1, time: 60000, errors: ['time'] })
+        await message.channel.awaitMessages({
+          filter: (m: Message) => m.author.id === message.author.id, max: 1, time: 60000, errors: ['time'],
+        })
       ).first();
       if (!['yes', 'y', 't', 'true', 'go', 'start'].includes(res.content)) return 'Challenge vote phase aborted.';
 

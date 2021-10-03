@@ -9,10 +9,10 @@ export default class CreateTagCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ args }: RunArgumentsOptions) {
     const tag = await this.client.database.tags.getTag(args.join(' '));
-    if (!tag) return msg.react('❓');
+    if (!tag) throw new Error(`Unknown tag \`${args.join(' ')}\`.`);
 
-    msg.channel.send(tag.reply);
+    return tag.reply;
   }
 }

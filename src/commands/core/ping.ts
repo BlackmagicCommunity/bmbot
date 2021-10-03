@@ -21,11 +21,9 @@ export default class PingCommand extends Command {
     });
   }
 
-  public main({ msg }: RunArgumentsOptions) {
-    msg.channel.send(
-      `${responses[Math.floor(Math.random() * responses.length)]}.\nTime taken: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${
-        this.client.ws.ping
-      }ms.`
-    );
+  public async main({ msg }: RunArgumentsOptions) {
+    return `${responses[Math.floor(Math.random() * responses.length)]}.\nTime taken: ${Date.now() - msg.createdTimestamp}ms.\nWebSocket: ${
+      this.client.ws.ping
+    }ms.`;
   }
 }

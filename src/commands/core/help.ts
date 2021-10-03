@@ -15,31 +15,34 @@ export default class HelpCommand extends Command {
     });
   }
 
-  public main({ msg, args }: RunArgumentsOptions) {
+  public async main({ msg, args }: RunArgumentsOptions) {
     if (args.length === 0) {
-      const categories: any = {};
+      const categories: Record<string, Command[]> = {};
       // Separate by category
-      for (const cmd of this.client.commands.map((cmd) => cmd)) {
-        if (!cmd.hasPermission(msg)) continue;
-        if (typeof categories[cmd.category] === 'undefined') categories[cmd.category] = [cmd];
-        else categories[cmd.category].push(cmd);
-      }
+      Array.from(this.client.commands.values())
+        .forEach((cmd) => {
+          if (cmd.hasPermission(msg)) {
+            if (typeof categories[cmd.category] === 'undefined') categories[cmd.category] = [cmd];
+            else categories[cmd.category].push(cmd);
+          }
+        });
 
-      const embed: MessageEmbed = new MessageEmbed().setTitle(`${this.client.user.username}'s Commands`).setColor(this.client.settings.colors.info);
-      for (const categoryName in categories) {
-        const category: Command[] = categories[categoryName];
-        let categoryCommands = '';
-        for (const cmd of category) categoryCommands += ` \`${msg.prefix}${cmd.name}\`\n`;
-        embed.addField(categoryName, categoryCommands, true);
-      }
+      const embed = new MessageEmbed()
+        .setTitle(`${this.client.user.username}'s Commands`)
+        .setColor(this.client.settings.colors.info);
 
-      embed.setDescription(`You can use any of the following commands by simply typing a message.`);
-      embed.setFooter(`Staff does not take any responsibility for the bot.`);
-      msg.channel.send(embed);
-    } else {
-      const cmd = this.client.commands.get(args.join(' '));
-      if (typeof cmd === 'undefined' || !cmd.hasPermission(msg)) return msg.channel.send(`:x: Command named ${args[0]} not found.`);
-      msg.channel.send(this.helpMessage(msg, cmd));
+      Object.keys(categories).forEach((cat) => {
+        const category = categories[cat];
+        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` \n`')}\``);
+      });
+
+      embed.setDescription('You can use any of the following commands by simply typing a message.');
+      embed.setFooter('Staff does not take any responsibility for the bot.');
+      return { embeds: [embed] };
     }
+
+    const cmd = this.client.commands.get(args.join(' '));
+    if (typeof cmd === 'undefined' || !cmd.hasPermission(msg)) throw new Error(`Command named ${args[0]} not found.`);
+    return { embeds: [this.helpMessage(msg, cmd)] };
   }
 }

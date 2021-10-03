@@ -1,27 +1,47 @@
-import { Collection, Message, MessageEmbed, PermissionString, Snowflake, TextChannel } from 'discord.js';
-import { resolve as Resolve } from 'path';
+import {
+  Collection, Message, MessageEmbed, MessagePayload,
+  PermissionString, ReplyMessageOptions, Snowflake,
+} from 'discord.js';
 import { Client } from '../../core/Client';
 import { CommandArguments, CommandOptions, RunArgumentsOptions } from '../../typings/typings';
 
 export class Command {
   public name: string;
+
   public category: string;
+
   public client: Client;
+
   public usageCount: number;
+
   public readonly aliases: string[];
+
   public readonly disabled: boolean;
+
   public readonly hidden: boolean;
+
   public readonly alias: boolean;
+
   public readonly guildOnly: boolean;
+
   public readonly ownerOnly: boolean;
+
   public readonly developerOnly: boolean;
+
   public readonly deletable: boolean;
+
   public readonly help: string;
+
   public readonly arguments: CommandArguments[];
+
   public readonly requiredPermissions: PermissionString[];
+
   public readonly allowedChannels: string[];
+
   public readonly allowedRoles: string[];
+
   public readonly cooldown: number;
+
   public readonly cooldowns: Collection<Snowflake, number> | null;
 
   constructor(client: Client, options: CommandOptions) {
@@ -48,7 +68,7 @@ export class Command {
 
   public hasPermission(message: Message): boolean {
     // Guild only
-    if (message.channel.type === 'dm' && this.guildOnly) return false;
+    if (message.channel.type === 'DM' && this.guildOnly) return false;
 
     if (this.client.util.isOwner(message.author.id)) return true;
     if (this.ownerOnly) return false;
@@ -56,37 +76,23 @@ export class Command {
     if (this.developerOnly && !this.client.util.isDeveloper(message.author.id)) return false;
 
     // Guild Permissions
-    for (const permission of this.requiredPermissions)
-      if (!message.member.hasPermission(permission) || !message.guild.me.hasPermission(permission)) return false;
+    if (this.requiredPermissions.some(
+      (perm) => (!message.member.permissions.has(perm) || !message.guild.me.permissions.has(perm)),
+    )) {
+      return false;
+    }
 
     // Allowed Channels
-    if (this.allowedChannels.length !== 0) {
-      let allowed = false;
-      for (const chnl of this.allowedChannels) {
-        const c = message.guild.channels.cache.find(
-          (a) => a.type === 'text' && (a.name.toLowerCase().includes(chnl.toLowerCase()) || a.id === chnl)
-        ) as TextChannel;
-        if (c && message.channel.id) {
-          allowed = true;
-          break;
-        }
-      }
-      if (!allowed) return false;
-    }
+    if (!this.allowedChannels.some(
+      (channel) => message.guild.channels.cache.find((c) => c.id === channel || (c.type === 'GUILD_TEXT' && c.name.toLowerCase().includes(channel.toLowerCase()))),
+    )) { return false; }
 
     // Allowed Roles
-    if (this.allowedRoles.length !== 0) {
-      let allowed = false;
-      allowed = false;
-      for (const rol of this.allowedRoles) {
-        const r = message.guild.roles.cache.find((a) => a.name.toLowerCase().includes(rol.toLowerCase()) || a.id === rol);
-        if (r && message.member.roles.cache.has(r.id)) {
-          allowed = true;
-          break;
-        }
-      }
-      if (!allowed) return false;
-    }
+    if (!this.allowedRoles.some(
+      (role) => message.guild.roles.cache.find(
+        (r) => r.id === role || r.name.toLowerCase().includes(role.toLowerCase()),
+      ),
+    )) { return false; }
 
     return true;
   }
@@ -98,11 +104,12 @@ export class Command {
 
     if (command.guildOnly) embed.addField('Guild Only', 'Yes', true);
     if (command.aliases.length !== 0) embed.addField('Aliases', `\`${command.aliases.join('`, `')}\``, true);
-    if (command.arguments.length !== 0)
+    if (command.arguments.length !== 0) {
       embed.addField(
         'Usage',
-        `${message.prefix}${command.name} ${command.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`
+        `${this.client.settings.prefixes[0]}${command.name} ${command.arguments.map((a) => `${a.required ? '<' : '['}${a.name}${a.required ? '>' : ']'}`).join(' ')}`,
       );
+    }
     if (command.ownerOnly || command.developerOnly) embed.addField('Developer Only', 'Yes');
     if (command.requiredPermissions.length !== 0) embed.addField('Required Permissions', `\`${command.requiredPermissions.join('`, `')}\``);
     if (command.allowedRoles.length !== 0) embed.addField('Allowed Roles', `\`${command.allowedRoles.join('`, `')}\``);
@@ -110,46 +117,38 @@ export class Command {
     return embed;
   }
 
-  public async handleCommand(runArguments: RunArgumentsOptions): Promise<any> {
-    if (runArguments.message.command.disabled) return;
-    if (!runArguments.message.command.hasPermission(runArguments.message)) return runArguments.message.react('❌');
+  public async handleCommand(runArguments: RunArgumentsOptions):
+  Promise<string | MessagePayload | ReplyMessageOptions | null> {
+    if (this.disabled) return;
+    if (!this.hasPermission(runArguments.message)) {
+      runArguments.message.react('❌');
+      return;
+    }
 
     if (this.cooldown !== 0) {
       const cooldown = this.cooldowns.get(runArguments.user.id);
-      if (cooldown)
-        return runArguments.message.channel.send(
-          `:clock1: Way too fast! Wait \`${((cooldown - Date.now()) / 1000).toFixed(2)}\` seconds to continue.`
-        );
-      else {
-        this.cooldowns.set(runArguments.user.id, Date.now() + this.cooldown * 1000);
-        this.client.setTimeout(() => this.cooldowns.delete(runArguments.user.id), this.cooldown * 1000);
+      if (cooldown) {
+        throw new Error(`:clock1: Way too fast! Wait \`${((cooldown - Date.now()) / 1000).toFixed(2)}\` seconds to continue.`);
       }
+
+      this.cooldowns.set(runArguments.user.id, Date.now() + this.cooldown * 1000);
+      setTimeout(() => this.cooldowns.delete(runArguments.user.id), this.cooldown * 1000);
     }
 
-    if (runArguments.args.length < this.arguments.length && this.arguments.reduce((acc, a) => (a.required ? acc + 1 : acc), 0) !== 0)
-      return runArguments.message.channel.send(this.helpMessage(runArguments.message));
+    if (runArguments.args.length < this.arguments.length && this.arguments.reduce(
+      (acc, a) => (a.required ? acc + 1 : acc), 0,
+    ) !== 0) {
+      return { embeds: [this.helpMessage(runArguments.message)] } as ReplyMessageOptions;
+    }
 
-    this.usageCount++;
+    if (!this.hidden) this.usageCount++;
     if (this.deletable && runArguments.message.deletable) runArguments.message.delete();
-    return await this.main(runArguments);
+    return this.main(runArguments);
   }
 
-  public main(runArguments: RunArgumentsOptions): any {
-    return true;
-  }
-
-  public reload(): Promise<Command | any> {
-    return new Promise((resolve, reject) => {
-      try {
-        delete require.cache[require.resolve(Resolve('src', 'commands', this.category, this.name))];
-        const commandFile: any = require(Resolve('src', 'commands', this.category, this.name)).default;
-        const command: Command = new commandFile(this.client);
-        this.client.commands.delete(this.name);
-        this.client.commands.set(command.name, command);
-      } catch (err) {
-        reject(err);
-        this.client.logger.error('Reload Command', err.message);
-      }
-    });
+  // eslint-disable-next-line no-unused-vars
+  public async main(runArguments: RunArgumentsOptions):
+   Promise<string | MessagePayload | ReplyMessageOptions> {
+    return null;
   }
 }

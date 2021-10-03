@@ -12,14 +12,16 @@ export default class EvalCommand extends Command {
     });
   }
 
-  public async main({ msg, guild }: RunArgumentsOptions) {
+  public async main({ guild }: RunArgumentsOptions) {
     let str = '';
 
     const members = await guild.members.fetch();
     members
-      .sort((a, b) => {
-        return a.joinedTimestamp > b.joinedTimestamp ? -1 : a.joinedTimestamp < b.joinedTimestamp ? 1 : 0;
-      })
+      .sort((a, b) => (a.joinedTimestamp > b.joinedTimestamp
+        ? -1
+        : a.joinedTimestamp < b.joinedTimestamp
+          ? 1
+          : 0))
       .forEach((member) => {
         str += `<tr><td>${member.id}</td><td>${member.user.tag}</td><td>${DateFormat(member.joinedTimestamp, 'yyyy-mm-dd h:MM TT')}</td></tr>\n`;
       });
@@ -53,6 +55,6 @@ export default class EvalCommand extends Command {
     </body>
     </html>`;
 
-    msg.channel.send('Here is the Member List', new MessageAttachment(Buffer.from(file), 'user_list.html'));
+    return { content: 'Here is the Member List', files: [new MessageAttachment(Buffer.from(file), 'user_list.html')] };
   }
 }

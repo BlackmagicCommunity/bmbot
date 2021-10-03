@@ -5,8 +5,11 @@ import Tags from './Tags';
 
 export class Database {
   public client: Client;
+
   public sqlite: DB;
+
   public levels: Levels;
+
   public tags: Tags;
 
   constructor(client: Client) {
@@ -15,12 +18,12 @@ export class Database {
     this.levels = new Levels(client, this.sqlite);
     this.tags = new Tags(client, this.sqlite);
 
-    this._init();
+    this.init();
   }
 
-  private _init(): void {
+  private init(): void {
     this.sqlite.run(
-      'CREATE TABLE IF NOT EXISTS User (id TEXT PRIMARY KEY, msgCount INTEGER NOT NULL, totalXp INTEGER NOT NULL, currentXp INTEGER NOT NULL, level INTEGER NOT NULL);'
+      'CREATE TABLE IF NOT EXISTS User (id TEXT PRIMARY KEY, msgCount INTEGER NOT NULL, totalXp INTEGER NOT NULL, currentXp INTEGER NOT NULL, level INTEGER NOT NULL);',
     );
     this.sqlite.run('CREATE TABLE IF NOT EXISTS Role (id TEXT PRIMARY KEY, single INTEGER NOT NULL, level INTEGER NOT NULL);');
     this.sqlite.run('CREATE TABLE IF NOT EXISTS Tag (name TEXT PRIMARY KEY, description TEXT, reply TEXT);');

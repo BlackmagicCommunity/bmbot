@@ -1,8 +1,12 @@
+/* eslint-disable no-console */
 import chalk from 'chalk';
 import DateFormat from 'dateformat';
-import { Collection, GuildMember, Invite, Message, MessageAttachment, MessageEmbed, Snowflake, TextChannel, User } from 'discord.js';
+import {
+  Collection, GuildMember,
+  Invite, Message, MessageAttachment,
+  MessageEmbed, Snowflake, TextChannel, User,
+} from 'discord.js';
 import { Client } from '..';
-import { LoggerChannels } from '../typings/typings';
 
 const colors: any = {
   'Member Ban': 'RED',
@@ -14,27 +18,33 @@ const colors: any = {
 
 export class Logger {
   public channel: TextChannel;
+
   public client: Client;
 
   constructor(client: Client) {
     Object.defineProperty(this, 'client', { value: client });
   }
 
-  public message(message: Message | Collection<Snowflake, Message>, action: string, otherData?: any) {
+  public message(message: Message | Collection<Snowflake, Message>,
+    action: string, otherData?: any) {
     if (this.channel === null) return;
     const embed = new MessageEmbed().setColor(colors[action]).setTitle(action).setTimestamp();
+    const files: MessageAttachment[] = [];
 
     if (message instanceof Collection) {
       // bulk delete
       let str = '';
       message
-        .sort((a, b) => {
-          return a.createdTimestamp > b.createdTimestamp ? -1 : a.createdTimestamp < b.createdTimestamp ? 1 : 0;
-        })
+        .sort((a, b) => (
+          a.createdTimestamp > b.createdTimestamp
+            ? -1
+            : a.createdTimestamp < b.createdTimestamp
+              ? 1
+              : 0))
         .forEach((m: Message) => {
           str += `<tr><td>${m.author.id}</td><td>${m.author.tag}</td><td>${m.content}</td><td>${DateFormat(
             m.createdTimestamp,
-            'yyyy-mm-dd h:MM TT'
+            'yyyy-mm-dd h:MM TT',
           )}</td></tr>\n`;
         });
       const file = `<!DOCTYPE html>
@@ -65,19 +75,17 @@ export class Logger {
       </body>
       </html>`;
       embed
-        .addField('Amount of messages', message.size)
-        .addField('Channel', `${message.first().channel}`)
-        .attachFiles([new MessageAttachment(Buffer.from(file), 'message_list.html')]);
+        .addField('Amount of messages', message.size.toString())
+        .addField('Channel', `${message.first().channel}`);
+      files.push(new MessageAttachment(Buffer.from(file), 'message_list.html'));
     } else {
       if (!message.guild) return; // don't want it from dms
       if (message.content) embed.setDescription(message.cleanContent);
-      if (otherData instanceof Message && otherData.content)
-        embed.addField('Old Content', otherData.content.length > 1024 ? `${otherData.content.substring(0, 1021)}...` : otherData.content);
-      if (colors[action] !== 'Message Delete')
-        embed.addField('Link', `[Jump to Message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`);
+      if (otherData instanceof Message && otherData.content) embed.addField('Old Content', otherData.content.length > 1024 ? `${otherData.content.substring(0, 1021)}...` : otherData.content);
+      if (colors[action] !== 'Message Delete') embed.addField('Link', `[Jump to Message](https://discord.com/channels/${message.guild.id}/${message.channel.id}/${message.id})`);
     }
 
-    this.channel.send(embed);
+    this.channel.send({ embeds: [embed], files });
   }
 
   public async join(member: GuildMember, left: boolean = false) {
@@ -86,10 +94,8 @@ export class Logger {
     let used: Invite;
     if (!left) {
       const cached = this.client.invites.get(member.guild.id);
-      const current = await member.guild.fetchInvites();
-      used = cached.find((invite) => {
-        return current.get(invite.code).uses !== invite.uses;
-      });
+      const current = await member.guild.invites.fetch();
+      used = cached.find((invite) => current.get(invite.code).uses !== invite.uses);
     }
 
     const embed = new MessageEmbed()
@@ -100,36 +106,44 @@ export class Logger {
       .setTimestamp();
     if (used) embed.addField('Invited by', `**${used.inviter.username}**#${used.inviter.discriminator} (${used.inviter.id}) - ${used.uses} uses`);
 
-    this.channel.send(embed);
+    this.channel.send({ embeds: [embed] });
   }
 
   public infraction(action: string, reason: string, moderator: User, target: User): void {
     if (this.channel === null) return;
 
-    const embed = new MessageEmbed().setTitle(action).setColor(colors[action]).setThumbnail(target.displayAvatarURL());
+    const embed = new MessageEmbed()
+      .setTitle(action)
+      .setColor(colors[action])
+      .setThumbnail(target.displayAvatarURL());
     if (reason) embed.addField('Reason', reason, true);
     embed
       .addField('Target', `**${target.username}**#${target.discriminator} (${target.id})`)
       .addField('Moderator', `**${moderator.username}**#${moderator.discriminator} (${moderator.id})`)
       .setTimestamp();
-    this.channel.send(embed);
+    this.channel.send({ embeds: [embed] });
   }
 
   public async error(origin: string, description: string, isWarn = false) {
     console.log(isWarn ? chalk.bgYellow('WARN') : chalk.bgRed('ERROR'), `From: ${origin}\n${description}\n\n`);
 
     if (!this.client.readyAt) return;
-    const channel = (await this.client.channels.fetch(this.client.settings.channels.boterrors)) as TextChannel;
+    const channel = (await this.client.channels
+      .fetch(this.client.settings.channels.boterrors)) as TextChannel;
     if (!channel) {
       console.log(chalk.bgYellow('WARN'), 'No logger error channel defined.');
       return;
     }
 
-    await channel.send(
-      new MessageEmbed()
-        .setTitle(origin)
-        .setDescription(`\`\`\`js\n${description}\`\`\``)
-        .setColor(isWarn ? this.client.settings.colors.warning : this.client.settings.colors.danger)
-    );
+    await channel.send({
+      embeds: [
+        new MessageEmbed()
+          .setTitle(origin)
+          .setDescription(`\`\`\`js\n${description}\`\`\``)
+          .setColor(isWarn
+            ? this.client.settings.colors.warning
+            : this.client.settings.colors.danger),
+      ],
+    });
   }
 }

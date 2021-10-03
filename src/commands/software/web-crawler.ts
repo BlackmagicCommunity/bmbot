@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 // dave caruso 2020-03-17, updated to ts 2020-04-22
 import DomParser from 'dom-parser';
 import Cache from 'node-cache';
@@ -78,6 +79,7 @@ async function crawl(): Promise<WebCrawlerData> {
       const platform = node.getAttribute('class').split(' ')[1] as keyof DownloadsObject;
       const url = BM_BASE_URL + node.getAttribute('href');
 
+      // eslint-disable-next-line no-param-reassign
       obj[platform] = encodeURI(url);
 
       return obj;
@@ -123,7 +125,7 @@ async function crawl(): Promise<WebCrawlerData> {
     if (!obj.has(release.version)) {
       let isVisible = visibleMajors.includes(release.version.split('.')[0]);
       if (!isVisible && !visibleMajors[1]) {
-        visibleMajors[1] = release.version.split('.')[0];
+        [visibleMajors[1]] = release.version.split('.');
         isVisible = true;
       }
 

@@ -31,16 +31,16 @@ export default class LMGTFYCommand extends Command {
         const [, , , guildId, channelId, messageId] = matches;
 
         const guild = this.client.guilds.cache.get(guildId);
-        if (!guild) return msg.channel.send(':x: Guild not found.');
+        if (!guild) throw new Error('Guild not found.');
         const channel = guild.channels.cache.get(channelId) as TextChannel;
-        if (!channel) return msg.channel.send(':x: Channel not found.');
+        if (!channel) throw new Error('Channel not found.');
         const message = await channel.messages.fetch(messageId).catch(() => null);
-        if (!message) return msg.channel.send(':x: Message not found.');
+        if (!message) throw new Error('Message not found.');
         query = message.content.split(' ');
       }
     }
 
     const uri = query.map(encodeURIComponent).join('+');
-    msg.channel.send(`We're happy to help you on questions that are not easy to google.\n<https://lmgtfy.com/?q=${uri}>`);
+    return `We're happy to help you on questions that are not easy to google.\n<https://lmgtfy.com/?q=${uri}>`;
   }
 }

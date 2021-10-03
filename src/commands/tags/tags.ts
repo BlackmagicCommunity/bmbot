@@ -1,5 +1,7 @@
-import { MessageEmbed } from 'discord.js';
-import { Client, Command, RunArgumentsOptions, Tag } from '../../util';
+import { MessageEmbed, ReplyMessageOptions } from 'discord.js';
+import {
+  Client, Command, RunArgumentsOptions, Tag,
+} from '../../util';
 
 export default class CreateTagCommand extends Command {
   constructor(client: Client) {
@@ -9,9 +11,10 @@ export default class CreateTagCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
-    const tags = (await this.client.database.tags.getTags()).sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)).array();
-    if (tags.length === 0) return msg.channel.send(':x: No tags available.');
+  public async main({ args }: RunArgumentsOptions) {
+    const tags = Array.from((await this.client.database.tags.getTags())
+      .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)).values());
+    if (tags.length === 0) throw new Error('No tags available.');
     const parts: Tag[][] = [];
     while (tags.length > 0) parts.push(tags.splice(0, 10));
 
@@ -22,6 +25,6 @@ export default class CreateTagCommand extends Command {
       embed.addField(t.description, t.name);
     });
 
-    msg.channel.send(embed);
+    return { embeds: [embed] } as ReplyMessageOptions;
   }
 }

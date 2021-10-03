@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Client, Command, RunArgumentsOptions } from '../../util';
+import { Client, Command } from '../../util';
 
 export default class ComplimentCommand extends Command {
   constructor(client: Client) {
@@ -10,7 +10,7 @@ export default class ComplimentCommand extends Command {
     });
   }
 
-  public async main({ msg }: RunArgumentsOptions) {
-    msg.channel.send((await fetch('https://timto.site/compliment.php').then((x) => x.json())).compliment);
+  public async main() {
+    return (await fetch('https://timto.site/compliment.php').then((x) => x.json())).compliment;
   }
 }

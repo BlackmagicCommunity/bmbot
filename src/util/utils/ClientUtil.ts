@@ -1,4 +1,7 @@
-import { Guild, GuildChannel, GuildMember, Message, Role, TextChannel, User } from 'discord.js';
+import {
+  Guild, GuildChannel, GuildMember,
+  Message, Role, TextChannel, ThreadChannel, User,
+} from 'discord.js';
 import { Client } from '../core/Client';
 
 export class ClientUtil {
@@ -33,9 +36,10 @@ export class ClientUtil {
   public async getUser(message: Message, arg: string): Promise<User> {
     if (message.mentions.users.size !== 0) return message.mentions.users.first();
     if (/[0-9]{16,18}/.test(arg)) return this.client.users.fetch(arg);
+
+    // eslint-disable-next-line no-param-reassign
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/.test(arg))
-      return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user;
+    if (/[a-zA-Z]{1,30}/.test(arg)) return (await message.guild.members.fetch()).find((member) => member.user.username.toLowerCase().includes(arg))?.user;
     return null;
   }
 
@@ -49,27 +53,39 @@ export class ClientUtil {
   public async getRole(message: Message, arg: string): Promise<Role> {
     if (message.mentions.roles.size !== 0) return message.mentions.roles.first();
     if (/[0-9]{16,18}/.test(arg)) return message.guild.roles.fetch(arg);
+
+    // eslint-disable-next-line no-param-reassign
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/) return message.guild.roles.cache.find((role: Role) => role.name.toLowerCase().includes(arg));
+    if (/[a-zA-Z]{1,30}/.test(arg)) return message.guild.roles.cache.find((role: Role) => role.name.toLowerCase().includes(arg));
     return null;
   }
 
-  public async getChannel(message: Message, arg: string, textOnly: boolean = true): Promise<GuildChannel> {
-    if (message.mentions.channels.size !== 0) return message.mentions.channels.first() as TextChannel;
+  public async getChannel(message: Message, arg: string,
+    textOnly: boolean = true): Promise<GuildChannel|ThreadChannel> {
+    if (message.mentions.channels.size !== 0) {
+      return message.mentions.channels.first() as TextChannel;
+    }
+
     if (/[0-9]{16,18}/.test(arg)) return message.guild.channels.cache.get(arg) as GuildChannel;
+
+    // eslint-disable-next-line no-param-reassign
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/)
-      return message.guild.channels.cache.find((channel: GuildChannel) => {
-        if (textOnly && channel.type !== 'text') return;
-        return channel.name.toLowerCase().includes(arg);
-      });
+    if (/[a-zA-Z]{1,30}/.test(arg)) {
+      return message.guild.channels.cache
+        .find((channel) => {
+          if (textOnly && channel.type !== 'GUILD_TEXT') return false;
+          return channel.name.toLowerCase().includes(arg);
+        });
+    }
     return null;
   }
 
   public async getGuild(arg: string): Promise<Guild> {
     if (/[0-9]{16,18}/.test(arg)) return this.client.guilds.cache.get(arg);
+
+    // eslint-disable-next-line no-param-reassign
     arg = arg.toLowerCase();
-    if (/[a-zA-Z]{1,30}/) return this.client.guilds.cache.find((guild) => guild.name.toLowerCase().includes(arg));
+    if (/[a-zA-Z]{1,30}/.test(arg)) return this.client.guilds.cache.find((guild) => guild.name.toLowerCase().includes(arg));
     return null;
   }
 }

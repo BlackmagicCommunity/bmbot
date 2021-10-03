@@ -15,18 +15,19 @@ export default class CardCommand extends Command {
 
   public async main({ msg, args }: RunArgumentsOptions) {
     let user: User;
-    if (!args[0]) user = await msg.author.fetchData();
+    if (!args[0]) user = msg.author;
     else {
       user = await this.client.util.getUser(msg, args.join(' '));
-      if (!user) return msg.channel.send(':x: User not found.');
-      user = await user.fetchData();
+      if (!user) throw new Error('User not found.');
     }
 
-    if (!user.data?.totalXp) return msg.channel.send(':x: User has no rank.');
+    const userData = await this.client.userSettings.fetchData(user.id);
+
+    if (!userData?.totalXp) throw new Error('User has no rank.');
 
     const rank = await this.client.database.levels.getUserRank(user.id);
-    const requiredXp = Levels.exp(user.data.level);
-    msg.channel.startTyping();
+    const requiredXp = Levels.exp(userData.level);
+    msg.channel.sendTyping();
     const canvas = createCanvas(900, 270);
     const ctx = canvas.getContext('2d');
 
@@ -35,9 +36,10 @@ export default class CardCommand extends Command {
     ctx.drawImage(userImage, 28, 60, 150, 150);
 
     // xp bar
-    (ctx.fillStyle = '#99AAB5'), ctx.fillRect(211, 184, 371, 27);
+    ctx.fillStyle = '#99AAB5';
+    ctx.fillRect(211, 184, 371, 27);
     ctx.fillStyle = '#ff6800';
-    ctx.fillRect(211, 184, (user.data.currentXp / requiredXp) * 371, 27);
+    ctx.fillRect(211, 184, (userData.currentXp / requiredXp) * 371, 27);
 
     // background
     const card = await loadImage('src/assets/img/card.png');
@@ -46,21 +48,21 @@ export default class CardCommand extends Command {
     // values
     ctx.font = '20px "Roboto"';
     ctx.fillStyle = '#ffffff';
-    const xpText = `${this.client.util.formatNumber(user.data.currentXp)} / ${this.client.util.formatNumber(requiredXp)} XP`;
+    const xpText = `${this.client.util.formatNumber(userData.currentXp)} / ${this.client.util.formatNumber(requiredXp)} XP`;
     const xpLength = ctx.measureText(xpText).width;
     ctx.fillText(xpText, 580 - xpLength, 182);
     ctx.font = '60px "Roboto"';
     ctx.fillText(`#${rank}`, 211, 182);
     // Level
     ctx.fillStyle = '#ff6800';
-    const levelText = `${user.data.level.toString()}`;
+    const levelText = `${userData.level.toString()}`;
     const levelLength = ctx.measureText(levelText).width;
     ctx.fillText(levelText, 835 - levelLength, 211);
     // Level text
     ctx.font = '30px "Roboto"';
     ctx.fillText('LEVEL', 835 - levelLength - ctx.measureText('LEVEL').width, 211);
 
-    msg.reply({ files: [canvas.toBuffer()] });
-    msg.channel.stopTyping();
+    msg.channel.sendTyping();
+    return { files: [canvas.toBuffer()] };
   }
 }

@@ -1,4 +1,6 @@
-import { Guild, Message, MessageAttachment, PermissionString, TextChannel, User } from 'discord.js';
+import {
+  Collection, Guild, Message, MessageAttachment, PermissionString, Snowflake, TextChannel, User,
+} from 'discord.js';
 
 export interface CommandOptions {
   aliases?: string[];
@@ -9,6 +11,7 @@ export interface CommandOptions {
   ownerOnly?: boolean;
   guildOnly?: boolean;
   developerOnly?: boolean;
+  // eslint-disable-next-line no-use-before-define
   arguments?: CommandArguments[];
   requiredPermissions?: PermissionString[];
   allowedChannels?: string[];
@@ -69,7 +72,7 @@ export interface GuildData {
 
 export interface ChallengeOptions {
   author?: User;
-  assets?: MessageAttachment[];
+  assets?: Collection<Snowflake, MessageAttachment>;
   topic: string;
   title: string;
   description: string;
