@@ -15,7 +15,6 @@ export interface CommandOptions {
   guildOnly?: boolean;
   ownerOnly?: boolean;
   developerOnly?: boolean;
-
   // eslint-disable-next-line no-use-before-define
   arguments?: CommandArguments[];
   requiredPermissions?: PermissionString[];

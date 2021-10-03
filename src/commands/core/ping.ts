@@ -23,7 +23,7 @@ export default class PingCommand extends Command {
   }
 
   public async main({ msg }: RunArgumentsOptions) {
-    return `${responses[Math.floor(Math.random() * responses.length)]}.\nTime taken: ${msg.createdTimestamp - Date.now()}ms.\nWebSocket: ${
+    return `${responses[Math.floor(Math.random() * responses.length)]}.\nTime taken: ${Date.now() - msg.createdTimestamp}ms.\nWebSocket: ${
       this.client.ws.ping
     }ms.`;
   }
