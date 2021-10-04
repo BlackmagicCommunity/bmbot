@@ -24,12 +24,12 @@ export default class RulesCommand extends Command {
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ guild, args }: RunArgumentsOptions) {
     const embed = new MessageEmbed()
       .setColor(this.client.settings.colors.info)
-      .setTitle('Blackmagic Community - Rules');
+      .setTitle(`${guild.name} - Rules`);
 
-    const channel = msg.guild.channels.cache
+    const channel = guild.channels.cache
       .get(this.client.settings.channels.rules) as TextChannel;
     const { content } = await channel.messages.fetch(this.client.settings.messages.rules);
 
