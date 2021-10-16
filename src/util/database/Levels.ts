@@ -17,7 +17,7 @@ export default class Levels {
 
   public static exp = (lvl: number) => 5 * lvl ** 2 + 50 * lvl + 100; // from mee6 source
 
-  public async getUserRank(id: Snowflake): Promise<Number> {
+  public async getUserRank(id: Snowflake): Promise<number> {
     return new Promise((resolve) => {
       this.sqlite.get('SELECT COUNT(*) AS \'Rank\' FROM User WHERE totalXp >= (SELECT totalXp FROM User WHERE id = ?)', id, (err, row) => {
         resolve(row.Rank);

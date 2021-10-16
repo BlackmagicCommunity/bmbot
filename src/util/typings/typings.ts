@@ -1,6 +1,7 @@
 import {
   ApplicationCommandOptionData,
-  Collection, Guild, Message, MessageAttachment, PermissionString, Snowflake, TextChannel, User,
+  Collection, CommandInteraction, Guild, Message,
+  MessageAttachment, PermissionString, Snowflake, TextChannel, User,
 } from 'discord.js';
 
 export interface CommandOptions {
@@ -32,8 +33,8 @@ export interface CommandArguments {
 }
 
 export interface RunArgumentsOptions {
-  message: Message;
-  msg: Message;
+  message: Message | CommandInteraction;
+  msg: Message | CommandInteraction;
   args: string[];
   user: User;
   guild: Guild;
