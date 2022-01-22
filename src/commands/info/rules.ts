@@ -16,17 +16,20 @@ export default class RulesCommand extends Command {
         },
       ],
       aliases: ['rule'],
-      help: "Returns the server's rule(s) info",
+      help: "Returns the server's rule(s) info.",
       guildOnly: true,
+      optionsData: [{
+        name: 'rule', description: 'Rule number.', type: 'INTEGER',
+      }],
     });
   }
 
-  public async main({ msg, args }: RunArgumentsOptions) {
+  public async main({ guild, args }: RunArgumentsOptions) {
     const embed = new MessageEmbed()
       .setColor(this.client.settings.colors.info)
-      .setTitle('Blackmagic Community - Rules');
+      .setTitle(`${guild.name} - Rules`);
 
-    const channel = msg.guild.channels.cache
+    const channel = guild.channels.cache
       .get(this.client.settings.channels.rules) as TextChannel;
     const { content } = await channel.messages.fetch(this.client.settings.messages.rules);
 
@@ -39,11 +42,11 @@ export default class RulesCommand extends Command {
       try {
         const key = content.indexOf(map[parseInt(args[0], 10) - 1]);
         let next = content.indexOf(map[parseInt(args[0], 10)]);
-        if (key === -1) throw new Error('Invalid rule.');
+        if (key === -1) throw new Error(`Unknown rule. Use \`${this.client.settings.prefixes[0]}rules\``);
         if (next === -1) next = content.indexOf('http');
         embed.setDescription(content.substring(key, next).trim());
-      } catch {
-        throw new Error('The parameter you specified is not a number.');
+      } catch (err) {
+        throw new Error(err?.message || 'The parameter you specified is not a number.');
       }
     }
 

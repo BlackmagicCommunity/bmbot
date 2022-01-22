@@ -62,8 +62,9 @@ export default class MessageEvent extends Event {
   }
 
   public async main(message: Message): Promise<any> {
-    if (message.author.bot) return;
-    if (message.guild && !(message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES')) return;
+    if (message.author.bot
+      || message.interaction
+      || (message.guild && !(message.channel as TextChannel).permissionsFor(message.guild.me).has('SEND_MESSAGES'))) return;
 
     if (!message.editedAt) await this.handleLeveling(message);
 
@@ -93,13 +94,20 @@ export default class MessageEvent extends Event {
     const commandArguments = RunArguments(message, args);
     try {
       const res = await command.handleCommand(commandArguments);
-      if (res) return message.reply(res);
+      if (res) {
+        let resObj = {};
+        if (typeof res === 'string') resObj = { content: res };
+        else resObj = res;
+
+        return message.reply({ ...resObj, allowedMentions: { repliedUser: false } });
+      }
     } catch (err) {
-      this.client.logger.error('Message Event', err.message);
+      this.client.logger.error('Message Event', err);
       return message.reply({
         embeds: [new MessageEmbed()
+          .setTitle('Error')
           .setColor(this.client.settings.colors.danger)
-          .setDescription(err.message),
+          .setDescription(`:x: ${err.message}`),
         ],
       });
     }

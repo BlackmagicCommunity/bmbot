@@ -1,4 +1,4 @@
-import { MessageEmbed, User } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 import { Levels } from '../../util/database';
 
@@ -8,31 +8,33 @@ export default class RankCommand extends Command {
       help: "Check yours or someone's rank.",
       aliases: ['level'],
       arguments: [{ name: 'user', type: 'User' }],
+      optionsData: [{ name: 'user', description: 'User to see the rank.', type: 'USER' }],
       cooldown: 2,
     });
   }
 
   public async main({ msg, args }: RunArgumentsOptions) {
-    let user: User;
-    if (!args[0]) user = msg.author;
-    else {
-      user = await this.client.util.getUser(msg, args.join(' '));
-      if (!user) throw new Error('User not found.');
+    let m = msg.member;
+    if (args[0]) {
+      m = await this.client.util.getMember(msg, args.join(' '));
+      if (!m) throw new Error(`Could not find member \`${args.join(' ')}\`.`);
     }
 
-    const userData = await this.client.userSettings.fetchData(user.id);
+    const userData = await this.client.userSettings.fetchData(m.id);
 
     if (!userData?.totalXp) throw new Error('User has no rank.');
 
-    const rank = await this.client.database.levels.getUserRank(user.id);
+    const userRank = await this.client.database.levels.getUserRank(msg.member.id);
     const requiredXp = Levels.exp(userData.level);
+
     return {
       embeds: [
         new MessageEmbed()
-          .setThumbnail(user.displayAvatarURL())
+          .setTitle(m.user.username)
+          .setThumbnail(m.user.displayAvatarURL())
           .setColor(this.client.settings.colors.info)
-          .addField('Rank', rank, true)
-          .addField('Level', userData.level.toString(), true)
+          .addField('Rank', userRank?.toString() ?? 'unranked', true)
+          .addField('Level', userData.level?.toString() || '0', true)
           .addField('\u200b', '\u200b', true)
           .addField(
             'XP (current/required)',
@@ -41,7 +43,7 @@ export default class RankCommand extends Command {
             )})`,
             true,
           )
-          .addField('Message Count', this.client.util.formatNumber(userData.msgCount), true),
+          .addField('Message Count', this.client.util.formatNumber(userData.msgCount) || '0', true),
       ],
     };
   }

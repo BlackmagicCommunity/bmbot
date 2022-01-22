@@ -5,7 +5,7 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class VoteChallengeCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: 'Starts the voting phase of the challenge',
+      help: 'Starts the voting phase of the challenge.',
       aliases: ['vchall', 'votephase'],
       ownerOnly: true,
     });

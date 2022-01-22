@@ -1,4 +1,3 @@
-import DateFormat from 'dateformat';
 import { MessageEmbed } from 'discord.js';
 import { Client, Command, RunArgumentsOptions } from '../../util';
 
@@ -6,10 +5,13 @@ export default class UserInfoCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['u', 'uinfo', 'userinfo'],
-      help: 'Gets userinfo',
+      help: 'Gets userinfo.',
       arguments: [{ name: 'member', type: 'Member' }],
       allowedRoles: ['staff'],
       guildOnly: true,
+      optionsData: [{
+        name: 'user', type: 'USER', description: 'User to see info about.', required: false,
+      }],
     });
   }
 
@@ -27,18 +29,21 @@ export default class UserInfoCommand extends Command {
 
     if (m) {
       const embed = new MessageEmbed()
-        .setTitle(`User: ${m.user.tag} ${m.user.bot ? '[BOT]' : m.user.system ? '[SYSTEM]' : ''}`)
+        .setTitle(`${m.user.tag}${m.user.bot ? ' [BOT]' : m.user.system ? ' [SYSTEM]' : ''}`)
         .setColor(m.displayColor)
         .setImage(`https://cdn.discordapp.com/avatars/${m.user.id}/${m.user.avatar}.png?size=1024`)
-        .addField('Display Name', `${m.displayName} (\`${m.displayHexColor}\`)`, true)
-        .addField('ID', `${m.user.id}`, true)
-        .addField('Joined On', `${DateFormat(m.joinedTimestamp, 'yyyy-mm-dd h:MM TT')}`, true);
+        .setFooter(m.user.id)
+        .addField('Name', `${m.displayName} (\`${m.displayHexColor}\`)`, true)
+        // eslint-disable-next-line no-bitwise
+        .addField('Joined', `<t:${~~(m.joinedTimestamp / 1000)}:R>`, true)
+        // eslint-disable-next-line no-bitwise
+        .addField('Created', `<t:${~~(m.user.createdTimestamp / 1000)}:R>`, true);
       if (roles.length !== 0) {
         embed.addField(
           'Roles',
           m.roles.cache
             .filter((x) => x.name !== '@everyone')
-            .map((x) => `- ${x.name}`)
+            .map((x) => `- ${x}`)
             .join('\n'),
           true,
         );

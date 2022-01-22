@@ -18,6 +18,12 @@ export default class PurgeCommand extends Command {
           type: 'Member',
         },
       ],
+      optionsData: [
+        {
+          name: 'amount', description: 'Amount of messages to delete.', type: 'INTEGER', required: true,
+        },
+        { name: 'user', description: 'User to delete the messages from.', type: 'USER' },
+      ],
     });
   }
 
@@ -29,7 +35,7 @@ export default class PurgeCommand extends Command {
     if (args[0]) {
       user = await this.client.util.getUser(msg, args.join(' '));
       messages = (await msg.channel.messages
-        .fetch({ limit: amount })).filter((m) => m.author.id === user.id);
+        .fetch({ limit: amount })).filter((m) => m.member.id === user.id);
     }
 
     const { size } = await msg.channel.bulkDelete(user ? messages : amount, true);

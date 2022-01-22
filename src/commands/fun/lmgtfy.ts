@@ -13,6 +13,9 @@ export default class LMGTFYCommand extends Command {
           type: 'string | url',
         },
       ],
+      optionsData: [{
+        name: 'query', type: 'STRING', description: 'Search query.',
+      }],
     });
   }
 
@@ -22,7 +25,8 @@ export default class LMGTFYCommand extends Command {
     if (!args[0]) {
       // previous message
       const message = (await msg.channel.messages.fetch({ limit: 2 })).last();
-      query = message.content.split(' ');
+      query = message.content?.split(' ');
+      if (!query) throw new Error('Nothing to search.');
     } else {
       const str = args.join(' ');
       const matches = str.match('https://(canary.)?(discord.com|discordapp.com)/channels/([0-9]{16,18})/([0-9]{16,18})/([0-9]{16,18})');

@@ -16,8 +16,9 @@ export default class ChannelsCommand extends Command {
         },
       ],
       aliases: ['channel'],
-      help: 'Returns the channel(s) info',
+      help: 'Returns the channel(s) info.',
       guildOnly: true,
+      optionsData: [{ name: 'channel', description: 'Channel to get info on.', type: 'CHANNEL' }],
     });
   }
 

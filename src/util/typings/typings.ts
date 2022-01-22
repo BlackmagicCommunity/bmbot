@@ -1,15 +1,19 @@
 import {
+  ApplicationCommandOptionData,
   Collection, Guild, Message, MessageAttachment, PermissionString, Snowflake, TextChannel, User,
 } from 'discord.js';
 
 export interface CommandOptions {
-  aliases?: string[];
+  name?: string;
+  category?: string;
   help: string;
-  deletable?: boolean;
+  aliases?: string[];
   disabled?: boolean;
   hidden?: boolean;
-  ownerOnly?: boolean;
+  optionsData?: ApplicationCommandOptionData[];
+  deletable?: boolean;
   guildOnly?: boolean;
+  ownerOnly?: boolean;
   developerOnly?: boolean;
   // eslint-disable-next-line no-use-before-define
   arguments?: CommandArguments[];
@@ -77,4 +81,12 @@ export interface ChallengeOptions {
   title: string;
   description: string;
   message: Message;
+}
+
+export function autoImplement<T>(defaults?: Partial<T>) {
+  return class {
+    constructor() {
+      Object.assign(this, defaults || {});
+    }
+  } as new () => T;
 }

@@ -7,7 +7,8 @@ export default class SwissCommand extends Command {
       disabled: false,
       hidden: true,
       ownerOnly: false,
-      help: 'Swiss German Insult',
+      help: 'Swiss German insult.',
+      optionsData: [],
     });
   }
 

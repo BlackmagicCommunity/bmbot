@@ -52,7 +52,7 @@ export class Client extends client {
 
   public start() {
     process.on('uncaughtException', (err) => {
-      this.logger.error(`Uncaught Exception - ${err.stack}`, err.message);
+      this.logger.error(`Uncaught Exception - ${err.stack}`, err);
       process.exit(1);
     });
 

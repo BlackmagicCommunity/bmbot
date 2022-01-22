@@ -5,7 +5,7 @@ import { Client, Command, RunArgumentsOptions } from '../../util';
 export default class StartChallengeCommand extends Command {
   constructor(client: Client) {
     super(client, {
-      help: 'Starts a new challenge',
+      help: 'Starts a new challenge.',
       arguments: [
         {
           name: 'topic',

@@ -5,14 +5,8 @@ export default class RTFMCommand extends Command {
   constructor(client: Client) {
     super(client, {
       aliases: ['readthefuckingmanual', 'rtm'],
-      help: 'If someone asks a question that is easily findable in the manual',
+      help: 'If someone asks a question that is easily findable in the manual.',
       deletable: true,
-      arguments: [
-        {
-          name: 'query | link',
-          type: 'string | url',
-        },
-      ],
     });
   }
 

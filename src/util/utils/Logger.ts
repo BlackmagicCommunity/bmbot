@@ -124,8 +124,8 @@ export class Logger {
     this.channel.send({ embeds: [embed] });
   }
 
-  public async error(origin: string, description: string, isWarn = false) {
-    console.log(isWarn ? chalk.bgYellow('WARN') : chalk.bgRed('ERROR'), `From: ${origin}\n${description}\n\n`);
+  public async error(origin: string, err: Error, isWarn = false) {
+    console.log(isWarn ? chalk.bgYellow('WARN') : chalk.bgRed('ERROR'), `From: ${origin}\n${err}\n\n`);
 
     if (!this.client.readyAt) return;
     const channel = (await this.client.channels
@@ -139,7 +139,7 @@ export class Logger {
       embeds: [
         new MessageEmbed()
           .setTitle(origin)
-          .setDescription(`\`\`\`js\n${description}\`\`\``)
+          .setDescription(`\`\`\`js\n${err.message}\`\`\``)
           .setColor(isWarn
             ? this.client.settings.colors.warning
             : this.client.settings.colors.danger),

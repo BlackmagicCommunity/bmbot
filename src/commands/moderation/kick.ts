@@ -11,6 +11,12 @@ export default class KickCommand extends Command {
         { name: 'member', type: 'Member', required: true },
         { name: 'reason', type: 'string' },
       ],
+      optionsData: [
+        {
+          name: 'user', description: 'User to kick.', type: 'USER', required: true,
+        },
+        { name: 'reason', description: 'Reason for the kick.', type: 'STRING' },
+      ],
     });
   }
 
@@ -21,7 +27,7 @@ export default class KickCommand extends Command {
     if (member.roles.highest.position > guild.me.roles.highest.position) throw new Error('Can not ban user that is above me.');
     if (member.roles.highest.position > msg.member.roles.highest.position) throw new Error('Can not ban user that is above you.');
 
-    await member.kick(`Kicked by ${msg.author.tag} ${args[1] ? `: ${args[1]}` : ''}`);
+    await member.kick(`Kicked by ${msg.member.user.tag} ${args[1] ? `: ${args[1]}` : ''}`);
     msg.react('✅');
     return null;
   }

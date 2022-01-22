@@ -10,6 +10,12 @@ export default class BanCommand extends Command {
         { name: 'member', type: 'Member', required: true },
         { name: 'reason', type: 'string' },
       ],
+      optionsData: [
+        {
+          name: 'user', description: 'User to ban.', type: 'USER', required: true,
+        },
+        { name: 'reason', description: 'Reason for the ban.', type: 'STRING' },
+      ],
     });
   }
 
@@ -23,7 +29,7 @@ export default class BanCommand extends Command {
     await member
       .ban({
         days: 7,
-        reason: `Banned by ${msg.author.tag} ${args[1] ? `: ${args[1]}` : ''}`,
+        reason: `Banned by ${msg.member.user.tag} ${args[1] ? `: ${args[1]}` : ''}`,
       });
     msg.react('✅');
     return null;

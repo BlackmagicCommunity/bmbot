@@ -11,7 +11,15 @@ export default class HelpCommand extends Command {
           type: 'Command',
         },
       ],
-      help: 'This command!!!',
+      optionsData: [
+        {
+          name: 'command',
+          description: 'Command name for descriptive help.',
+          type: 'STRING',
+          required: false,
+        },
+      ],
+      help: 'List bot commands.',
     });
   }
 
@@ -33,7 +41,7 @@ export default class HelpCommand extends Command {
 
       Object.keys(categories).forEach((cat) => {
         const category = categories[cat];
-        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` \n`')}\``);
+        embed.addField(cat, `\`${category.map((c) => `${this.client.settings.prefixes[0]}${c.name}`).join('` \n`')}\``, true);
       });
 
       embed.setDescription('You can use any of the following commands by simply typing a message.');
